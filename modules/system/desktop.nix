@@ -13,7 +13,8 @@
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
     };
 
-    services.displayManager.lemurs.enable = true;
+    # Display Manager
+    services.displayManager.sddm.enable = true;
 
     # PAM authentication for Hyprlock (instant zero-delay login)
     security.pam.services.hyprlock = {};
