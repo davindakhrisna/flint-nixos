@@ -1,7 +1,7 @@
 <p align="center">
   <strong>F L I N T</strong>
   <br>
-  <em>Deterministic NixOS configuration — one flake to rule them all.</em>
+  <em>One flake to rule them all.</em>
 </p>
 
 ---
@@ -48,49 +48,6 @@ max → mid + flutter, godot, blender, android-tools, uv
 > [!TIP]
 > `mkenv` bootstraps per-project `flake.nix` + `.envrc` environments instantly.
 > Run `mkenv ts` for TypeScript, `mkenv go` for Go, `mkenv py` for Python — or just `mkenv` for a fuzzy picker.
-
----
-
-## Hardware Abstraction
-
-```nix
-var = {
-  cpu = "intel";       # or "amd"
-  gpu = "nvidia";      # or "amd" / "intel"
-  nvidia.mode = "sync"; # or "offload" / "desktop"
-};
-```
-
-That's it. Microcode, drivers, VA-API, PRIME offload — all wired automatically.
-
----
-
-## Structure
-
-```
-flint/
-├── flake.nix              # Entrypoint
-├── hosts/
-│   ├── powerhouse/        # My machine
-│   └── template/          # Copy this to add a new host
-└── modules/
-    ├── home/
-    │   ├── desktop/       # Hyprland, Waybar, Dunst, Swww, etc.
-    │   ├── dev/           # Dev tiers, Nixvim, mkenv + templates
-    │   ├── entertainment/ # Gaming, social apps
-    │   ├── productivity/  # TUI/GUI productivity tools
-    │   ├── shell/         # Zsh, Starship, CLI tools
-    │   └── home.nix       # XDG compliance & base config
-    └── system/
-        ├── base.nix       # Kernel, PipeWire, Docker, DNS
-        ├── desktop.nix    # Hyprland session, fonts, display manager
-        ├── hardware.nix   # CPU/GPU declarative abstraction
-        ├── gaming.nix     # Steam, GameMode
-        └── utils.nix      # System-wide utilities
-```
-
-> [!IMPORTANT]
-> All modules are auto-imported via `import-tree`. You never need to manually add imports to `flake.nix` — just create a `.nix` file in the right directory.
 
 ---
 
