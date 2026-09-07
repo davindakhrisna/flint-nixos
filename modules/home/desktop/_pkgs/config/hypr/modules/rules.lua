@@ -38,7 +38,6 @@ hl.window_rule({
         xwayland = true,
         float    = true,
     },
-    no_border = true,
     no_shadow = true,
     no_blur   = true,
 })
@@ -49,7 +48,6 @@ hl.window_rule({
         class    = "^(Helium|chromium|google-chrome)$",
         float    = true,
     },
-    no_border = true,
     no_shadow = true,
     no_blur   = true,
 })
