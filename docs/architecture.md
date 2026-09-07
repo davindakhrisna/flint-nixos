@@ -1,85 +1,125 @@
-# ❄️ Flint NixOS Configuration - Architecture & Overview
+# Architecture
 
-Flint is a modular, multi-host NixOS configuration built with **Flake-Parts** and **Import-Tree** for clean modularity, declarative hardware abstraction, and tiered development profiles.
+Flint uses **flake-parts** as the flake framework and **import-tree** for automatic module discovery. Every `.nix` file placed inside `modules/` or `hosts/` is imported without any manual wiring.
 
 ---
 
-## 📁 Repository Structure
+## How Modules Compose
 
 ```
-.
-├── flake.nix                  # Flake definition with inputs and flake-parts root
-├── flake.lock                 # Pinned dependencies lockfile
-├── docs/                      # Documentation
-│   └── offline-installation.md
-├── hosts/                     # Machine-specific host configurations
-│   ├── powerhouse/            # Primary desktop configuration
-│   │   ├── _hardware.nix      # Disk mounts and hardware scan definitions
-│   │   └── default.nix        # Host entrypoint & user declarations
-│   └── template/              # Ready-to-use template for new machines
-│       ├── _hardware.nix
-│       └── default.nix
-└── modules/                   # Shared modular components
-    ├── home/                  # Home Manager modules
-    │   ├── desktop/           # Hyprland, Wayland ecosystem, Dolphin, QuickShell
-    │   ├── dev/               # Tiered developer tools (min / mid / max / nixvim)
-    │   ├── entertainment/     # Social (Discord/Spotify) and Gaming (MangoHud/Sober)
-    │   ├── productivity/      # TUI & GUI productivity apps (Obsidian, Sioyek, etc.)
-    │   ├── shell/             # Zsh, Starship prompt, Modern CLI tools
-    │   └── home.nix           # Base Home Manager & XDG compliance rules
-    └── system/                # NixOS System-level modules
-        ├── base.nix           # Kernel hardening, pipewire, docker, DNS (9.9.9.9), overlays
-        ├── default.nix        # Core system modules bundle
-        ├── desktop.nix        # Hyprland UWSM, Lemurs display manager, global fonts
-        ├── gaming.nix         # Steam, GameMode optimizations
-        ├── hardware.nix       # CPU (Intel/AMD) & GPU (Nvidia/AMD/Intel) abstractions
-        └── utils.nix          # System-wide utilities and helper packages
+flake.nix
+  ├── import-tree ./modules   ← auto-discovers all system & home modules
+  └── import-tree ./hosts     ← auto-discovers all host definitions
+```
+
+Each host in `hosts/<name>/default.nix` selects which home-manager modules to load:
+
+```nix
+home-manager.users.kryisnn = { ... }: {
+  imports = with self.homeModules; [
+    home-manager desktop shell productivity dev
+    entertainment-social entertainment-gaming
+  ];
+  dev = "max";  # ← tier selector
+};
 ```
 
 ---
 
-## ⚙️ Key Architectural Features
+## System Modules (`modules/system/`)
 
-### 1. Hardware Abstraction Layer (`var.cpu` & `var.gpu`)
-Declarative hardware options defined in [`modules/system/hardware.nix`](../modules/system/hardware.nix):
-- **CPU:** `"intel"` (enables microcode & thermald) or `"amd"` (enables AMD microcode).
-- **GPU:** `"nvidia"` (loads proprietary drivers, VA-API acceleration, and Wayland session variables), `"amd"` (amdgpu & VA-API/VDPAU), or `"intel"`.
-- **Nvidia Modes:** `"desktop"` (discrete GPU), `"offload"` (PRIME dynamic power offload), or `"sync"`.
+| File | Responsibility |
+|:-----|:---------------|
+| `base.nix` | Nix settings, kernel hardening, PipeWire, Docker, Quad9 DNS, overlays |
+| `desktop.nix` | Hyprland UWSM session, Lemurs display manager, system fonts, Flatpak |
+| `hardware.nix` | Declarative `var.cpu` / `var.gpu` / `var.nvidia.mode` abstraction |
+| `gaming.nix` | Steam, GameMode, Gamescope |
+| `utils.nix` | System-wide CLI utilities and helpers |
 
-### 2. Tiered Development Profiles (`dev`)
-Configurable in each host's user configuration:
-- `"off"`: No development packages or compilers loaded.
-- `"min"`: C/C++ toolchain (GCC, Make), Git, GitHub CLI, direnv, and Neovim (`nixvim`).
-- `"mid"`: Everything in `min` + Go, Node.js, Python, Zed Editor, container tools (`lazydocker`), and AI tools.
-- `"max"`: Everything in `mid` + Flutter SDK, Android tools, Godot 4, Blender, and game/asset creation software.
-
-### 3. DNS & Network Configuration
-Default network configurations automatically set Quad9 DNS:
-- Primary: `9.9.9.9`
-- Secondary: `149.112.112.112`
-- NetworkManager automatically prioritizes these nameservers across all network interfaces.
-
-### 4. XDG Compliance & Dotfile Cleanliness
-Strict adherence to the XDG Base Directory specification:
-- Cargo, Rustup, Go, NPM, Gradle, and Android directories are redirected to `~/.local/share` and `~/.cache`.
-- Legacy dotfiles (`.zshenv`, `.gtkrc-2.0`) in `$HOME` root are disabled or relocated to keep the user home directory clean.
+> [!NOTE]
+> `hardware.nix` uses `lib.mkIf` guards — unused hardware paths are completely eliminated. An AMD machine never evaluates Nvidia driver logic.
 
 ---
 
-## 🧪 Validation & Linting Commands
+## Home Modules (`modules/home/`)
 
-Run validation checks directly using the following commands:
+| Directory | Responsibility |
+|:----------|:---------------|
+| `desktop/` | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Swww, GTK theming |
+| `dev/` | Tiered dev tools, Nixvim (LazyVim workflow), `mkenv` bootstrapper, templates |
+| `shell/` | Zsh (vi-mode, plugins), Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
+| `entertainment/` | Gaming (MangoHud, Sober) and social (Discord, Spotify) |
+| `productivity/` | Obsidian, Sioyek, TUI tools |
+| `home.nix` | Base HM config, XDG compliance, session variables |
+
+---
+
+## Dev Tier System
+
+Defined in `modules/home/dev/default.nix` as an enum option:
+
+```nix
+options.dev = lib.mkOption {
+  type = lib.types.enum [ "off" "min" "mid" "max" ];
+  default = "mid";
+};
+```
+
+Each tier file uses conditional activation:
+
+```nix
+# min.nix  → activates when dev != "off"
+# mid.nix  → activates when dev ∈ { "mid", "max" }
+# max.nix  → activates when dev == "max"
+```
+
+> [!TIP]
+> `_mkenv.nix` lives in `dev/` and ships `mkenv`, a CLI tool that generates per-project `flake.nix` + `.envrc` files for any supported stack. Templates are stored in `dev/templates/<stack>/`.
+
+---
+
+## Hardware Abstraction
+
+The `var` option set in `hardware.nix` drives all hardware configuration:
+
+```nix
+var = {
+  cpu = "intel";          # → microcode + thermald
+  gpu = "nvidia";         # → proprietary drivers, VA-API, env vars
+  nvidia.mode = "sync";   # → PRIME sync (laptop) or "desktop" / "offload"
+};
+```
+
+Nvidia config also supports clock tuning via a systemd oneshot:
+
+```nix
+nvidia.baseClockMHz = 2100;  # applied at boot
+```
+
+> [!IMPORTANT]
+> Bus IDs for PRIME (`nvidia.intelBusId`, `nvidia.nvidiaBusId`) default to common values but should be verified with `lspci | grep VGA` on each machine.
+
+---
+
+## Dual Boot
+
+```nix
+var.dualBoot = {
+  enable = true;
+  windowsEntry = "uuid(XXXX-XXXX):/EFI/Microsoft/Boot/bootmgfw.efi";
+};
+```
+
+Limine bootloader is configured with limited generations to keep the boot menu clean.
+
+---
+
+## Validation
 
 ```bash
-# 1. Format code
-nix run nixpkgs#alejandra -- .
-
-# 2. Check for dead/unused code
-nix run nixpkgs#deadnix -- .
-
-# 3. Check for anti-patterns and style suggestions
-nix run nixpkgs#statix -- check .
-
-# 4. Dry evaluation (validate configuration logic without building)
-nix eval .#nixosConfigurations.powerhouse.config.system.build.toplevel.drvPath
+alejandra .                    # format
+deadnix .                      # dead code
+statix check .                 # anti-patterns
+nh os build --dry              # dry build (evaluates without applying)
+nh os switch                   # build + activate
 ```
