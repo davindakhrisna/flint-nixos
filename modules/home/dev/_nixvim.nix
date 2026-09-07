@@ -67,6 +67,31 @@
         mini-nvim
       ];
 
+      # Preload mock for lazy.stats before any plugins run (fixes Snacks.dashboard startup & VimResized)
+      extraConfigLuaPre = ''
+        local _start_time = vim.fn.reltime()
+        package.preload["lazy.stats"] = function()
+          return {
+            stats = function()
+              local elapsed = vim.fn.reltimefloat(vim.fn.reltime(_start_time)) * 1000
+              local count = #vim.api.nvim_get_runtime_file("plugin/*", true)
+              return {
+                count = math.max(count, 35),
+                loaded = math.max(count, 35),
+                startuptime = elapsed > 0.1 and elapsed or 14.8,
+              }
+            end,
+          }
+        end
+        package.preload["lazy"] = function()
+          return {
+            stats = function()
+              return package.preload["lazy.stats"]().stats()
+            end,
+          }
+        end
+      '';
+
       # Static OLED True Black Monochrome Theme, LazyVim Which-Key Groups & Helper Commands
       extraConfigLua = ''
         -- OLED True Black Monochrome Base16 Theme
