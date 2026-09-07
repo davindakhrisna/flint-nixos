@@ -29,6 +29,31 @@ hl.window_rule({
     no_focus = true,
 })
 
+-- Clean popups & context menus (no borders, shadows, or background blur)
+hl.window_rule({
+    name      = "clean-xwayland-popups",
+    match     = {
+        class    = "^$",
+        title    = "^$",
+        xwayland = true,
+        float    = true,
+    },
+    no_border = true,
+    no_shadow = true,
+    no_blur   = true,
+})
+
+hl.window_rule({
+    name      = "clean-browser-popups",
+    match     = {
+        class    = "^(Helium|chromium|google-chrome)$",
+        float    = true,
+    },
+    no_border = true,
+    no_shadow = true,
+    no_blur   = true,
+})
+
 -- Hyprland-run floating position
 hl.window_rule({
     name  = "move-hyprland-run",

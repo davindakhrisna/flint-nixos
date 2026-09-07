@@ -67,46 +67,25 @@
         mini-nvim
       ];
 
-      # Static OLED True Black Monochrome Theme, LazyVim Which-Key Groups & Helper Commands
+      # Gruvbox Colorscheme for Enhanced Readability & Contrast
+      colorschemes.gruvbox = {
+        enable = true;
+        settings = {
+          contrast = "hard";
+          transparent_mode = false;
+          bold = true;
+          italic = {
+            strings = true;
+            emphasis = true;
+            comments = true;
+            operators = false;
+            folds = true;
+          };
+        };
+      };
+
+      # LazyVim Which-Key Groups, Indentscope Disabler & Helper Commands
       extraConfigLua = ''
-        -- OLED True Black Monochrome Base16 Theme
-        local mini_base16 = require('mini.base16')
-        mini_base16.setup({
-          palette = {
-            base00 = '#000000', -- Default Background (True OLED Black)
-            base01 = '#121212', -- Lighter Background (Statusline/Sidebar)
-            base02 = '#262626', -- Selection Background
-            base03 = '#737373', -- Comments & Line Numbers (Crisp Silver Grey)
-            base04 = '#a3a3a3', -- Dark Foreground (Status bar elements)
-            base05 = '#f5f5f5', -- Default Foreground (Crisp White Text)
-            base06 = '#ffffff', -- Light Foreground
-            base07 = '#ffffff', -- Lightest Accent
-            base08 = '#ef4444', -- Variables & Errors (Red)
-            base09 = '#f97316', -- Constants & Numbers (Orange)
-            base0A = '#eab308', -- Classes & Types (Amber/Yellow)
-            base0B = '#22c55e', -- Strings (Green)
-            base0C = '#06b6d4', -- Regex & Special (Cyan)
-            base0D = '#38bdf8', -- Functions & Methods (Sky/Blue)
-            base0E = '#c084fc', -- Keywords & Storage (Purple/Magenta)
-            base0F = '#e4e4e7', -- Delimiters & Accents (Silver)
-          },
-          use_icons = true,
-        })
-
-        -- Brutalist OLED Popups & Window Borders
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#000000", fg = "#f5f5f5" })
-        vim.api.nvim_set_hl(0, "FloatBorder", { bg = "#000000", fg = "#737373" })
-        vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "#000000" })
-        vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "#000000", fg = "#737373" })
-        vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = "#000000" })
-        vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "#000000" })
-        vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "#000000" })
-        vim.api.nvim_set_hl(0, "SnacksDashboardHeader", { fg = "#ffffff", bold = true })
-        vim.api.nvim_set_hl(0, "SnacksDashboardIcon", { fg = "#a3a3a3" })
-        vim.api.nvim_set_hl(0, "SnacksDashboardKey", { fg = "#ffffff", bold = true })
-        vim.api.nvim_set_hl(0, "SnacksDashboardDesc", { fg = "#d4d4d8" })
-        vim.api.nvim_set_hl(0, "SnacksDashboardFooter", { fg = "#737373" })
-
         -- Disable mini.indentscope on dashboard and utility buffers (removes awkward dashed line)
         vim.api.nvim_create_autocmd("FileType", {
           pattern = {
@@ -189,12 +168,12 @@
               enabled = true;
               preset = {
                 header = ''
-                  ███████╗██╗     ██╗███╗   ██╗████████╗
-                  ██╔════╝██║     ██║████╗  ██║╚══██╔══╝
-                  █████╗  ██║     ██║██╔██╗ ██║   ██║
-                  ██╔══╝  ██║     ██║██║╚██╗██║   ██║
-                  ██║     ███████╗██║██║ ╚████║   ██║
-                  ╚═╝     ╚══════╝╚═╝╚═╝  ╚═══╝   ╚═╝
+                   ______ _      _____ _   _ _______
+                  |  ____| |    |_   _| \ | |__   __|
+                  | |__  | |      | | |  \| |  | |
+                  |  __| | |      | | | . ` |  | |
+                  | |    | |____ _| |_| |\  |  | |
+                  |_|    |______|_____|_| \_|  |_|
                 '';
                 keys = [
                   {
@@ -258,20 +237,20 @@
                   align = "center";
                   hl = "SnacksDashboardFooter";
                   padding = 1;
-                  text = "⚡ Flint Neovim · Deterministic & Fast";
+                  text = "⚡ Flint Neovim · Gruvbox Edition";
                 }
               ];
             };
           };
         };
 
-        # LazyVim Iconic Statusline (Monochrome)
+        # LazyVim Statusline (Gruvbox)
         lualine = {
           enable = true;
           settings = {
             options = {
               icons_enabled = true;
-              theme = "auto";
+              theme = "gruvbox";
               component_separators = {
                 left = "│";
                 right = "│";
