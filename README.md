@@ -4,7 +4,7 @@ A clean, modular, and performant multi-host NixOS configuration built with [flak
 
 ---
 
-## Read before proceeding
+[!WARNING] Read before proceeding
 
 This config serve as a bootstrap to future nixos configuration, it is modular and dendritic making it easy to customize to your own liking. Please thoroughly read and check the whole configuration before proceeding into anything, it is still my personal (opinionated maybe?) configuration for my own dev workflow.
 
