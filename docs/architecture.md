@@ -22,7 +22,7 @@ Flint is a modular, multi-host NixOS configuration built with **Flake-Parts** an
 └── modules/                   # Shared modular components
     ├── home/                  # Home Manager modules
     │   ├── desktop/           # Hyprland, Wayland ecosystem, Dolphin, QuickShell
-    │   ├── dev/               # Tiered developer tools (min / mid / max / nvf)
+    │   ├── dev/               # Tiered developer tools (min / mid / max / nixvim)
     │   ├── entertainment/     # Social (Discord/Spotify) and Gaming (MangoHud/Sober)
     │   ├── productivity/      # TUI & GUI productivity apps (Obsidian, Sioyek, etc.)
     │   ├── shell/             # Zsh, Starship prompt, Modern CLI tools
@@ -49,7 +49,7 @@ Declarative hardware options defined in [`modules/system/hardware.nix`](../modul
 ### 2. Tiered Development Profiles (`dev`)
 Configurable in each host's user configuration:
 - `"off"`: No development packages or compilers loaded.
-- `"min"`: C/C++ toolchain (GCC, Make), Git, GitHub CLI, direnv, and Neovim (`nvf`).
+- `"min"`: C/C++ toolchain (GCC, Make), Git, GitHub CLI, direnv, and Neovim (`nixvim`).
 - `"mid"`: Everything in `min` + Go, Node.js, Python, Zed Editor, container tools (`lazydocker`), and AI tools.
 - `"max"`: Everything in `mid` + Flutter SDK, Android tools, Godot 4, Blender, and game/asset creation software.
 

@@ -11,6 +11,7 @@
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
+      AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
     };
 
     # PAM authentication for Hyprlock (instant zero-delay login)
@@ -18,7 +19,15 @@
 
     # Global Fonts & Glyphs
     fonts = {
-      fontconfig.enable = true;
+      fontconfig = {
+        enable = true;
+        defaultFonts = {
+          monospace = ["Iosevka Nerd Font Mono"];
+          sansSerif = ["Iosevka Nerd Font Mono"];
+          serif = ["Iosevka Nerd Font Mono"];
+          emoji = ["Noto Color Emoji"];
+        };
+      };
       packages = with pkgs; [
         nerd-fonts.iosevka
         noto-fonts

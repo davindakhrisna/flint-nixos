@@ -16,7 +16,7 @@
           backupFileExtension = "backup";
           sharedModules = [
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
-            inputs.nvf.homeManagerModules.default
+            inputs.nixvim.homeModules.default
           ];
         };
       }

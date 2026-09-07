@@ -1,0 +1,228 @@
+/* =============================================================================
+ * Waybar Style Sheet - Vertical Monochromatic (Base16)
+ * =========================================================================== */
+
+@import "colors.css";
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Iosevka Nerd Font Mono", monospace;
+    font-size: 12px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+}
+
+window#waybar {
+    background-color: @base00;
+    border: 1px solid @border_color;
+    color: @base05;
+}
+
+/* Tooltip */
+tooltip {
+    background-color: @base01;
+    border: 1px solid @base03;
+    border-radius: 0;
+    color: @base06;
+}
+
+tooltip label {
+    padding: 4px 8px;
+}
+
+/* Top / Center / Bottom group padding */
+.modules-left,
+.modules-center,
+.modules-right {
+    padding: 0;
+}
+
+/* All modules centered horizontally */
+#custom-launcher,
+#submap,
+#clock,
+#mpris,
+#custom-power {
+    padding: 2px 0;
+    margin: 1px 3px;
+    border-radius: 0;
+    background: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+#tray,
+#backlight,
+#network,
+#bluetooth,
+#battery,
+#memory,
+#pulseaudio,
+#cpu {
+    margin: 4px 10px;
+    border-radius: 0;
+    background: transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    border: 0.5px solid @border_color;
+}
+
+/* Hover feedback */
+#custom-launcher:hover,
+#submap:hover,
+#clock:hover,
+#mpris:hover,
+#pulseaudio:hover,
+#backlight:hover,
+#network:hover,
+#bluetooth:hover,
+#battery:hover,
+#cpu:hover,
+#memory:hover,
+#custom-power:hover {
+    background-color: @base02;
+    border-radius: 0;
+}
+
+/* Submap indicator */
+#submap {
+    font-size: 11px;
+    font-weight: bold;
+    color: @base07;
+    background-color: @base02;
+    padding: 2px 2px;
+}
+
+/* ================= Workspaces ================= */
+#workspaces {
+    padding: 2px 0;
+    margin: 4px 3px;
+    margin-top: 0;
+    border-bottom: 1px solid @border_color;
+}
+
+#workspaces button {
+    padding: 6px 0;
+    border-radius: 0;
+    color: @base04;
+    background: transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid transparent;
+    box-shadow: none;
+    text-shadow: none;
+    transition: all 0.15s ease;
+}
+
+#workspaces button:hover {
+    background: @base02;
+    color: @base06;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#workspaces button.active {
+    background: @base02;
+    color: @base07;
+    font-weight: bold;
+    border-right: 2px solid transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#workspaces button.urgent {
+    background: @base07;
+    color: @base00;
+    border-radius: 0;
+}
+
+
+/* ================= Individual Module Styling ================= */
+#custom-launcher {
+    font-size: 20px;
+    color: @base07;
+    padding: 6px;
+    margin-bottom: 0;
+    border-bottom: 1px solid @border_color;
+}
+
+#clock {
+    font-size: 12px;
+    font-weight: bold;
+    color: @base06;
+}
+
+#custom-arrow-up,
+#custom-arrow-down,
+#custom-spacer {
+    font-size: 6px;
+    padding: 0;
+    background: transparent;
+}
+
+#mpris {
+    font-size: 17px;
+    color: @base05;
+}
+
+#mpris,
+#clock {
+    margin: 12px;
+    border: solid 0.5px @base07;
+}
+
+#pulseaudio,
+#backlight,
+#network,
+#bluetooth,
+#battery,
+#cpu,
+#memory {
+    font-size: 11.5px;
+    font-weight: bold;
+    color: @base05;
+    padding: 1px 0;
+}
+
+#pulseaudio.muted {
+    color: @base04;
+}
+
+#network.disconnected {
+    color: @base04;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+    color: @base04;
+}
+
+#bluetooth.connected {
+    color: @base07;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @base07;
+}
+
+#battery.warning:not(.charging) {
+    color: @base06;
+}
+
+#battery.critical:not(.charging) {
+    background-color: @base07;
+    color: @base00;
+    border-radius: 0;
+}
+
+#tray {
+    margin: 4px 2px;
+}
+
+#custom-power {
+    font-size: 18px;
+    color: @base06;
+    padding: 8px;
+    margin-top: 12px;
+    border-top: 1px solid @border_color;
+}

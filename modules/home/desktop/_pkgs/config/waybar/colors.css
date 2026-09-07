@@ -1,0 +1,27 @@
+/* =============================================================================
+ * Base16 Color Palette for Waybar
+ *
+ * You can easily switch themes by replacing the Base16 values below.
+ * Compatible with standard Base16 schemes (e.g. from tinted-theming).
+ * =========================================================================== */
+
+/* Base16 Monochrome / Grayscale Scheme */
+@define-color base00 #101010; /* Default Background (Dark charcoal/black) */
+@define-color base01 #181818; /* Alternate / Surface Background */
+@define-color base02 #262626; /* Selection / Hover Background */
+@define-color base03 #3e3e3e; /* Borders / Dividers / Muted Elements */
+@define-color base04 #666666; /* Inactive Foreground / Muted Text */
+@define-color base05 #b4b4b4; /* Default Foreground (Silver/Light Gray) */
+@define-color base06 #dedede; /* Light Foreground (Bright Silver) */
+@define-color base07 #ffffff; /* Pure White (Primary Focus/Active) */
+@define-color border_color rgba(255, 255, 255, 0.40); /* 40% white border */
+
+/* Base16 Accents (Monochrome) */
+@define-color base08 #e0e0e0; /* Warning / Alert */
+@define-color base09 #9a9a9a; /* Secondary Accent */
+@define-color base0A #d0d0d0; /* Highlight Accent */
+@define-color base0B #c5c5c5; /* Status OK / Connected */
+@define-color base0C #b0b0b0; /* Alternate Status */
+@define-color base0D #ffffff; /* Active / Primary Focus (White) */
+@define-color base0E #e8e8e8; /* Accent */
+@define-color base0F #4a4a4a; /* Disabled / Off State */

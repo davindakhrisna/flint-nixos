@@ -66,6 +66,7 @@
           package = config.boot.kernelPackages.nvidiaPackages.stable;
           powerManagement.enable = true;
           powerManagement.finegrained = cfg.nvidia.mode == "offload";
+          nvidiaPersistenced = true;
 
           prime = lib.mkIf (cfg.nvidia.mode != "desktop") {
             offload = {
@@ -82,6 +83,30 @@
           __GLX_VENDOR_LIBRARY_NAME = "nvidia";
           NVD_BACKEND = "direct";
         };
+
+        systemd.services.nvidia-sync-clocks = lib.mkIf (cfg.nvidia.mode == "sync") {
+          description = "NVIDIA Sync Mode Minimum GPU Clock Lock for 144Hz Stutter Prevention";
+          after = ["nvidia-persistenced.service"];
+          requires = ["nvidia-persistenced.service"];
+          wantedBy = ["multi-user.target"];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = pkgs.writeShellScript "nvidia-sync-clock-tune" ''
+              NVSMI="${config.hardware.nvidia.package.bin}/bin/nvidia-smi"
+              if [ "$(${pkgs.coreutils}/bin/cat /sys/class/power_supply/A*/online 2>/dev/null | ${pkgs.coreutils}/bin/head -n 1)" = "1" ]; then
+                $NVSMI -lgc 1200,2100 || true
+              else
+                $NVSMI -rgc || true
+              fi
+            '';
+            ExecStop = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -rgc";
+          };
+        };
+
+        services.udev.extraRules = lib.mkIf (cfg.nvidia.mode == "sync") ''
+          SUBSYSTEM=="power_supply", ACTION=="change", RUN+="${pkgs.systemd}/bin/systemctl restart --no-block nvidia-sync-clocks.service"
+        '';
       })
 
       # GPU: AMD

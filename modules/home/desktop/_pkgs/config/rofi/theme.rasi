@@ -1,0 +1,190 @@
+/**
+ * Base16 Monochrome Brutalist Theme for Rofi
+ * Matches Waybar Base16 Grayscale Aesthetic
+ **/
+
+@import "colors.rasi"
+
+* {
+    font: "Iosevka Nerd Font Mono 11";
+    background-color: transparent;
+    text-color: var(foreground);
+}
+
+window {
+    transparency: "real";
+    location: center;
+    anchor: center;
+    fullscreen: false;
+    width: 540px;
+    x-offset: 0px;
+    y-offset: 0px;
+    enabled: true;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid;
+    border-color: var(borderColor);
+    border-radius: 0px;
+    background-color: var(background);
+    cursor: "default";
+}
+
+mainbox {
+    enabled: true;
+    spacing: 0px;
+    margin: 0px;
+    padding: 0px;
+    border: 0px solid;
+    background-color: transparent;
+    children: [ "inputbar", "message", "listview", "mode-switcher" ];
+}
+
+inputbar {
+    enabled: true;
+    spacing: 12px;
+    margin: 0px;
+    padding: 14px 16px;
+    border: 0px 0px 1px 0px;
+    border-color: var(borderColor);
+    background-color: var(background-alt);
+    text-color: var(foreground);
+    children: [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled: true;
+    padding: 0px 4px 0px 0px;
+    background-color: transparent;
+    text-color: var(accent-color);
+    font: "Iosevka Nerd Font Mono Bold 11";
+}
+
+entry {
+    enabled: true;
+    background-color: transparent;
+    text-color: var(base06);
+    cursor: text;
+    placeholder: "Search applications...";
+    placeholder-color: var(base04);
+}
+
+message {
+    enabled: true;
+    margin: 0px;
+    padding: 10px 16px;
+    border: 0px 0px 1px 0px;
+    border-color: var(borderColor);
+    background-color: var(background-alt);
+    text-color: var(foreground);
+}
+
+textbox {
+    background-color: transparent;
+    text-color: var(foreground);
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    highlight: none;
+}
+
+listview {
+    enabled: true;
+    columns: 1;
+    lines: 8;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: true;
+    fixed-columns: true;
+    margin: 0px;
+    border: 0px solid;
+    background-color: transparent;
+    cursor: "default";
+}
+
+element {
+    enabled: true;
+    spacing: 12px;
+    padding: 8px 12px;
+    border-color: transparent;
+    border-radius: 0px;
+    background-color: transparent;
+    text-color: var(foreground);
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: var(foreground);
+}
+
+element normal.urgent {
+    background-color: var(base07);
+    text-color: var(base00);
+}
+
+element normal.active {
+    background-color: transparent;
+    text-color: var(base07);
+}
+
+element selected.normal {
+    background-color: var(selected-background);
+    text-color: var(selected-foreground);
+    border-color: var(accent-color);
+}
+
+element selected.urgent {
+    background-color: var(base07);
+    text-color: var(base00);
+    border-color: var(accent-color);
+}
+
+element selected.active {
+    background-color: var(selected-background);
+    text-color: var(accent-color);
+    border-color: var(accent-color);
+}
+
+element-icon {
+    background-color: transparent;
+    text-color: inherit;
+    size: 24px;
+    cursor: inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    highlight: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}
+
+mode-switcher {
+    enabled: true;
+    spacing: 0px;
+    margin: 0px;
+    padding: 0px;
+    border: 1px 0px 0px 0px;
+    border-color: var(borderColor);
+    background-color: var(background-alt);
+}
+
+button {
+    padding: 8px 16px;
+    border: 0px;
+    border-radius: 0px;
+    background-color: transparent;
+    text-color: var(base04);
+    cursor: pointer;
+}
+
+button selected {
+    background-color: var(selected-background);
+    text-color: var(selected-foreground);
+    border: 1px 0px 0px 0px;
+    border-color: var(accent-color);
+}

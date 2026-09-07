@@ -1,0 +1,202 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "position": "left",
+    "width": 50,
+    "margin-top": 20,
+    "margin-bottom": 20,
+    "margin-left": 20,
+    // Module Layout (Vertical: left = top, center = center, right = bottom)
+    "modules-left": [
+        "custom/launcher",
+        "hyprland/workspaces",
+        "hyprland/submap",
+        "cpu",
+        "memory",
+        "custom/arrow-down"
+    ],
+    "modules-center": [
+        "clock",
+        "custom/spacer",
+        "mpris"
+    ],
+    "modules-right": [
+        "custom/arrow-up",
+        "tray",
+        "pulseaudio",
+        "backlight",
+        "network",
+        "bluetooth",
+        "battery",
+        "custom/power"
+    ],
+    // ================= Modules Configuration =================
+    // App Launcher
+    "custom/launcher": {
+        "format": "",
+        "align": 0.5,
+        "justify": "center",
+        "tooltip": true,
+        "tooltip-format": "Launch Applications (rofi)",
+        "on-click": "rofi -show drun"
+    },
+    // Hyprland Workspaces
+    "hyprland/workspaces": {
+        "all-outputs": true,
+        "format": "{id}",
+        "align": 0.5,
+        "justify": "center",
+        "sort-by-number": true,
+        "active-only": false,
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({workspace=\"e+1\"})'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({workspace=\"e-1\"})'",
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
+    // Hyprland Submap (modes)
+    "hyprland/submap": {
+        "format": "{}",
+        "align": 0.5,
+        "justify": "center",
+        "tooltip": false
+    },
+    // Clock (Vertical Stack: HH on top, MM below)
+    "clock": {
+        "interval": 60,
+        "align": 0.5,
+        "justify": "center",
+        "format": "{0:%H}\n{0:%M}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>"
+    },
+    // Spacer between Clock and MPRIS
+    "custom/spacer": {
+        "format": "──────────",
+        "tooltip": false
+    }, // Arrow
+    "custom/arrow-up": {
+        "format": "▲",
+        "tooltip": false
+    }, // Arrow
+    "custom/arrow-down": {
+        "format": "▼",
+        "tooltip": false
+    },
+    // Media Player
+    "mpris": {
+        "align": 0.5,
+        "justify": "center",
+        "format": "{player_icon}",
+        "format-paused": "{status_icon}",
+        "player-icons": {
+            "default": ""
+        },
+        "status-icons": {
+            "paused": ""
+        },
+        "tooltip-format": "{player} ({status}): {dynamic}",
+        "on-click": "playerctl play-pause",
+        "on-scroll-up": "playerctl next",
+        "on-scroll-down": "playerctl previous"
+    },
+    // System Tray
+    "tray": {
+        "icon-size": 16,
+        "spacing": 6
+    },
+    // Audio / Volume
+    "pulseaudio": {
+        "align": 0.5,
+        "justify": "center",
+        "format": "VOL\n{volume}%",
+        "format-muted": "VOL\nMUT",
+        "format-bluetooth": "VOL\n{volume}%",
+        "format-bluetooth-muted": "VOL\nMUT",
+        "tooltip-format": "Volume: {volume}%\n{desc}",
+        "scroll-step": 5,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "~/.config/hypr/scripts/tui-app.sh wiremix",
+        "on-scroll-up": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    },
+    // Brightness / Backlight
+    "backlight": {
+        "device": "intel_backlight",
+        "align": 0.5,
+        "justify": "center",
+        "format": "BRG\n{percent}%",
+        "tooltip-format": "Brightness: {percent}%",
+        "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
+        "on-scroll-down": "brightnessctl -e4 -n2 set 5%-"
+    },
+    // Network
+    "network": {
+        "align": 0.5,
+        "justify": "center",
+        "format-wifi": "WFI\n{signalStrength}%",
+        "format-ethernet": "ETH\nON",
+        "format-linked": "ETH\nLNK",
+        "format-disconnected": "WFI\nOFF",
+        "tooltip-format": "{ifname} via {gwaddr}",
+        "tooltip-format-wifi": "Wi-Fi: {essid} ({signalStrength}%)\nIP: {ipaddr}\nUp: {bandwidthUpBytes} Down: {bandwidthDownBytes}",
+        "tooltip-format-ethernet": "Ethernet: {ipaddr}\nUp: {bandwidthUpBytes} Down: {bandwidthDownBytes}",
+        "tooltip-format-disconnected": "Network Disconnected",
+        "on-click": "~/.config/hypr/scripts/tui-app.sh gazelle"
+    },
+    // Bluetooth
+    "bluetooth": {
+        "align": 0.5,
+        "justify": "center",
+        "format": "BLT\nON",
+        "format-disabled": "BLT\nOFF",
+        "format-off": "BLT\nOFF",
+        "format-connected": "BLT\nON",
+        "format-connected-battery": "BLT\nON",
+        "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t({device_battery_percentage}%)",
+        "on-click": "~/.config/hypr/scripts/tui-app.sh bluetui"
+    },
+    // Battery
+    "battery": {
+        "bat": "BAT1",
+        "interval": 30,
+        "align": 0.5,
+        "justify": "center",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "BAT\n{capacity}%",
+        "format-charging": "BAT\n{capacity}%+",
+        "format-plugged": "BAT\n{capacity}%=",
+        "tooltip-format": "Battery: {capacity}%\nStatus: {timeTo}",
+        "on-click": "/home/kryisnn/.config/waybar/scripts/powerprofile.sh"
+    },
+    // CPU Usage
+    "cpu": {
+        "interval": 3,
+        "align": 0.5,
+        "justify": "center",
+        "format": "CPU\n{usage}%",
+        "tooltip-format": "CPU Usage: {usage}%"
+    },
+    // Memory Usage
+    "memory": {
+        "interval": 5,
+        "align": 0.5,
+        "justify": "center",
+        "format": "MEM\n{percentage}%",
+        "tooltip-format": "Memory: {used:0.1f}GiB / {total:0.1f}GiB ({percentage}%)"
+    },
+    // Power Menu Button
+    "custom/power": {
+        "align": 0.5,
+        "justify": "center",
+        "format": "",
+        "tooltip": true,
+        "tooltip-format": "Power Options",
+        "on-click": "/home/kryisnn/.config/waybar/scripts/powermenu.sh"
+    }
+}

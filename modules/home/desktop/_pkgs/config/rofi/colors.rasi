@@ -1,0 +1,26 @@
+/**
+ * Base16 Monochrome / Grayscale Palette for Rofi
+ * Matches ~/.config/waybar/colors.css
+ **/
+
+* {
+    /* Base16 Grayscale Values */
+    base00: #101010; /* Dark charcoal/black background */
+    base01: #181818; /* Surface/input background */
+    base02: #262626; /* Selection / Hover background */
+    base03: #3e3e3e; /* Dividers / Inactive borders */
+    base04: #666666; /* Muted text / placeholders */
+    base05: #b4b4b4; /* Default foreground (silver) */
+    base06: #dedede; /* Bright foreground (light silver) */
+    base07: #ffffff; /* Pure white (focus / active accent) */
+    borderColor: rgba(255, 255, 255, 0.40); /* 40% transparent white */
+
+    /* Semantic Mappings */
+    background:                  var(base00);
+    background-alt:              var(base01);
+    foreground:                  var(base05);
+    selected-background:         var(base02);
+    selected-foreground:         var(base07);
+    border-color:                var(borderColor);
+    accent-color:                var(base07);
+}

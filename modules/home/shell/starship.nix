@@ -7,7 +7,7 @@
       settings = {
         add_newline = true;
 
-        format = ''                
+        format = ''
           [╭─](bright-black) $directory $git_branch$git_status$fill $nodejs$python$golang$nix_shell$cmd_duration[─╮](bright-black)
           [╰─](bright-black)$character '';
 

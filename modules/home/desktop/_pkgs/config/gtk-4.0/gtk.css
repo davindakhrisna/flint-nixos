@@ -1,0 +1,198 @@
+/* =============================================================================
+ * GTK 4.0 / Libadwaita Configuration
+ * Theme: Base16 Monochrome Brutalist
+ * ============================================================================= */
+
+/* --- 1. Global Reset & Zero Rounding --- */
+* {
+    border-radius: 0px;
+    font-family: "Iosevka Nerd Font Mono", monospace;
+}
+
+window,
+window.background,
+.background,
+dialog,
+headerbar,
+.titlebar,
+button,
+entry,
+popover,
+popover contents,
+menu,
+menubar,
+menuitem,
+tooltip,
+notebook,
+tab,
+tabbar,
+stack,
+switch,
+switch slider,
+scrollbar,
+scrollbar slider,
+list,
+row,
+treeview,
+checkbutton,
+radiobutton,
+infobar,
+progressbar,
+levelbar,
+scale trough,
+scale highlight,
+spinbutton,
+dropdown,
+combobox,
+searchbar {
+    border-radius: 0px;
+    box-shadow: none;
+}
+
+/* --- 2. Base16 Monochrome Color Definitions --- */
+@define-color base00 #101010;
+@define-color base01 #181818;
+@define-color base02 #262626;
+@define-color base03 #3e3e3e;
+@define-color base04 #666666;
+@define-color base05 #b4b4b4;
+@define-color base06 #dedede;
+@define-color base07 #ffffff;
+
+@define-color theme_bg_color @base00;
+@define-color theme_fg_color @base06;
+@define-color theme_base_color @base00;
+@define-color theme_text_color @base06;
+@define-color theme_selected_bg_color @base02;
+@define-color theme_selected_fg_color @base07;
+
+/* Libadwaita Named Colors */
+@define-color accent_color @base07;
+@define-color accent_bg_color @base02;
+@define-color accent_fg_color @base07;
+
+@define-color window_bg_color @base00;
+@define-color window_fg_color @base06;
+@define-color view_bg_color @base00;
+@define-color view_fg_color @base06;
+
+@define-color headerbar_bg_color @base01;
+@define-color headerbar_fg_color @base06;
+@define-color headerbar_border_color rgba(255, 255, 255, 0.40);
+@define-color headerbar_backdrop_color @base00;
+
+@define-color card_bg_color @base01;
+@define-color card_fg_color @base06;
+@define-color card_border_color rgba(255, 255, 255, 0.15);
+
+@define-color popover_bg_color @base01;
+@define-color popover_fg_color @base06;
+@define-color dialog_bg_color @base00;
+@define-color dialog_fg_color @base06;
+
+@define-color destructive_color @base06;
+@define-color destructive_bg_color @base02;
+@define-color destructive_fg_color @base07;
+@define-color success_color @base06;
+@define-color success_bg_color @base02;
+@define-color success_fg_color @base07;
+@define-color warning_color @base06;
+@define-color warning_bg_color @base02;
+@define-color warning_fg_color @base07;
+@define-color error_color @base06;
+@define-color error_bg_color @base02;
+@define-color error_fg_color @base07;
+
+/* --- 3. Widget Overrides --- */
+
+/* Windows */
+window,
+window.background,
+.background {
+    background-color: @base00;
+    color: @base06;
+}
+
+/* Headerbars */
+headerbar,
+.titlebar {
+    background-color: @base01;
+    color: @base06;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 2px 6px;
+}
+
+/* Buttons */
+button {
+    background-color: @base01;
+    color: @base06;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 4px 10px;
+}
+
+button:hover {
+    background-color: @base02;
+    color: @base07;
+    border-color: rgba(255, 255, 255, 0.40);
+}
+
+button:active,
+button:checked {
+    background-color: @base02;
+    color: @base07;
+    border-color: @base07;
+}
+
+/* Text Inputs / Entries */
+entry {
+    background-color: @base01;
+    color: @base06;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    padding: 4px 8px;
+}
+
+entry:focus {
+    border-color: @base07;
+    background-color: @base01;
+    color: @base07;
+}
+
+/* Selection */
+:selected,
+*:selected,
+row:selected,
+list row:selected {
+    background-color: @base02;
+    color: @base07;
+}
+
+/* Popovers */
+popover contents {
+    background-color: @base01;
+    color: @base06;
+    border: 1px solid rgba(255, 255, 255, 0.40);
+    padding: 4px;
+}
+
+/* Tooltips */
+tooltip {
+    background-color: @base01;
+    color: @base06;
+    border: 1px solid rgba(255, 255, 255, 0.40);
+    padding: 4px 8px;
+}
+
+/* Scrollbars */
+scrollbar slider {
+    background-color: @base03;
+    min-width: 6px;
+    min-height: 6px;
+}
+
+scrollbar slider:hover {
+    background-color: @base04;
+}
+
+scrollbar slider:active {
+    background-color: @base05;
+}

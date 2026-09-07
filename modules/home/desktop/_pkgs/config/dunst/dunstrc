@@ -1,0 +1,86 @@
+# =============================================================================
+# Dunst Configuration - Base16 Monochromatic Brutalist
+# =============================================================================
+
+[global]
+    # Geometry & Floating Positioning (20px gaps from top and right screen edges)
+    origin = top-right
+    offset = (20, 20)
+    scale = 0
+    notification_limit = 5
+
+    # Dimensions
+    width = (300, 420)
+    height = (60, 300)
+
+    # Progress bar
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_min_width = 150
+    progress_bar_max_width = 400
+    progress_bar_corner_radius = 0
+
+    # Layout & Aesthetics
+    indicate_hidden = yes
+    transparency = 0
+    separator_height = 1
+    padding = 12
+    horizontal_padding = 16
+    text_icon_padding = 12
+    frame_width = 1
+    gap_size = 8
+    separator_color = frame
+    sort = yes
+    idle_threshold = 120
+
+    # Brutalist Zero-Rounding
+    corner_radius = 0
+    corners = all
+
+    # Typography
+    font = Iosevka Nerd Font Mono 11
+    line_height = 2
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    # Icons
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 48
+    icon_theme = "Papirus-Dark"
+    enable_recursive_icon_lookup = true
+
+    # Interaction
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#181818"
+    foreground = "#a8a8a8"
+    frame_color = "#383838"
+    highlight = "#888888"
+    timeout = 4
+
+[urgency_normal]
+    background = "#181818"
+    foreground = "#e8e8e8"
+    frame_color = "#d8d8d8"
+    highlight = "#d8d8d8"
+    timeout = 6
+
+[urgency_critical]
+    background = "#181818"
+    foreground = "#ffffff"
+    frame_color = "#ab4642"
+    highlight = "#ffffff"
+    timeout = 0

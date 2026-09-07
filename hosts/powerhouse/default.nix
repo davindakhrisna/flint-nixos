@@ -17,7 +17,7 @@
           backupFileExtension = "backup";
           sharedModules = [
             inputs.nix-flatpak.homeManagerModules.nix-flatpak
-            inputs.nvf.homeManagerModules.default
+            inputs.nixvim.homeModules.default
           ];
         };
       }
@@ -52,7 +52,7 @@
           flakePath = "/home/kryisnn/.config/flint"; # Path to your flint flake repository
           cpu = "intel";
           gpu = "nvidia";
-          nvidia.mode = "desktop";
+          nvidia.mode = "sync";
           dualBoot = {
             enable = true;
             windowsEntry = "uuid(XXXX-XXXX):/EFI/Microsoft/Boot/bootmgfw.efi";

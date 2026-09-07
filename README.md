@@ -7,7 +7,7 @@ A clean, modular, and performant multi-host NixOS configuration built with [flak
 ## ✨ Features
 
 - 🖥️ **Desktop:** Hyprland (Wayland) with UWSM session management, Dolphin file manager, QuickShell, Lemurs display manager, and custom fonts.
-- 🛠️ **Tiered Dev Environments:** Single-switch development profile (`dev = "off" | "min" | "mid" | "max"`) featuring Neovim (`nvf`), Zed, Flutter, Go, Node, Python, and AI tools.
+- 🛠️ **Tiered Dev Environments:** Single-switch development profile (`dev = "off" | "min" | "mid" | "max"`) featuring Neovim (`nixvim`), Zed, Flutter, Go, Node, Python, and AI tools.
 - ⚡ **Declarative Hardware Layer:** Automatic configuration for Intel/AMD CPUs and Nvidia/AMD GPUs (with PRIME offload/sync support).
 - 🔒 **Security & Hardening:** Kernel sysctl security parameters, RTKit, PipeWire audio stack, automated weekly Vulnix CVE vulnerability scans, and Quad9 DNS (`9.9.9.9`).
 - 🧹 **100% XDG Compliant:** Clean `$HOME` with all tool caches, histories, and configs redirected to standard XDG paths.

@@ -1,0 +1,90 @@
+-- =============================================================================
+-- Keybindings Configuration
+-- https://wiki.hypr.land/Configuring/Binds/
+-- =============================================================================
+
+local mainMod = "SUPER"
+
+-- Applications & Launchers
+local terminal    = 'kitty zsh -c "fetch || true; exec zsh"'
+local fileManager = "dolphin"
+local menu        = "rofi -show drun"
+local launcher    = "rofi -show drun"
+
+-- Core Application Binds
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(launcher))
+hl.bind(mainMod .. " + Q",     hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + C",     hl.dsp.window.close())
+hl.bind(mainMod .. " + M",     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+hl.bind(mainMod .. " + E",     hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + V",     hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + R",     hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + P",     hl.dsp.window.pseudo())
+hl.bind(mainMod .. " + J",     hl.dsp.layout("togglesplit")) -- dwindle only
+hl.bind(mainMod .. " + L",     hl.dsp.exec_cmd("hyprlock"))  -- Lock screen
+
+-- Window Focus (Super + Arrow keys)
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+
+-- Workspaces (Super + [1-9, 0])
+-- Move active window to workspace (Super + Shift + [1-9, 0])
+for i = 1, 10 do
+    local key = i % 10 -- 10 maps to key 0
+    hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+end
+
+-- Special Workspace (Scratchpad)
+hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+
+-- Scroll Through Existing Workspaces (Super + Scroll)
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+
+-- Move/Resize Windows with Super + Mouse Dragging
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- =============================================================================
+-- Utility & Script Binds
+-- =============================================================================
+local scriptsDir = os.getenv("HOME") .. "/.config/hypr/scripts"
+
+-- Multimedia Keys: Volume & Display Brightness with Dunst OSD
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh up"),       { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh down"),     { locked = true, repeating = true })
+hl.bind("XF86AudioMute",        hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mute"),     { locked = true, repeating = true })
+hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mic-mute"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",  hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh up"),   { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown",hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh down"), { locked = true, repeating = true })
+
+-- Media Player Controls (requires playerctl)
+hl.bind("XF86AudioNext",  hl.dsp.exec_cmd("playerctl next"),       { locked = true })
+hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
+hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
+
+-- Screenshots: Print / Super+Shift+S (Region), Super+Print (Full Screen)
+hl.bind("Print",                   hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh region"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh region"))
+hl.bind(mainMod .. " + Print",     hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh full"))
+
+-- Screen Recording Toggle (Super + Alt + R)
+hl.bind(mainMod .. " + ALT + R",   hl.dsp.exec_cmd(scriptsDir .. "/screenrecord.sh"))
+
+-- Color Picker (Super + Shift + P or Super + Shift + C)
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(scriptsDir .. "/hyprpicker.sh"))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(scriptsDir .. "/hyprpicker.sh"))
+
+-- Game Mode Toggle (Super + F1)
+hl.bind(mainMod .. " + F1",        hl.dsp.exec_cmd(scriptsDir .. "/gamemode.sh"))
+
+-- Focus Mode Toggle (Super + F2)
+hl.bind(mainMod .. " + F2",        hl.dsp.exec_cmd(scriptsDir .. "/focusmode.sh"))
+
+-- Quick Launch Tools Menu (Super + T)
+hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd("rofi -show tools"))

@@ -57,6 +57,7 @@
           limine = {
             enable = true;
             efiSupport = true;
+            maxGenerations = 3;
             extraEntries = lib.optionalString config.var.dualBoot.enable ''
               /Windows 10
                   protocol: efi

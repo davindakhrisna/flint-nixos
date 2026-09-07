@@ -7,7 +7,7 @@ _: {
     ...
   }: {
     imports = [
-      ./_nvf.nix
+      ./_nixvim.nix
     ];
 
     config = lib.mkIf (config.dev != "off") {
