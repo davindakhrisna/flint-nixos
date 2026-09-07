@@ -13,7 +13,6 @@
     rofi-rbw-wayland
     wtype
     pinentry-gnome3
-    rofimoji
 
     # File manager
     kdePackages.dolphin
@@ -54,6 +53,7 @@
     btop.enable = true;
     kitty.enable = true;
     helium.enable = true;
+    waybar.enable = true;
   };
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {

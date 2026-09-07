@@ -1,5 +1,5 @@
 {pkgs, ...}: {
   home.packages = [
-    pkgs.quickshell
+    pkgs.waybar
   ];
 }
