@@ -67,31 +67,6 @@
         mini-nvim
       ];
 
-      # Preload mock for lazy.stats before any plugins run (fixes Snacks.dashboard startup & VimResized)
-      extraConfigLuaPre = ''
-        local _start_time = vim.fn.reltime()
-        package.preload["lazy.stats"] = function()
-          return {
-            stats = function()
-              local elapsed = vim.fn.reltimefloat(vim.fn.reltime(_start_time)) * 1000
-              local count = #vim.api.nvim_get_runtime_file("plugin/*", true)
-              return {
-                count = math.max(count, 35),
-                loaded = math.max(count, 35),
-                startuptime = elapsed > 0.1 and elapsed or 14.8,
-              }
-            end,
-          }
-        end
-        package.preload["lazy"] = function()
-          return {
-            stats = function()
-              return package.preload["lazy.stats"]().stats()
-            end,
-          }
-        end
-      '';
-
       # Static OLED True Black Monochrome Theme, LazyVim Which-Key Groups & Helper Commands
       extraConfigLua = ''
         -- OLED True Black Monochrome Base16 Theme
@@ -130,6 +105,27 @@
         vim.api.nvim_set_hl(0, "SnacksDashboardIcon", { fg = "#a3a3a3" })
         vim.api.nvim_set_hl(0, "SnacksDashboardKey", { fg = "#ffffff", bold = true })
         vim.api.nvim_set_hl(0, "SnacksDashboardDesc", { fg = "#d4d4d8" })
+        vim.api.nvim_set_hl(0, "SnacksDashboardFooter", { fg = "#737373" })
+
+        -- Disable mini.indentscope on dashboard and utility buffers (removes awkward dashed line)
+        vim.api.nvim_create_autocmd("FileType", {
+          pattern = {
+            "snacks_dashboard",
+            "snacks_notif",
+            "snacks_terminal",
+            "snacks_win",
+            "neo-tree",
+            "Trouble",
+            "trouble",
+            "help",
+            "lazy",
+            "notify",
+            "toggleterm",
+          },
+          callback = function()
+            vim.b.miniindentscope_disable = true
+          end,
+        })
 
         -- LazyVim Which-Key Group Specifications
         local wk = require("which-key")
@@ -202,37 +198,37 @@
                 '';
                 keys = [
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "f";
                     desc = "Find File";
                     action = ":Telescope find_files";
                   }
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "n";
                     desc = "New File";
                     action = ":ene | startinsert";
                   }
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "r";
                     desc = "Recent Files";
                     action = ":Telescope oldfiles";
                   }
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "g";
                     desc = "Find Text";
                     action = ":Telescope live_grep";
                   }
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "c";
                     desc = "Config";
                     action = ":lua require('telescope.builtin').find_files({ cwd = vim.fn.expand('~/.config/flint') })";
                   }
                   {
-                    icon = " ";
+                    icon = " ";
                     key = "s";
                     desc = "Restore Session";
                     action = ":lua require('persistence').load()";
@@ -251,6 +247,20 @@
                   }
                 ];
               };
+              sections = [
+                {section = "header";}
+                {
+                  section = "keys";
+                  gap = 1;
+                  padding = 1;
+                }
+                {
+                  align = "center";
+                  hl = "SnacksDashboardFooter";
+                  padding = 1;
+                  text = "⚡ Flint Neovim · Deterministic & Fast";
+                }
+              ];
             };
           };
         };
@@ -488,7 +498,30 @@
         };
 
         # Visuals
-        indent-blankline.enable = true;
+        indent-blankline = {
+          enable = true;
+          settings = {
+            exclude = {
+              filetypes = [
+                ""
+                "checkhealth"
+                "help"
+                "lspinfo"
+                "man"
+                "neo-tree"
+                "notify"
+                "snacks_dashboard"
+                "snacks_notif"
+                "snacks_terminal"
+                "snacks_win"
+                "TelescopePrompt"
+                "TelescopeResults"
+                "trouble"
+                "Trouble"
+              ];
+            };
+          };
+        };
         rainbow-delimiters.enable = true;
         colorizer.enable = true;
         diffview.enable = true;
