@@ -1,0 +1,45 @@
+{
+  description = "Python & UV development environment";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
+    ];
+    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+  in {
+    devShells = forAllSystems (pkgs: {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          python3
+          uv
+          ruff
+          pyright
+          black
+        ];
+
+        shellHook = ''
+          if [ ! -d ".venv" ]; then
+            uv venv .venv --quiet 2>/dev/null || true
+          fi
+          if [ -d ".venv" ]; then
+            # shellcheck disable=SC1091
+            source .venv/bin/activate 2>/dev/null || true
+          fi
+          echo "⚡ [Python & UV Dev Environment Loaded]"
+          echo "  • Python: $(python3 --version 2>/dev/null || echo 'ready')"
+          echo "  • uv:     $(uv --version 2>/dev/null || echo 'ready')"
+        '';
+      };
+    });
+  };
+}

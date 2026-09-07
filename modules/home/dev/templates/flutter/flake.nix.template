@@ -1,0 +1,40 @@
+{
+  description = "Flutter development environment";
+
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+  };
+
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "x86_64-darwin"
+      "aarch64-darwin"
+    ];
+    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+  in {
+    devShells = forAllSystems (pkgs: {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          flutter
+          jdk17
+          android-tools
+        ];
+
+        shellHook = ''
+          export JAVA_HOME="''${pkgs.jdk17}"
+          export ANDROID_USER_HOME="$PWD/.direnv/android"
+          export GRADLE_USER_HOME="$PWD/.direnv/gradle"
+          mkdir -p "$ANDROID_USER_HOME" "$GRADLE_USER_HOME"
+          echo "⚡ [Flutter Dev Environment Loaded]"
+          echo "  • Flutter: $(flutter --version 2>/dev/null | head -n1 || echo 'ready')"
+          echo "  • Java:    $(java --version 2>/dev/null | head -n1 || echo 'ready')"
+        '';
+      };
+    });
+  };
+}

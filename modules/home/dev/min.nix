@@ -8,6 +8,7 @@ _: {
   }: {
     imports = [
       ./_nixvim.nix
+      ./_mkenv.nix
     ];
 
     config = lib.mkIf (config.dev != "off") {
@@ -45,6 +46,7 @@ _: {
         sqlite
 
         # Core CLI & TUI Dev Tools
+        fzf
         lazygit
         jq
         alejandra
