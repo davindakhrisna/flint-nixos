@@ -11,7 +11,7 @@
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";
       ELECTRON_OZONE_PLATFORM_HINT = "auto";
-      AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
+      AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
     };
 
     # PAM authentication for Hyprlock (instant zero-delay login)

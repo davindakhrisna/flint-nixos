@@ -26,7 +26,7 @@ hl.env("QT_STYLE_OVERRIDE", "adwaita-dark")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 
--- GPU & Rendering: Primary Renderer = NVIDIA, Display Output = Intel eDP-1
-hl.env("AQ_DRM_DEVICES", "/dev/dri/card0:/dev/dri/card1")
+-- GPU & Rendering
+hl.env("AQ_DRM_DEVICES", "/dev/dri/card1:/dev/dri/card0")
 hl.env("AQ_NO_MODIFIERS", "1") -- Linear multi-gpu buffer allocation avoids modifier fallback stalls
 hl.env("__GL_VRR_ALLOWED", "0") -- Fix 144Hz panel refresh timing
