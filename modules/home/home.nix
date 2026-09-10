@@ -53,6 +53,7 @@
 
     # Relocate .gtkrc-2.0 and .Xresources away from $HOME
     gtk = {
+      enable = true;
       theme = {
         name = "adw-gtk3-dark";
         package = pkgs.adw-gtk3;
@@ -72,6 +73,12 @@
       };
       gtk2.configLocation = "${config.xdg.configHome}/gtk-2.0/gtkrc";
       gtk2.force = true;
+      gtk3.extraConfig = {
+        gtk-application-prefer-dark-theme = 1;
+      };
+      gtk4.extraConfig = {
+        gtk-application-prefer-dark-theme = 1;
+      };
     };
 
     dconf.settings = {

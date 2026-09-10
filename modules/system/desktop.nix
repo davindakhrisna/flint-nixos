@@ -17,6 +17,9 @@
       environment.sessionVariables = {
         NIXOS_OZONE_WL = "1";
         ELECTRON_OZONE_PLATFORM_HINT = "auto";
+        GTK_THEME = "adw-gtk3-dark";
+        QT_QPA_PLATFORMTHEME = "gtk3";
+        QT_STYLE_OVERRIDE = "adwaita-dark";
       };
 
       # PAM authentication for Hyprlock (instant zero-delay login)

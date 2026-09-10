@@ -57,6 +57,17 @@
     '')
   ];
 
+  # Keep the familiar command name, but always enter Hyprland through UWSM so
+  # graphical-session.target, portals, and session services have a real owner.
+  home.file.".local/bin/start-hyprland" = {
+    executable = true;
+    force = true;
+    text = ''
+      #!/usr/bin/env bash
+      exec ${pkgs.uwsm}/bin/uwsm start -e -D Hyprland hyprland.desktop
+    '';
+  };
+
   programs = {
     btop.enable = true;
 
@@ -144,24 +155,35 @@
       source = ./config/spotify-flags.conf;
       force = true;
     };
+    "systemd/user/xdg-desktop-portal-gtk.service.d/theme.conf" = {
+      force = true;
+      text = ''
+        [Service]
+        Environment=GTK_THEME=adw-gtk3-dark
+      '';
+    };
   };
 
-  xdg.desktopEntries.helium = {
-    name = "Helium";
-    genericName = "Web Browser";
-    # Keep Chromium UI and web content dark even when the profile preference
-    # is reset; the desktop itself already advertises prefer-dark via dconf.
-    exec = "helium --ozone-platform=wayland --force-dark-mode %U";
-    icon = "helium";
-    terminal = false;
-    categories = ["Network" "WebBrowser"];
-    mimeType = [
-      "text/html"
-      "text/xml"
-      "application/xhtml+xml"
-      "x-scheme-handler/http"
-      "x-scheme-handler/https"
-    ];
+  # A user-local desktop entry takes precedence over the package entry. Manage
+  # it directly so upgrades cannot leave an old X11 launcher shadowing this
+  # Wayland/dark-mode command.
+  xdg.dataFile."applications/helium.desktop" = {
+    force = true;
+    text = ''
+      [Desktop Entry]
+      Type=Application
+      Version=1.0
+      Name=Helium
+      GenericName=Web Browser
+      Comment=Browse the web
+      Exec=helium --ozone-platform=wayland --force-dark-mode %U
+      Icon=helium
+      Terminal=false
+      Categories=Network;WebBrowser;
+      MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+      StartupNotify=true
+      StartupWMClass=Helium
+    '';
   };
 
   systemd.user.services.polkit-gnome-authentication-agent-1 = {

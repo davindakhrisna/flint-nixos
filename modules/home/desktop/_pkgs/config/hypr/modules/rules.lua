@@ -69,6 +69,23 @@ hl.window_rule({
     size   = "950 620",
 })
 
+-- Center file-manager windows and native file-picker dialogs.  These are
+-- separate from the TUI rule because Dolphin and portal dialogs use their
+-- own Wayland/XWayland app IDs.
+hl.window_rule({
+    name   = "center-file-manager",
+    match  = { class = "^(Dolphin|org\\.kde\\.dolphin|xdg-desktop-portal-gtk|org\\.freedesktop\\.impl\\.portal\\.desktop\\.gtk|GtkFileChooser|zenity)$" },
+    float  = true,
+    center = true,
+})
+
+hl.window_rule({
+    name   = "center-file-dialog",
+    match  = { title = "^(Open|Open File|Save|Save File|Select Folder|Choose File|Choose Folder).*" },
+    float  = true,
+    center = true,
+})
+
 -- Floating centered window rules for screenshot annotation apps (satty, swappy)
 hl.window_rule({
     name   = "screenshot-annotator",
