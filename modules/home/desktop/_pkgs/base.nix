@@ -149,7 +149,9 @@
   xdg.desktopEntries.helium = {
     name = "Helium";
     genericName = "Web Browser";
-    exec = "helium --ozone-platform=wayland %U";
+    # Keep Chromium UI and web content dark even when the profile preference
+    # is reset; the desktop itself already advertises prefer-dark via dconf.
+    exec = "helium --ozone-platform=wayland --force-dark-mode %U";
     icon = "helium";
     terminal = false;
     categories = ["Network" "WebBrowser"];
@@ -165,7 +167,6 @@
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     Unit = {
       Description = "polkit-gnome-authentication-agent-1";
-      WantedBy = ["graphical-session.target"];
       Wants = ["graphical-session.target"];
       After = ["graphical-session.target"];
     };

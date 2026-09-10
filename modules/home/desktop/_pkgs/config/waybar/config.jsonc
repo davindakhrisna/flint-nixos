@@ -155,7 +155,8 @@
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
         "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t({device_battery_percentage}%)",
-        "on-click": "~/.config/hypr/scripts/tui-app.sh bluetui"
+        "on-click": "~/.config/hypr/scripts/tui-app.sh bluetui",
+        "on-click-right": "~/.config/waybar/scripts/bluetooth-toggle.sh"
     },
     // Battery
     "battery": {

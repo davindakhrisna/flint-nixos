@@ -59,7 +59,9 @@
       inputs.opencode.overlays.default
       (final: _: {
         areofyl-fetch = inputs.areofyl-fetch.packages.${final.stdenv.hostPlatform.system}.default;
-        gazelle-tui = inputs.gazelle.packages.${final.stdenv.hostPlatform.system}.default;
+        gazelle-tui = inputs.gazelle.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (oldAttrs: {
+          patches = (oldAttrs.patches or []) ++ [./patches/gazelle-theme.patch];
+        });
         hacker-news-tui = inputs.hacker-news-tui.packages.${final.stdenv.hostPlatform.system}.default;
         pomo = inputs.pomo.packages.${final.stdenv.hostPlatform.system}.default;
       })

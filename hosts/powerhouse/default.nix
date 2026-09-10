@@ -76,7 +76,10 @@
 
         # Prefer the Intel iGPU for Hyprland while keeping the Nvidia GPU
         # available for render offload and outputs wired to it.
-        environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card";
+        # Aquamarine uses ':' as the device-list separator, so PCI by-path
+        # names (which contain ':') cannot be used here.  Keep the integrated
+        # Intel GPU primary and the NVIDIA GPU secondary for hybrid rendering.
+        environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
 
         # User Configuration (Home Manager level)
         home-manager.users.kryisnn = {...}: {

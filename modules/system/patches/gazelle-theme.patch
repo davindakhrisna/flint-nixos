@@ -1,0 +1,42 @@
+--- a/app.py
++++ b/app.py
+@@ -1,4 +1,4 @@
+ """Gazelle - Minimal NetworkManager TUI"""
+ import os
+-os.environ["RICH_COLOR_SYSTEM"] = "standard"
++# os.environ["RICH_COLOR_SYSTEM"] = "standard"
+ from textual.app import App, ComposeResult
+@@ -565,12 +565,22 @@
+     Button {{ min-width: {styles['button_min_width']}; }}
+
+     /* DataTable selection/cursor colors */
++    DataTable > .datatable--header, DataTable:ansi > .datatable--header,
++    DataTable > .datatable--header-cursor, DataTable:ansi > .datatable--header-cursor,
++    DataTable > .datatable--header-hover, DataTable:ansi > .datatable--header-hover {{
++        background: #242424;
++        color: #ffffff;
++        text-style: bold;
++    }}
++
++    DataTable > .datatable--cursor, DataTable:ansi > .datatable--cursor {{
++        background: #383838;
++        color: #ffffff;
++        text-style: bold;
++    }}
++
++    DataTable > .datatable--hover, DataTable:ansi > .datatable--hover {{
++        background: #202020;
++        color: #e0e0e0;
++    }}
+-    DataTable > .datatable--cursor {{
+-        background: $accent {styles['cursor_opacity']};
+-        color: $foreground;
+-    }}
+-
+-    DataTable > .datatable--hover {{
+-        background: $accent {styles['hover_opacity']};
+-    }}
+     """
+@@ -639,1 +639,1 @@
+-    ansi_color = True  # Enable terminal ANSI color support
++    ansi_color = False
