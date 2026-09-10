@@ -63,7 +63,11 @@
       ];
 
       profileExtra = lib.optionalString (config.home.sessionPath != []) ''
-        export PATH="$PATH''${PATH:+:}${lib.concatStringsSep ":" config.home.sessionPath}"
+        # User-managed commands must take precedence over same-named binaries
+        # from the system profile.  In particular, Flint's start-hyprland
+        # wrapper enters the session through UWSM; Hyprland also ships a direct
+        # launcher with that name which does not activate graphical-session.
+        export PATH="${lib.concatStringsSep ":" config.home.sessionPath}''${PATH:+:$PATH}"
       '';
 
       shellAliases = {
@@ -77,6 +81,7 @@
 
         # Shortcuts
         open = "${pkgs.xdg-utils}/bin/xdg-open";
+        start-hyprland = "${config.home.profileDirectory}/bin/start-hyprland";
 
         notes = "nvim ~/Notes/index.md --cmd 'cd ~/notes' -c ':lua Snacks.picker.smart()'";
 

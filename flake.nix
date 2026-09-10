@@ -20,10 +20,6 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    opencode = {
-      url = "github:anomalyco/opencode";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     areofyl-fetch = {
       url = "github:areofyl/fetch";
       inputs.nixpkgs.follows = "nixpkgs";

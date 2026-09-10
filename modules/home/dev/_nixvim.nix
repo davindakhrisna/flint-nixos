@@ -167,14 +167,6 @@
             dashboard = {
               enabled = true;
               preset = {
-                header = ''
-                   ______ _      _____ _   _ _______
-                  |  ____| |    |_   _| \ | |__   __|
-                  | |__  | |      | | |  \| |  | |
-                  |  __| | |      | | | . ` |  | |
-                  | |    | |____ _| |_| |\  |  | |
-                  |_|    |______|_____|_| \_|  |_|
-                '';
                 keys = [
                   {
                     icon = " ";
@@ -227,7 +219,6 @@
                 ];
               };
               sections = [
-                {section = "header";}
                 {
                   section = "keys";
                   gap = 1;
@@ -237,7 +228,7 @@
                   align = "center";
                   hl = "SnacksDashboardFooter";
                   padding = 1;
-                  text = "⚡ Flint Neovim · Gruvbox Edition";
+                  text = "";
                 }
               ];
             };

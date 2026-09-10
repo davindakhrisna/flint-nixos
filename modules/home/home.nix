@@ -92,6 +92,15 @@
         document-font-name = "Noto Serif 11";
         monospace-font-name = "Iosevka Nerd Font 12";
       };
+
+      # Show dot-directories in GTK file chooser dialogs used by developer
+      # applications (for example, when selecting a project folder).
+      "org/gtk/settings/file-chooser" = {
+        show-hidden = true;
+      };
+      "org/gtk/gtk4/settings/file-chooser" = {
+        show-hidden = true;
+      };
     };
 
     qt = {

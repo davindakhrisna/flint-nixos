@@ -27,3 +27,6 @@ ForegroundNormal=222,222,222
 
 [KDE]
 widgetStyle=adwaita-dark
+
+[Dolphin]
+ShowHiddenFiles=true

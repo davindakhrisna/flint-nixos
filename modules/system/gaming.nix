@@ -11,7 +11,6 @@
         remotePlay.openFirewall = config.var.features.steamRemotePlay;
         dedicatedServer.openFirewall = config.var.features.steamDedicatedServer;
         localNetworkGameTransfers.openFirewall = config.var.features.steamLocalTransfers;
-        gamescopeSession.enable = true;
 
         extraCompatPackages = with pkgs; [
           proton-ge-bin

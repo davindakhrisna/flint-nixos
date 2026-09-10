@@ -3,7 +3,22 @@
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  # Hyprland also ships a direct launcher named start-hyprland.  Install this
+  # wrapper at a higher Home Manager package priority so every shell resolves
+  # the UWSM-managed entry point, independent of ~/.local/bin ordering.
+  startHyprland = lib.hiPrio (pkgs.writeShellScriptBin "start-hyprland" ''
+    if ! ${pkgs.uwsm}/bin/uwsm check may-start; then
+      echo "A UWSM session cannot be started from this login context." >&2
+      exit 1
+    fi
+    exec ${pkgs.uwsm}/bin/uwsm start -e -D Hyprland -- hyprland.desktop
+  '');
+
+  flintLaunch = pkgs.writeShellScriptBin "flint-launch" ''
+    exec ${pkgs.uwsm}/bin/uwsm app -- "$@"
+  '';
+in {
   imports = lib.optional (inputs ? helium) inputs.helium.homeModules.default;
 
   home.packages = with pkgs; [
@@ -48,6 +63,8 @@
     adw-gtk3
     gsettings-desktop-schemas
     kitty
+    startHyprland
+    flintLaunch
 
     (writeShellScriptBin "flint-rofi-tools" ''
       exec "$HOME/.config/hypr/scripts/rofi-tools.sh" "$@"
@@ -56,17 +73,6 @@
       exec "$HOME/.config/awww/wallpaper-picker.sh" "$@"
     '')
   ];
-
-  # Keep the familiar command name, but always enter Hyprland through UWSM so
-  # graphical-session.target, portals, and session services have a real owner.
-  home.file.".local/bin/start-hyprland" = {
-    executable = true;
-    force = true;
-    text = ''
-      #!/usr/bin/env bash
-      exec ${pkgs.uwsm}/bin/uwsm start -e -D Hyprland hyprland.desktop
-    '';
-  };
 
   programs = {
     btop.enable = true;
@@ -143,10 +149,6 @@
       source = ./config/code-flags.conf;
       force = true;
     };
-    "vesktop-flags.conf" = {
-      source = ./config/vesktop-flags.conf;
-      force = true;
-    };
     "obsidian-flags.conf" = {
       source = ./config/obsidian-flags.conf;
       force = true;
@@ -189,8 +191,8 @@
   systemd.user.services.polkit-gnome-authentication-agent-1 = {
     Unit = {
       Description = "polkit-gnome-authentication-agent-1";
-      Wants = ["graphical-session.target"];
-      After = ["graphical-session.target"];
+      PartOf = ["graphical-session.target"];
+      After = ["graphical-session-pre.target"];
     };
     Install = {
       WantedBy = ["graphical-session.target"];

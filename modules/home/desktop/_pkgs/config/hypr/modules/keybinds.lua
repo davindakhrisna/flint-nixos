@@ -6,10 +6,11 @@
 local mainMod = "SUPER"
 
 -- Applications & Launchers
-local terminal    = 'kitty zsh -c "fetch || true; exec zsh"'
-local fileManager = "dolphin"
-local menu        = "rofi -show drun"
-local launcher    = "rofi -show drun"
+local app         = "flint-launch "
+local terminal    = app .. 'kitty zsh -c "fetch || true; exec zsh"'
+local fileManager = app .. "dolphin"
+local menu        = app .. "rofi -show drun"
+local launcher    = app .. "rofi -show drun"
 
 -- Core Application Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(launcher))
@@ -21,7 +22,7 @@ hl.bind(mainMod .. " + V",     hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R",     hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P",     hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J",     hl.dsp.layout("togglesplit")) -- dwindle only
-hl.bind(mainMod .. " + L",     hl.dsp.exec_cmd("hyprlock"))  -- Lock screen
+hl.bind(mainMod .. " + L",     hl.dsp.exec_cmd(app .. "hyprlock"))  -- Lock screen
 
 -- Window Focus (Super + Arrow keys)
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -87,4 +88,4 @@ hl.bind(mainMod .. " + F1",        hl.dsp.exec_cmd(scriptsDir .. "/gamemode.sh")
 hl.bind(mainMod .. " + F2",        hl.dsp.exec_cmd(scriptsDir .. "/focusmode.sh"))
 
 -- Quick Launch Tools Menu (Super + T)
-hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd("rofi -show tools"))
+hl.bind(mainMod .. " + T",         hl.dsp.exec_cmd(app .. "rofi -show tools"))

@@ -38,7 +38,7 @@
         "justify": "center",
         "tooltip": true,
         "tooltip-format": "Launch Applications (rofi)",
-        "on-click": "rofi -show drun"
+        "on-click": "flint-launch rofi -show drun"
     },
     // Hyprland Workspaces
     "hyprland/workspaces": {

@@ -11,4 +11,4 @@ kitty_options=(
     -o "map escape quit"
 )
 
-exec kitty "${kitty_options[@]}" -e "$@"
+exec uwsm app -- kitty "${kitty_options[@]}" -e "$@"
