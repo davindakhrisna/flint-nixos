@@ -6,12 +6,6 @@
 
 ---
 
-![Desktop — Rofi Tools launcher with Waybar](.github/1.png)
-
-![Terminal — neofetch + direnv + nh os switch](.github/2.png)
-
----
-
 ## What is this?
 
 Flint is my personal NixOS configuration. It manages everything from kernel parameters to Neovim keybindings in a single, reproducible flake. Drop a new host file in `hosts/`, set a few options, and `nh os switch` gives you the whole stack.
@@ -25,29 +19,26 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 
 | Layer | What's in it |
 |:------|:-------------|
-| **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Swww wallpapers |
+| **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers |
 | **Shell** | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
 | **Editor** | Nixvim (LazyVim workflow) — Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
-| **Dev** | Tiered tooling (`min` → `mid` → `max`), direnv + nix-direnv, `mkenv` bootstrapper |
+| **Dev** | `minimal` / `full` workstation profiles, direnv + nix-direnv, `mkenv` project environments |
 | **System** | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS |
 | **Gaming** | Steam, Gamescope, MangoHud, GameMode |
 
 ---
 
-## Dev Tiers
+## Development Profiles
 
-Set `dev = "min"` / `"mid"` / `"max"` / `"off"` per host. Each tier inherits from the one below.
+Set `dev = "minimal"` or `dev = "full"` per host. Both provide the daily development workstation; `full` adds resource-heavy creative and compatibility applications.
 
 ```
-off → nothing
-min → git, gcc, neovim, direnv, mkenv, lazygit
-mid → min + go, node, python, pnpm, zed, docker tools, AI IDEs
-max → mid + flutter, godot, blender, android-tools, uv
+minimal → Git/GitHub CLI, direnv, Nixvim, Zed, mkenv, CLI/container/database tools, AI coding tools
+full    → minimal + Godot, Blender, LibreSprite, Winboat
 ```
 
 > [!TIP]
-> `mkenv` bootstraps per-project `flake.nix` + `.envrc` environments instantly.
-> Run `mkenv ts` for TypeScript, `mkenv go` for Go, `mkenv py` for Python — or just `mkenv` for a fuzzy picker.
+> Compilers, language runtimes, SDKs, and formatters are project-scoped. `mkenv` bootstraps a `flake.nix` + `.envrc` for C/C++, Go, TypeScript, Python, Rust, Flutter, or Nix. Run `mkenv ts`, for example, or use `mkenv` for a fuzzy picker.
 
 ---
 
@@ -60,10 +51,21 @@ nh os switch
 
 **Lint & format:**
 ```bash
+nix develop          # also activated automatically by direnv
 alejandra .          # format
 deadnix .            # find dead code
 statix check .       # anti-patterns
 ```
+
+**Pre-switch validation:**
+```bash
+./scripts/check.sh                # checks and dry-builds powerhouse + template
+./scripts/check.sh powerhouse     # check and dry-build one host
+nh os switch                      # activate only after validation passes
+```
+
+The validation script also rejects untracked `.nix` files, because Git-backed
+flakes cannot see them even when they exist in the working tree.
 
 **Bootstrap a dev environment:**
 ```bash
@@ -79,7 +81,12 @@ cd my-project        # direnv activates automatically
 cp -r hosts/template hosts/my-machine
 ```
 
-Edit `hosts/my-machine/default.nix` — set hostname, timezone, user, hardware vars, and which modules to import. Generate `_hardware.nix` with `nixos-generate-config`.
+Edit `hosts/my-machine/default.nix` — set hostname, timezone, user, hardware vars, and which modules to import. After mounting the target at `/mnt`, generate and copy its hardware configuration explicitly:
+
+```bash
+nixos-generate-config --root /mnt
+cp /mnt/etc/nixos/hardware-configuration.nix hosts/my-machine/_hardware.nix
+```
 
 > [!CAUTION]
 > Don't forget to update disk UUIDs in `_hardware.nix` — they're unique to each machine.

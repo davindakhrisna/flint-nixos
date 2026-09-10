@@ -3,7 +3,10 @@
 # Focus Mode Toggle (Turns off hypridle and hyprlock)
 # =============================================================================
 
-STATUS_FILE="/tmp/hypr_focusmode_active"
+RUNTIME_DIR="${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}/flint"
+mkdir -p "$RUNTIME_DIR"
+chmod 700 "$RUNTIME_DIR"
+STATUS_FILE="$RUNTIME_DIR/hypr_focusmode_active"
 
 if [ -f "$STATUS_FILE" ]; then
     # --- DISABLE FOCUS MODE ---

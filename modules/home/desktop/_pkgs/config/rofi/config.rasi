@@ -4,7 +4,7 @@
  **/
 
 configuration {
-    modi:                       "drun,tools:/home/kryisnn/.config/hypr/scripts/rofi-tools.sh,wallpaper:/home/kryisnn/.config/awww/wallpaper-picker.sh,window";
+    modi:                       "drun,tools:flint-rofi-tools,wallpaper:flint-wallpaper-picker,window";
     font:                       "Iosevka Nerd Font Mono 11";
     show-icons:                 true;
     icon-theme:                 "Papirus-Dark";

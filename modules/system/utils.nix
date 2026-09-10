@@ -1,7 +1,12 @@
 {
-  flake.nixosModules.utils = {pkgs, ...}: {
+  flake.nixosModules.utils = {
+    config,
+    lib,
+    pkgs,
+    ...
+  }: {
     # Desktop packages
-    programs.chromium.enable = true; # Also serve as fallback browser
+    programs.chromium.enable = lib.mkIf config.var.features.desktop true;
 
     environment.systemPackages = with pkgs; [
       # Development Tools

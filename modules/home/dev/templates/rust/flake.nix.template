@@ -12,8 +12,6 @@
     systems = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
-      "aarch64-darwin"
     ];
     forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
   in {
@@ -29,10 +27,13 @@
         ];
 
         shellHook = ''
+          export CARGO_HOME="$PWD/.direnv/cargo"
           export RUST_SRC_PATH="''${pkgs.rustPlatform.rustLibSrc}"
+          mkdir -p "$CARGO_HOME"
           echo "⚡ [Rust Dev Environment Loaded]"
           echo "  • Rust:  $(rustc --version 2>/dev/null || echo 'ready')"
           echo "  • Cargo: $(cargo --version 2>/dev/null || echo 'ready')"
+          echo "  • Cargo home: $CARGO_HOME"
         '';
       };
     });

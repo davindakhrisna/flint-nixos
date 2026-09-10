@@ -1,5 +1,5 @@
 _: {
-  flake.homeModules.dev-min = {
+  flake.homeModules.dev-minimal = {
     config,
     lib,
     pkgs,
@@ -11,7 +11,7 @@ _: {
       ./_mkenv.nix
     ];
 
-    config = lib.mkIf (config.dev != "off") {
+    config = lib.mkIf (builtins.elem config.dev ["minimal" "full"]) {
       programs = {
         git = {
           enable = true;
@@ -21,7 +21,9 @@ _: {
               email = "arpeggio.gns@gmail.com";
             };
             init.defaultBranch = "main";
-            safe.directory = [(osConfig.var.flakePath or "${config.home.homeDirectory}/.config/flint") "*"];
+            safe.directory = [
+              (osConfig.var.flakePath or "${config.home.homeDirectory}/.config/flint")
+            ];
           };
         };
 
@@ -34,23 +36,27 @@ _: {
           enable = true;
           nix-direnv.enable = true;
         };
+
+        zed-editor = {
+          enable = true;
+          userSettings = {
+            tab_size = 4;
+            vim_mode = true;
+            cursor_blink = true;
+          };
+        };
       };
 
       home.packages = with pkgs; [
-        # Core Build & Compiler Tools
-        gcc
-        gnumake
-        pkg-config
-
-        # Core Database CLI
-        sqlite
-
-        # Core CLI & TUI Dev Tools
-        fzf
         lazygit
         jq
-        alejandra
-        nixfmt
+        lazydocker
+        netcat-gnu
+        dbgate
+        bruno
+        google-antigravity-ide
+        codex
+        opencode
       ];
     };
   };

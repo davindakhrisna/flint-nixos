@@ -121,7 +121,6 @@
     },
     // Brightness / Backlight
     "backlight": {
-        "device": "intel_backlight",
         "align": 0.5,
         "justify": "center",
         "format": "BRG\n{percent}%",
@@ -160,7 +159,6 @@
     },
     // Battery
     "battery": {
-        "bat": "BAT1",
         "interval": 30,
         "align": 0.5,
         "justify": "center",
@@ -172,7 +170,7 @@
         "format-charging": "BAT\n{capacity}%+",
         "format-plugged": "BAT\n{capacity}%=",
         "tooltip-format": "Battery: {capacity}%\nStatus: {timeTo}",
-        "on-click": "/home/kryisnn/.config/waybar/scripts/powerprofile.sh"
+        "on-click": "~/.config/waybar/scripts/powerprofile.sh"
     },
     // CPU Usage
     "cpu": {
@@ -197,6 +195,6 @@
         "format": "",
         "tooltip": true,
         "tooltip-format": "Power Options",
-        "on-click": "/home/kryisnn/.config/waybar/scripts/powermenu.sh"
+        "on-click": "~/.config/waybar/scripts/powermenu.sh"
     }
 }

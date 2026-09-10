@@ -3,8 +3,8 @@
 -- =============================================================================
 
 -- Cursor
-hl.env("XCURSOR_SIZE", "18")
-hl.env("HYPRCURSOR_SIZE", "18")
+hl.env("XCURSOR_SIZE", "24")
+hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
 
 -- Path
@@ -26,7 +26,7 @@ hl.env("QT_STYLE_OVERRIDE", "adwaita-dark")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
 
--- GPU & Rendering
-hl.env("AQ_DRM_DEVICES", "/dev/dri/card1:/dev/dri/card0")
+-- GPU & Rendering. AQ_DRM_DEVICES is host-owned because DRM card ordering is
+-- hardware-specific; do not override its stable PCI paths here.
 hl.env("AQ_NO_MODIFIERS", "1") -- Linear multi-gpu buffer allocation avoids modifier fallback stalls
 hl.env("__GL_VRR_ALLOWED", "0") -- Fix 144Hz panel refresh timing

@@ -3,13 +3,15 @@
 # AWWW Daemon Initialization & Wallpaper Restore Script
 # =============================================================================
 
-# Start awww-daemon if not already running
-if ! awww query >/dev/null 2>&1; then
-    awww-daemon &
-    sleep 0.3
-fi
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/awww"
+CURRENT_FILE="$STATE_DIR/current_wallpaper"
+mkdir -p "$STATE_DIR"
 
-CURRENT_FILE="$HOME/.config/awww/current_wallpaper"
+# systemd ordering starts the daemon first, but wait briefly for its socket.
+for _ in {1..20}; do
+    awww query >/dev/null 2>&1 && break
+    sleep 0.1
+done
 
 # Restore saved wallpaper if available
 if [ -f "$CURRENT_FILE" ] && [ -s "$CURRENT_FILE" ]; then

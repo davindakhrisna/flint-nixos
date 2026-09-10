@@ -66,5 +66,24 @@
         default = {};
         description = "Home Manager modules";
       };
+
+      config = {
+        systems = ["x86_64-linux"];
+
+        perSystem = {pkgs, ...}: {
+          devShells.default = pkgs.mkShell {
+            packages = with pkgs; [
+              alejandra
+              nixfmt
+              deadnix
+              statix
+              shellcheck
+              lua
+              jq
+              nix-prefetch-github
+            ];
+          };
+        };
+      };
     });
 }

@@ -4,14 +4,15 @@
 # =============================================================================
 export PATH="$HOME/.local/bin:$PATH"
 
-PID_FILE="/tmp/screenrecording.pid"
-NAME_FILE="/tmp/screenrecording.path"
+RUNTIME_DIR="${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}/flint"
+mkdir -p "$RUNTIME_DIR"
+chmod 700 "$RUNTIME_DIR"
+PID_FILE="$RUNTIME_DIR/screenrecording.pid"
+NAME_FILE="$RUNTIME_DIR/screenrecording.path"
 
 # Check if recording is active
 is_recording() {
     if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE" 2>/dev/null)" 2>/dev/null; then
-        return 0
-    elif pgrep -x wf-recorder >/dev/null 2>&1 || pgrep -x wl-screenrec >/dev/null 2>&1; then
         return 0
     fi
     return 1
@@ -25,8 +26,6 @@ if is_recording; then
     # Send SIGINT to gracefully close the video container
     if [ -n "$REC_PID" ] && kill -0 "$REC_PID" 2>/dev/null; then
         kill -INT "$REC_PID" 2>/dev/null
-    else
-        pkill -INT -x wf-recorder 2>/dev/null || pkill -INT -x wl-screenrec 2>/dev/null
     fi
     
     # Wait for recorder to flush file

@@ -12,8 +12,6 @@
     systems = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
-      "aarch64-darwin"
     ];
     forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
   in {
@@ -30,11 +28,13 @@
         shellHook = ''
           export GOPATH="$PWD/.direnv/go"
           export GOBIN="$GOPATH/bin"
+          export GOMODCACHE="$GOPATH/pkg/mod"
           export PATH="$GOBIN:$PATH"
-          mkdir -p "$GOPATH" "$GOBIN"
+          mkdir -p "$GOBIN" "$GOMODCACHE"
           echo "⚡ [Go Dev Environment Loaded]"
           echo "  • Go:     $(go version 2>/dev/null || echo 'ready')"
           echo "  • GOPATH: $GOPATH"
+          echo "  • Module cache: $GOMODCACHE"
         '';
       };
     });

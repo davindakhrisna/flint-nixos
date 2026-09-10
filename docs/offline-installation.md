@@ -1,115 +1,86 @@
-# 📦 Offline Installation Guide (Closure Archive Method)
+# Offline Installation
 
-This guide explains how to pre-build and package the entire Flint NixOS system on a connected machine (e.g. via WSL or an existing Linux host) and install it on a target machine without requiring an active internet connection.
+Flint creates a local Nix binary cache containing both the complete system
+closure and every locked flake input. This matters because importing only the
+system closure is insufficient: a fresh installer must also evaluate the flake
+without contacting GitHub.
 
----
+## Create the bundle
 
-## 📋 Overview
+Commit the configuration first, attach the destination drive, and run:
 
-NixOS builds a complete, hermetic dependency graph called a **System Closure**. By exporting this closure to a single `.nar` archive file, you capture 100% of all required dependencies (kernel, NVIDIA/AMD drivers, bootloader, desktop environment, CLI tools, and user configuration).
-
-```
-[ Connected Machine (WSL) ]
-  1. Build System Closure (`nix build ...`)
-  2. Export Closure (`nix-store --export ... > powerhouse-closure.nar`)
-  3. Copy Flake Repository + `.nar` to USB Drive
-       │
-       ▼
-[ USB Drive ]
-  ├── powerhouse-closure.nar
-  └── flint-nixos/
-       │
-       ▼
-[ Target Machine (Offline Installation) ]
-  1. Boot standard NixOS Minimal Live USB
-  2. Partition & Mount disks to `/mnt`
-  3. Mount USB Drive & Import Closure (`nix-store --import < ...`)
-  4. Run `nixos-install --flake /path/to/flint-nixos#powerhouse --no-channel-copy`
-  5. Reboot into the fully installed system
-```
-
----
-
-## 🛠️ Step-by-Step Instructions
-
-### Phase 1: On the Host Machine (WSL / Connected Linux)
-
-#### 1. Build the System Closure
-Inside the `flint-nixos` directory, run:
 ```bash
-nix build .#nixosConfigurations.powerhouse.config.system.build.toplevel
+nix develop
+./scripts/export-offline.sh powerhouse /path/to/usb/flint-offline-powerhouse
 ```
-> This will download and compile all packages, creating a `./result` symlink in your directory.
 
-#### 2. Export the Closure to USB
-Plug in your USB drive. In WSL, external drives are mounted under `/mnt/d/`, `/mnt/e/`, etc.
+The exporter deliberately refuses a dirty working tree so the archived system,
+flake inputs, and editable source all describe the same Git revision. It builds
+the selected host, copies its closure into a portable binary cache, archives all
+locked flake inputs into that cache, and includes the committed repository.
+
+The resulting directory contains:
+
+```text
+flint-offline-powerhouse/
+├── cache/              local Nix binary cache
+├── flint/              editable source at the recorded revision
+├── flake-store-path    immutable archived flake path
+├── system-store-path   built system closure path
+├── git-revision        source revision
+└── INSTALL.txt         installation commands
+```
+
+## Install offline
+
+Boot the NixOS installer, connect the bundle drive, and mount the target root and
+EFI filesystems under `/mnt`. Device names below are examples; verify every
+device with `lsblk -f` before running formatting or mounting commands.
+
+Import the entire cache:
+
 ```bash
-# Export the complete closure to a single archive file on your USB drive
-nix-store --export $(nix-store -qR ./result) > /mnt/d/powerhouse-closure.nar
+nix copy --all --from file:///mnt-usb/flint-offline-powerhouse/cache
 ```
 
-#### 3. Copy the Configuration Repository to USB
-Copy the `flint-nixos` configuration directory to the USB drive:
+Install from the immutable flake path recorded in the bundle:
+
 ```bash
-cp -r "/mnt/c/Users/kris/Documents/Misc Project/flint-nixos" /mnt/d/flint-nixos
+flake_path="$(cat /mnt-usb/flint-offline-powerhouse/flake-store-path)"
+nixos-install \
+  --flake "path:$flake_path#powerhouse" \
+  --no-channel-copy
 ```
 
----
+Because the archived flake itself and all its inputs are already in `/nix/store`,
+this evaluation does not need a network connection or a pre-populated fetcher
+cache. Set passwords when prompted, then reboot.
 
-### Phase 2: On the Target Machine (NixOS Live USB)
+## Installing different hardware
 
-Boot the target PC with any standard NixOS Live USB. No network or Wi-Fi connection is needed.
+Do not install the `powerhouse` closure on unrelated hardware. Start from the
+host template, mount the target filesystems, and generate its hardware module:
 
-#### 1. Partition and Format Disks
-Set up your partitions (e.g., EFI boot and Root filesystem).
-
-Example using `Btrfs`:
 ```bash
-# Format partitions (Adjust disk identifiers according to `lsblk`)
-mkfs.fat -F 32 -n boot /dev/nvme0n1p1
-mkfs.btrfs -f -L nixos /dev/nvme0n1p2
-
-# Mount Root and Boot partitions
-mount /dev/nvme0n1p2 /mnt
-mkdir -p /mnt/boot
-mount /dev/nvme0n1p1 /mnt/boot
+nixos-generate-config --root /mnt
+cp /mnt/etc/nixos/hardware-configuration.nix hosts/my-machine/_hardware.nix
 ```
 
-#### 2. Mount the Data USB Drive
-Plug in the USB drive containing `powerhouse-closure.nar` and `flint-nixos`:
+Set the host's CPU, GPU, Nvidia PRIME IDs if applicable, filesystem paths, and
+feature flags. Commit those changes and create a bundle for that host on a
+compatible `x86_64-linux` builder.
+
+## Verification
+
+Before disconnecting the build machine, confirm the bundle records exist and
+inspect its binary cache:
+
 ```bash
-mkdir -p /mnt-usb
-mount /dev/sdb1 /mnt-usb  # Check partition name with lsblk
+test -s /path/to/bundle/flake-store-path
+test -s /path/to/bundle/system-store-path
+nix path-info --store file:///path/to/bundle/cache --all >/dev/null
 ```
 
-#### 3. Import the Closure into the Target Nix Store
-Import the `.nar` archive directly into the machine's local Nix store:
-```bash
-nix-store --import < /mnt-usb/powerhouse-closure.nar
-```
-> This will populate `/nix/store` with all required binaries at maximum USB read speed.
-
-#### 4. Run the Installation
-Install the system from the local flake on the USB:
-```bash
-nixos-install --flake /mnt-usb/flint-nixos#powerhouse --no-channel-copy
-```
-> `nixos-install` will detect that every derivation already exists in `/nix/store`, link the bootloader, generate system files, and prompt you to set the root password.
-
-#### 5. Finish and Reboot
-```bash
-umount -R /mnt
-reboot
-```
-
----
-
-## 🔍 Verification & Troubleshooting
-
-- **Check Closure Integrity:**
-  If you want to verify that the target Nix store has all required paths before running `nixos-install`:
-  ```bash
-  nix-store --verify --check-contents
-  ```
-- **Custom Hardware (`_hardware.nix`):**
-  If the target machine has different disk UUIDs, generate the hardware configuration using `nixos-generate-config --root /mnt` and update `hosts/powerhouse/_hardware.nix` with the corresponding disk UUIDs/labels before building.
+The cache's `.narinfo` files contain the hashes Nix uses to verify imported
+paths. Keep an additional checksum of the bundle directory if the transport
+medium or transfer process is untrusted.

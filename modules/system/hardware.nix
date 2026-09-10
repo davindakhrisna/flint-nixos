@@ -2,7 +2,6 @@
   flake.nixosModules.hardware = {
     config,
     lib,
-    pkgs,
     ...
   }: let
     cfg = config.var;
@@ -21,25 +20,64 @@
       };
 
       nvidia = {
+        open = lib.mkOption {
+          type = lib.types.nullOr lib.types.bool;
+          default = null;
+          description = "Use Nvidia's open kernel modules; recommended for Turing and newer GPUs";
+        };
         mode = lib.mkOption {
-          type = lib.types.enum ["desktop" "offload" "sync"];
+          type = lib.types.enum ["desktop" "offload"];
           default = "desktop";
-          description = "Nvidia mode: desktop (dedicated GPU) or offload/sync (hybrid laptop PRIME)";
+          description = "Nvidia mode for Hyprland Wayland: dedicated desktop GPU or hybrid PRIME offload";
+        };
+        igpu = lib.mkOption {
+          type = lib.types.enum ["intel" "amd"];
+          default = "intel";
+          description = "Integrated GPU vendor used with Nvidia PRIME offload";
         };
         intelBusId = lib.mkOption {
           type = lib.types.str;
-          default = "PCI:0:2:0";
+          default = "";
           description = "Intel iGPU PCI Bus ID for PRIME";
         };
         nvidiaBusId = lib.mkOption {
           type = lib.types.str;
-          default = "PCI:1:0:0";
+          default = "";
           description = "Nvidia GPU PCI Bus ID for PRIME";
+        };
+        amdgpuBusId = lib.mkOption {
+          type = lib.types.str;
+          default = "";
+          description = "AMD integrated GPU PCI Bus ID for PRIME";
         };
       };
     };
 
     config = lib.mkMerge [
+      {
+        assertions = [
+          {
+            assertion = cfg.gpu != "nvidia" || cfg.nvidia.open != null;
+            message = "Set var.nvidia.open explicitly when var.gpu is nvidia (true for Turing and newer; false for older GPUs).";
+          }
+          {
+            assertion =
+              cfg.gpu
+              != "nvidia"
+              || cfg.nvidia.mode == "desktop"
+              || (
+                cfg.nvidia.nvidiaBusId
+                != ""
+                && (
+                  (cfg.nvidia.igpu == "intel" && cfg.nvidia.intelBusId != "")
+                  || (cfg.nvidia.igpu == "amd" && cfg.nvidia.amdgpuBusId != "")
+                )
+              );
+            message = "Nvidia offload requires explicit dGPU and matching Intel/AMD iGPU PRIME bus IDs.";
+          }
+        ];
+      }
+
       # CPU: Intel
       (lib.mkIf (cfg.cpu == "intel") {
         hardware.cpu.intel.updateMicrocode = true;
@@ -53,72 +91,48 @@
 
       # GPU: Nvidia
       (lib.mkIf (cfg.gpu == "nvidia") {
-        services.xserver.videoDrivers = ["nvidia"];
-        hardware.graphics = {
-          enable = true;
-          extraPackages = with pkgs; [
-            nvidia-vaapi-driver
-          ];
-        };
+        services.xserver.videoDrivers =
+          lib.optionals (cfg.nvidia.mode == "offload") [
+            (
+              if cfg.nvidia.igpu == "intel"
+              then "modesetting"
+              else "amdgpu"
+            )
+          ]
+          ++ ["nvidia"];
+        hardware.graphics.enable = true;
         hardware.nvidia = {
-          open = false;
+          open = cfg.nvidia.open;
           modesetting.enable = true;
           package = config.boot.kernelPackages.nvidiaPackages.stable;
           powerManagement.enable = true;
           powerManagement.finegrained = cfg.nvidia.mode == "offload";
-          nvidiaPersistenced = true;
+          nvidiaPersistenced = cfg.nvidia.mode != "offload";
+          videoAcceleration = true;
 
           prime = lib.mkIf (cfg.nvidia.mode != "desktop") {
             offload = {
               enable = cfg.nvidia.mode == "offload";
               enableOffloadCmd = cfg.nvidia.mode == "offload";
             };
-            sync.enable = cfg.nvidia.mode == "sync";
-            inherit (cfg.nvidia) intelBusId nvidiaBusId;
+            inherit (cfg.nvidia) nvidiaBusId;
+            intelBusId = lib.optionalString (cfg.nvidia.igpu == "intel") cfg.nvidia.intelBusId;
+            amdgpuBusId = lib.optionalString (cfg.nvidia.igpu == "amd") cfg.nvidia.amdgpuBusId;
           };
         };
-        environment.sessionVariables = {
-          LIBVA_DRIVER_NAME = "nvidia";
-          GBM_BACKEND = "nvidia-drm";
-          __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-          NVD_BACKEND = "direct";
-        };
-
-        systemd.services.nvidia-sync-clocks = lib.mkIf (cfg.nvidia.mode == "sync") {
-          description = "NVIDIA Sync Mode Minimum GPU Clock Lock for 144Hz Stutter Prevention";
-          after = ["nvidia-persistenced.service"];
-          requires = ["nvidia-persistenced.service"];
-          wantedBy = ["multi-user.target"];
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            ExecStart = pkgs.writeShellScript "nvidia-sync-clock-tune" ''
-              NVSMI="${config.hardware.nvidia.package.bin}/bin/nvidia-smi"
-              if [ "$(${pkgs.coreutils}/bin/cat /sys/class/power_supply/A*/online 2>/dev/null | ${pkgs.coreutils}/bin/head -n 1)" = "1" ]; then
-                $NVSMI -lgc 1200,2100 || true
-              else
-                $NVSMI -rgc || true
-              fi
-            '';
-            ExecStop = "${config.hardware.nvidia.package.bin}/bin/nvidia-smi -rgc";
-          };
-        };
-
-        services.udev.extraRules = lib.mkIf (cfg.nvidia.mode == "sync") ''
-          SUBSYSTEM=="power_supply", ACTION=="change", RUN+="${pkgs.systemd}/bin/systemctl restart --no-block nvidia-sync-clocks.service"
-        '';
+        # Preserve VRAM across suspend without consuming tmpfs-backed /tmp.
+        boot.kernelParams = ["nvidia.NVreg_TemporaryFilePath=/var/tmp"];
       })
 
       # GPU: AMD
       (lib.mkIf (cfg.gpu == "amd") {
         services.xserver.videoDrivers = ["amdgpu"];
-        hardware.graphics = {
-          enable = true;
-          extraPackages = with pkgs; [
-            vaapiVdpau
-            libvdpau-va-gl
-          ];
-        };
+        hardware.graphics.enable = true;
+      })
+
+      # GPU: Intel (Mesa is provided by hardware.graphics).
+      (lib.mkIf (cfg.gpu == "intel") {
+        hardware.graphics.enable = true;
       })
     ];
   };

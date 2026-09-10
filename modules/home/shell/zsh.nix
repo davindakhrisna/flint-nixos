@@ -76,7 +76,6 @@
         tree = "eza --icons=always --tree --no-quotes";
 
         # Shortcuts
-        spt = "spotatui";
         open = "${pkgs.xdg-utils}/bin/xdg-open";
 
         notes = "nvim ~/Notes/index.md --cmd 'cd ~/notes' -c ':lua Snacks.picker.smart()'";
@@ -190,8 +189,8 @@
 
           # Suffix Aliases
           alias -s {nix,md,txt,yml,yaml,go}=nvim
-          alias -s {json,jsonl}=jless
-          alias -s {csv,tsv,parquet,pqt,arrow,db,sqlite,xls,xlsx,xlsm,xlsb,fwf}=tw
+          alias -s {json,jsonl}=nvim
+          alias -s {csv,tsv,parquet,pqt,arrow,db,sqlite,xls,xlsx,xlsm,xlsb,fwf}=nvim
           alias -s {png,jpg,jpeg,gif,pdf}=xdg-open
 
           # Global Aliases

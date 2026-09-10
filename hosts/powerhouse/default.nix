@@ -40,9 +40,6 @@
             "wheel"
             "networkmanager"
             "docker"
-            "video"
-            "audio"
-            "input"
             "adbusers"
           ];
         };
@@ -52,12 +49,34 @@
           flakePath = "/home/kryisnn/.config/flint"; # Path to your flint flake repository
           cpu = "intel";
           gpu = "nvidia";
-          nvidia.mode = "sync";
+          nvidia = {
+            open = true;
+            mode = "offload";
+            intelBusId = "PCI:0:2:0";
+            nvidiaBusId = "PCI:1:0:0";
+          };
           dualBoot = {
             enable = true;
-            windowsEntry = "uuid(XXXX-XXXX):/EFI/Microsoft/Boot/bootmgfw.efi";
+            windowsEntry = "uuid(0694-C779):/EFI/Microsoft/Boot/bootmgfw.efi";
+          };
+          features = {
+            desktop = true;
+            audio = true;
+            bluetooth = true;
+            removableStorage = true;
+            tailscale = true;
+            ollama = true;
+            docker = true;
+            waydroid = true;
+            gaming = true;
+            steamLocalTransfers = true;
+            developerKernelAccess = true;
           };
         };
+
+        # Prefer the Intel iGPU for Hyprland while keeping the Nvidia GPU
+        # available for render offload and outputs wired to it.
+        environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card";
 
         # User Configuration (Home Manager level)
         home-manager.users.kryisnn = {...}: {
@@ -71,8 +90,8 @@
             entertainment-gaming
           ];
 
-          # Dev Environment Profile: "off" | "min" | "mid" | "max"
-          dev = "max";
+          # Dev Environment Profile: "minimal" | "full"
+          dev = "full";
         };
 
         system.stateVersion = "26.05";

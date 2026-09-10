@@ -3,7 +3,10 @@
 # Game Mode Toggle (Disables animations, blur, rounding for maximum performance)
 # =============================================================================
 
-STATUS_FILE="/tmp/hypr_gamemode_active"
+RUNTIME_DIR="${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}/flint"
+mkdir -p "$RUNTIME_DIR"
+chmod 700 "$RUNTIME_DIR"
+STATUS_FILE="$RUNTIME_DIR/hypr_gamemode_active"
 
 if [ -f "$STATUS_FILE" ]; then
     # --- DISABLE GAME MODE (RESTORE AESTHETICS) ---

@@ -12,8 +12,6 @@
     systems = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
-      "aarch64-darwin"
     ];
     forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
   in {
@@ -28,16 +26,18 @@
         ];
 
         shellHook = ''
-          if [ ! -d ".venv" ]; then
-            uv venv .venv --quiet 2>/dev/null || true
+          export VIRTUAL_ENV="$PWD/.direnv/venv"
+          if [ ! -d "$VIRTUAL_ENV" ]; then
+            uv venv "$VIRTUAL_ENV" --quiet
           fi
-          if [ -d ".venv" ]; then
+          if [ -d "$VIRTUAL_ENV" ]; then
             # shellcheck disable=SC1091
-            source .venv/bin/activate 2>/dev/null || true
+            source "$VIRTUAL_ENV/bin/activate"
           fi
           echo "⚡ [Python & UV Dev Environment Loaded]"
           echo "  • Python: $(python3 --version 2>/dev/null || echo 'ready')"
           echo "  • uv:     $(uv --version 2>/dev/null || echo 'ready')"
+          echo "  • Venv:   $VIRTUAL_ENV"
         '';
       };
     });

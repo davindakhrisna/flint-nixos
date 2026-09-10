@@ -34,13 +34,13 @@
         -h, --help    Show this help message
 
       AVAILABLE STACKS:
-        ts, typescript, node   TypeScript / Node.js 22 (pnpm, bun, biome)
-        go, golang             Go (gopls, air, delve)
-        py, python, uv         Python 3 & uv (ruff, pyright, black)
-        rust, rs, cargo        Rust (cargo, rust-analyzer, clippy)
-        c, cpp, c++            C/C++ (gcc, gnumake, cmake, gdb)
-        flutter, dart          Flutter / Mobile (flutter, jdk17, android-tools)
-        nix, flake             Nix tooling (nil, alejandra, deadnix, statix)
+        ts, typescript, node   Node.js 22, TypeScript, pnpm, Yarn, Bun, Biome
+        go, golang             Go, gopls, Air, golangci-lint, Delve
+        py, python, uv         Python 3, uv, Ruff, Pyright, Black
+        rust, rs, cargo        Rust, Cargo, rust-analyzer, Clippy, rustfmt, pkg-config
+        c, cpp, c++            GCC, Make, CMake, pkg-config, clang tools, GDB, Valgrind
+        flutter, dart          Flutter, JDK 17, Android tools
+        nix, flake             Alejandra, nixfmt, nil, deadnix, statix, nix-prefetch-github
 
       CUSTOM TEMPLATES:
         Drop a directory containing a flake.nix into:
@@ -65,7 +65,7 @@
         flutter  (aliases: dart)
                  Flutter, Dart, JDK 17, Android SDK tools
         nix      (aliases: flake)
-                 Nix, Alejandra, Nixfmt, Nil LSP, Deadnix, Statix
+                 Alejandra, nixfmt, nil, deadnix, statix, nix-prefetch-github
       EOF
 
         if [ -d "$USER_TEMPLATES_DIR" ]; then
@@ -144,7 +144,7 @@
       rust     · Rust, Cargo, rust-analyzer, Clippy, rustfmt
       c        · C/C++, GCC, CMake, Clang-tools, GDB, Valgrind
       flutter  · Flutter, Dart, JDK 17, Android tools
-      nix      · Nix, Alejandra, Nil LSP, Deadnix, Statix
+      nix      · Alejandra, nixfmt, nil, Deadnix, Statix, nix-prefetch-github
       EOF
       )
 
@@ -211,14 +211,16 @@
       use flake
       EOF
 
-      # Ensure .gitignore ignores .direnv
+      # Ensure generated state and build results stay untracked.
       if [ -f .gitignore ]; then
-        if ! grep -q "^\.direnv" .gitignore; then
-          printf "\n# direnv\n.direnv/\nresult\n" >> .gitignore
+        if ! grep -qxF ".direnv/" .gitignore; then
+          printf "\n.direnv/\n" >> .gitignore
+        fi
+        if ! grep -qxF "result" .gitignore; then
+          printf "result\n" >> .gitignore
         fi
       else
         cat <<'EOF' > .gitignore
-      # direnv
       .direnv/
       result
       EOF
@@ -263,7 +265,7 @@
       'cpp:C++ development'
       'flutter:Flutter & Dart mobile development'
       'dart:Flutter & Dart mobile development'
-      'nix:Nix tooling & formatting (alejandra, nil)'
+      'nix:Nix tooling & formatting (alejandra, nixfmt, nil, deadnix, statix)'
       'flake:Nix flake tooling'
     )
 

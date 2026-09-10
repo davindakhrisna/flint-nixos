@@ -20,7 +20,7 @@ home-manager.users.kryisnn = { ... }: {
     home-manager desktop shell productivity dev
     entertainment-social entertainment-gaming
   ];
-  dev = "max";  # ← tier selector
+  dev = "full";  # or "minimal"
 };
 ```
 
@@ -30,8 +30,15 @@ home-manager.users.kryisnn = { ... }: {
 
 | File | Responsibility |
 |:-----|:---------------|
-| `base.nix` | Nix settings, kernel hardening, PipeWire, Docker, Quad9 DNS, overlays |
-| `desktop.nix` | Hyprland UWSM session, Lemurs display manager, system fonts, Flatpak |
+| `options.nix` | Shared system feature and host options, imported once by the aggregate system module |
+| `base.nix` | Nix daemon, power profiles, shell helpers, and package overlays |
+| `boot.nix` | Limine, UEFI, dual boot, and generation retention |
+| `security.nix` | Kernel/network hardening and the sandboxed Vulnix timer |
+| `networking.nix` | NetworkManager, Quad9 DNS-over-TLS/DNSSEC, and Tailscale |
+| `audio.nix` | Feature-gated PipeWire, PulseAudio compatibility, JACK, and RTKit |
+| `containers.nix` | Feature-gated Docker and Waydroid |
+| `compute.nix` | Hardware-aware Ollama service |
+| `desktop.nix` | Feature-gated Hyprland UWSM session and system fonts |
 | `hardware.nix` | Declarative `var.cpu` / `var.gpu` / `var.nvidia.mode` abstraction |
 | `gaming.nix` | Steam, GameMode, Gamescope |
 | `utils.nix` | System-wide CLI utilities and helpers |
@@ -45,8 +52,8 @@ home-manager.users.kryisnn = { ... }: {
 
 | Directory | Responsibility |
 |:----------|:---------------|
-| `desktop/` | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Swww, GTK theming |
-| `dev/` | Tiered dev tools, Nixvim (LazyVim workflow), `mkenv` bootstrapper, templates |
+| `desktop/` | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Awww, GTK theming |
+| `dev/` | Development profiles, Nixvim (LazyVim workflow), `mkenv` bootstrapper, templates |
 | `shell/` | Zsh (vi-mode, plugins), Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
 | `entertainment/` | Gaming (MangoHud, Sober) and social (Discord, Spotify) |
 | `productivity/` | Obsidian, Sioyek, TUI tools |
@@ -54,27 +61,26 @@ home-manager.users.kryisnn = { ... }: {
 
 ---
 
-## Dev Tier System
+## Development Profiles
 
 Defined in `modules/home/dev/default.nix` as an enum option:
 
 ```nix
 options.dev = lib.mkOption {
-  type = lib.types.enum [ "off" "min" "mid" "max" ];
-  default = "mid";
+  type = lib.types.enum [ "minimal" "full" ];
+  default = "minimal";
 };
 ```
 
-Each tier file uses conditional activation:
+The profiles are deliberately workstation-focused:
 
-```nix
-# min.nix  → activates when dev != "off"
-# mid.nix  → activates when dev ∈ { "mid", "max" }
-# max.nix  → activates when dev == "max"
-```
+- `minimal.nix` supplies editors, Git/GitHub, direnv, `mkenv`, daily database/container/network utilities, and AI coding tools.
+- `full.nix` inherits `minimal` and adds Godot, Blender, LibreSprite, and Winboat.
 
 > [!TIP]
-> `_mkenv.nix` lives in `dev/` and ships `mkenv`, a CLI tool that generates per-project `flake.nix` + `.envrc` files for any supported stack. Templates are stored in `dev/templates/<stack>/`.
+> Compilers, runtimes, SDKs, and formatters are not Home Manager packages. `_mkenv.nix` ships `mkenv`, which generates per-project `flake.nix` + `.envrc` files for the `c`, `go`, `ts`, `py`, `rust`, `flutter`, and `nix` stacks. Their caches and mutable state live under the ignored `.direnv/` directory.
+
+Flint itself follows the same workflow. Its tracked `.envrc` runs `use flake`, and `devShells.x86_64-linux.default` provides Alejandra, nixfmt, deadnix, statix, ShellCheck, Lua, and nix-prefetch-github.
 
 ---
 
@@ -85,19 +91,45 @@ The `var` option set in `hardware.nix` drives all hardware configuration:
 ```nix
 var = {
   cpu = "intel";          # → microcode + thermald
-  gpu = "nvidia";         # → proprietary drivers, VA-API, env vars
-  nvidia.mode = "sync";   # → PRIME sync (laptop) or "desktop" / "offload"
+  gpu = "nvidia";         # → Nvidia kernel/userspace and VA-API support
+  nvidia = {
+    open = true;           # required choice: true for Turing and newer
+    mode = "offload";     # Intel desktop with Nvidia available on demand
+    intelBusId = "PCI:0:2:0";
+    nvidiaBusId = "PCI:1:0:0";
+  };
 };
 ```
 
-Nvidia config also supports clock tuning via a systemd oneshot:
-
-```nix
-nvidia.baseClockMHz = 2100;  # applied at boot
-```
+For Wayland laptops, `offload` keeps the iGPU as the compositor device and exposes
+the `nvidia-offload` wrapper for applications that need the discrete GPU.
+Flint intentionally does not expose X11 PRIME-sync sessions: Hyprland Wayland
+under UWSM is the only supported graphical environment. Xwayland remains enabled
+strictly for application compatibility.
 
 > [!IMPORTANT]
-> Bus IDs for PRIME (`nvidia.intelBusId`, `nvidia.nvidiaBusId`) default to common values but should be verified with `lspci | grep VGA` on each machine.
+> PRIME Bus IDs (`nvidia.intelBusId`, `nvidia.nvidiaBusId`) must be obtained with `lspci` and set explicitly on each machine.
+
+CPU and GPU default to `null`, and Nvidia's kernel-module flavor and PRIME
+bus IDs have no guessed defaults. Hosts must make those hardware decisions
+explicitly.
+
+Workstation capabilities are independently selected under `var.features`:
+
+```nix
+features = {
+  desktop = true;
+  audio = true;
+  bluetooth = true;
+  docker = true;
+  gaming = true;
+  steamLocalTransfers = true;
+  developerKernelAccess = true;
+};
+```
+
+Steam firewall features default off even when gaming is enabled. Power Profiles
+Daemon remains enabled for every host to retain power-aware operation.
 
 ---
 
@@ -106,20 +138,23 @@ nvidia.baseClockMHz = 2100;  # applied at boot
 ```nix
 var.dualBoot = {
   enable = true;
-  windowsEntry = "uuid(XXXX-XXXX):/EFI/Microsoft/Boot/bootmgfw.efi";
+  windowsEntry = "uuid(EFI-UUID):/EFI/Microsoft/Boot/bootmgfw.efi";
 };
 ```
 
-Limine bootloader is configured with limited generations to keep the boot menu clean.
+Find the Windows EFI UUID with `lsblk -f`. Limine is configured with five
+generations to keep useful rollback entries without an oversized boot menu.
 
 ---
 
 ## Validation
 
 ```bash
-alejandra .                    # format
-deadnix .                      # dead code
-statix check .                 # anti-patterns
-nh os build --dry              # dry build (evaluates without applying)
-nh os switch                   # build + activate
+./scripts/check.sh             # full pre-switch protocol + dry builds
+./scripts/check.sh powerhouse  # validate only one host
+nh os switch                   # build + activate after checks pass
 ```
+
+The protocol rejects untracked Nix files, checks whitespace and formatting,
+runs deadnix and statix, evaluates every flake output, and dry-builds each
+requested host without realizing or activating the system closure.

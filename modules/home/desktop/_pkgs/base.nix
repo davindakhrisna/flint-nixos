@@ -21,7 +21,6 @@
     wiremix
     bluetui
     pamixer
-    pulseaudio
     gazelle-tui
 
     # Display & Monitor Management
@@ -36,6 +35,8 @@
     satty
     swappy
     wl-screenrec
+    hyprpicker
+    imagemagick
 
     # System & Clipboard
     cliphist
@@ -47,11 +48,65 @@
     adw-gtk3
     gsettings-desktop-schemas
     kitty
+
+    (writeShellScriptBin "flint-rofi-tools" ''
+      exec "$HOME/.config/hypr/scripts/rofi-tools.sh" "$@"
+    '')
+    (writeShellScriptBin "flint-wallpaper-picker" ''
+      exec "$HOME/.config/awww/wallpaper-picker.sh" "$@"
+    '')
   ];
 
   programs = {
     btop.enable = true;
-    helium.enable = true;
+
+    helium = {
+      enable = true;
+
+      policies = {
+        BrowserSignin = 0;
+        SyncDisabled = true;
+        SigninAllowed = false;
+
+        PasswordManagerEnabled = false;
+        AutofillAddressEnabled = false;
+        AutofillCreditCardEnabled = false;
+        SafeBrowsingEnabled = true;
+        MetricsReportingEnabled = false;
+        SpellCheckServiceEnabled = false;
+        DefaultCookiesSetting = 1;
+        DefaultGeolocationSetting = 2;
+        DefaultNotificationsSetting = 2;
+        DefaultPopupsSetting = 2;
+
+        DefaultBrowserSettingEnabled = false;
+        DeveloperToolsAvailability = 1;
+
+        DnsOverHttpsMode = "automatic";
+        DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
+
+        DefaultSearchProviderEnabled = true;
+        DefaultSearchProviderName = "Duckduckgo";
+        DefaultSearchProviderSearchURL = "https://www.duckduckgo.com/?q={searchTerms}";
+        DefaultSearchProviderSuggestURL = "https://www.duckduckgo.com/?q={searchTerms}";
+
+        NewTabPageLocation = "http://127.0.0.1:8888";
+        HomepageIsNewTabPage = false;
+        HomepageLocation = "http://127.0.0.1:8888";
+        ShowHomeButton = false;
+        RestoreOnStartup = 4;
+
+        BookmarkBarEnabled = false;
+
+        ExtensionInstallForcelist = [
+          "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimiu
+          "gcknhkkoolaabfmlnjonogaaifnjlfnp" # FoxyProxy
+          "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+          "mdjildafknihdffpkfmmpnpoiajfjnjd" # Consent-O-Matic
+          "pkehgijcmpdhfbdbbnkijodmdjhbjlgp" # Privacy Badger
+        ];
+      };
+    };
   };
 
   xdg.configFile = {
@@ -63,20 +118,6 @@
     "kitty" = {
       source = ./config/kitty;
       recursive = true;
-      force = true;
-    };
-    "gtk-3.0" = {
-      source = ./config/gtk-3.0;
-      recursive = true;
-      force = true;
-    };
-    "gtk-4.0" = {
-      source = ./config/gtk-4.0;
-      recursive = true;
-      force = true;
-    };
-    "fontconfig/fonts.conf" = {
-      source = ./config/fontconfig/fonts.conf;
       force = true;
     };
     "kdeglobals" = {
@@ -108,7 +149,7 @@
   xdg.desktopEntries.helium = {
     name = "Helium";
     genericName = "Web Browser";
-    exec = "helium --ozone-platform=x11 %U";
+    exec = "helium --ozone-platform=wayland %U";
     icon = "helium";
     terminal = false;
     categories = ["Network" "WebBrowser"];

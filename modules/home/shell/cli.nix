@@ -1,5 +1,10 @@
 {
-  flake.homeModules.utils-cli = {pkgs, ...}: {
+  flake.homeModules.utils-cli = {
+    lib,
+    osConfig ? {},
+    pkgs,
+    ...
+  }: {
     home.packages = with pkgs; [
       # Nix search & system info
       nix-search-tv
@@ -33,7 +38,7 @@
       enableZshIntegration = true;
     };
 
-    services.udiskie = {
+    services.udiskie = lib.mkIf (osConfig.var.features.removableStorage or false) {
       enable = true;
       notify = true;
       automount = true;

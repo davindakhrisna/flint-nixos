@@ -5,7 +5,7 @@
   inputs,
   ...
 }: {
-  config = lib.mkIf (config.dev != "off") {
+  config = lib.mkIf (builtins.elem config.dev ["minimal" "full"]) {
     home.sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";

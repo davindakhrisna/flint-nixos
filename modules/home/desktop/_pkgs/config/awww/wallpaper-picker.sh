@@ -12,6 +12,9 @@ WALLPAPER_DIRS=(
 # Cache directory for image preview thumbnails
 CACHE_DIR="$HOME/.cache/awww/thumbnails"
 mkdir -p "$CACHE_DIR"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/awww"
+CURRENT_FILE="$STATE_DIR/current_wallpaper"
+mkdir -p "$STATE_DIR"
 
 # Ensure awww-daemon is running
 ensure_daemon() {
@@ -54,7 +57,7 @@ if [ -n "$1" ] || [ -n "$ROFI_INFO" ]; then
         # Set wallpaper with smooth fade transition
         awww img "$TARGET" --transition-type fade --transition-duration 1.2
         # Record current wallpaper for session restore
-        echo "$TARGET" > "$HOME/.config/awww/current_wallpaper"
+        printf '%s\n' "$TARGET" > "$CURRENT_FILE"
     fi
     exit 0
 fi

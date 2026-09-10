@@ -41,10 +41,6 @@
             "seat"
             "wheel"
             "networkmanager"
-            "docker"
-            "video"
-            "audio"
-            "input"
             "adbusers"
           ];
         };
@@ -53,10 +49,16 @@
         var = {
           # CHANGEME (your hardware specs & flake path)
           flakePath = "/etc/nixos"; # CHANGEME: Path to your flake repository
-          cpu = "intel";
-          gpu = "nvidia";
-          nvidia.mode = "desktop"; # ["desktop" "offload" "sync"] -- or just comment it if you dont use nvidia
+          # Set cpu/gpu after inspecting the target hardware. Nvidia hosts must
+          # also choose nvidia.open and explicit PRIME bus IDs when applicable.
           dualBoot.enable = false; # Set to true if dual-booting with Windows
+          # Opt in to tailscale, ollama, docker, waydroid, or gaming under
+          # var.features as needed.
+          features = {
+            desktop = true;
+            audio = true;
+            removableStorage = true;
+          };
         };
 
         # User Configuration (Home Manager level)
@@ -72,8 +74,8 @@
             entertainment-gaming
           ];
 
-          # Dev Environment Profile: "off" | "min" | "mid" | "max"
-          dev = "mid"; # CHANGEME
+          # Dev Environment Profile: "minimal" | "full"
+          dev = "minimal"; # CHANGEME
         };
 
         system.stateVersion = "26.05";

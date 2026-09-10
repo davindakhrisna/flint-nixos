@@ -20,6 +20,23 @@ static int (*real_close)(int fd) = NULL;
 #define MAX_FD 65536
 static char is_hypr_cmd_sock[MAX_FD] = {0};
 
+static int escape_lua_string(const char *input, char *output, size_t output_max) {
+    size_t j = 0;
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        unsigned char ch = (unsigned char)input[i];
+        if (ch < 0x20) return 0;
+        if (ch == '"' || ch == '\\') {
+            if (j + 2 >= output_max) return 0;
+            output[j++] = '\\';
+        } else if (j + 1 >= output_max) {
+            return 0;
+        }
+        output[j++] = (char)ch;
+    }
+    output[j] = '\0';
+    return 1;
+}
+
 __attribute__((constructor))
 static void init_hooks(void) {
     if (!real_connect) real_connect = (int (*)(int, const struct sockaddr *, socklen_t))dlsym(RTLD_NEXT, "connect");
@@ -76,7 +93,9 @@ static int translate_hypr_cmd(const char *buf, size_t count, char *out, size_t o
         while (ws_len > 0 && (ws_buf[ws_len - 1] == '\n' || ws_buf[ws_len - 1] == ' ' || ws_buf[ws_len - 1] == '\r')) {
             ws_buf[--ws_len] = '\0';
         }
-        snprintf(out, out_max, "/dispatch hl.dsp.focus({ workspace = \"%s\" })", ws_buf);
+        char escaped[256] = {0};
+        if (!escape_lua_string(ws_buf, escaped, sizeof(escaped))) return 0;
+        snprintf(out, out_max, "/dispatch hl.dsp.focus({ workspace = \"%s\" })", escaped);
         return 1;
     }
 
@@ -90,7 +109,9 @@ static int translate_hypr_cmd(const char *buf, size_t count, char *out, size_t o
         while (ws_len > 0 && (ws_buf[ws_len - 1] == '\n' || ws_buf[ws_len - 1] == ' ' || ws_buf[ws_len - 1] == '\r')) {
             ws_buf[--ws_len] = '\0';
         }
-        snprintf(out, out_max, "/dispatch hl.dsp.focus({ workspace = \"%s\", on_current_monitor = true })", ws_buf);
+        char escaped[256] = {0};
+        if (!escape_lua_string(ws_buf, escaped, sizeof(escaped))) return 0;
+        snprintf(out, out_max, "/dispatch hl.dsp.focus({ workspace = \"%s\", on_current_monitor = true })", escaped);
         return 1;
     }
 
@@ -111,7 +132,9 @@ static int translate_hypr_cmd(const char *buf, size_t count, char *out, size_t o
         if (ws_len == 0) {
             snprintf(out, out_max, "/dispatch hl.dsp.workspace.toggle_special()");
         } else {
-            snprintf(out, out_max, "/dispatch hl.dsp.workspace.toggle_special(\"%s\")", ws_buf);
+            char escaped[256] = {0};
+            if (!escape_lua_string(ws_buf, escaped, sizeof(escaped))) return 0;
+            snprintf(out, out_max, "/dispatch hl.dsp.workspace.toggle_special(\"%s\")", escaped);
         }
         return 1;
     }
@@ -125,8 +148,8 @@ ssize_t write(int fd, const void *buf, size_t count) {
         char translated[512];
         if (translate_hypr_cmd((const char *)buf, count, translated, sizeof(translated))) {
             size_t tlen = strlen(translated);
-            real_write(fd, translated, tlen);
-            return count; // Return original count so caller's write loop satisfies rq.length()
+            ssize_t result = real_write(fd, translated, tlen);
+            return result < 0 ? result : (ssize_t)count;
         }
     }
     return real_write(fd, buf, count);
@@ -138,8 +161,8 @@ ssize_t send(int fd, const void *buf, size_t count, int flags) {
         char translated[512];
         if (translate_hypr_cmd((const char *)buf, count, translated, sizeof(translated))) {
             size_t tlen = strlen(translated);
-            real_send(fd, translated, tlen, flags);
-            return count;
+            ssize_t result = real_send(fd, translated, tlen, flags);
+            return result < 0 ? result : (ssize_t)count;
         }
     }
     return real_send(fd, buf, count, flags);
@@ -228,14 +251,6 @@ void gdk_window_move_to_rect(GdkWindow *window,
             mod_rect = *rect;
             mod_rect.x = 0;
             mod_rect.width = 50; // Bar width is 50px
-        }
-
-        FILE *f = fopen("/tmp/tooltip_debug.log", "a");
-        if (f) {
-            fprintf(f, "TOOLTIP HOVER: icon_y=%d icon_h=%d -> anchored EAST (x=50, cy=%d)\n",
-                    rect ? rect->y : 0, rect ? rect->height : 0,
-                    rect ? (rect->y + rect->height / 2) : 0);
-            fclose(f);
         }
 
         real_gdk_window_move_to_rect(window,
