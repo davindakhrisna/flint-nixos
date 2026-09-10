@@ -23,7 +23,7 @@ if [ -f "$CURRENT_FILE" ] && [ -s "$CURRENT_FILE" ]; then
 fi
 
 # Fallback: pick first image from wallpapers directory
-DEFAULT_WALL="$(find "$HOME/.config/awww/wallpapers" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1)"
+DEFAULT_WALL="$(find "${FLINT_DIR:-$HOME/.config/flint}/modules/home/desktop/_pkgs/config/awww/wallpapers" -maxdepth 2 -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \) 2>/dev/null | head -n 1)"
 if [ -n "$DEFAULT_WALL" ] && [ -f "$DEFAULT_WALL" ]; then
     awww img "$DEFAULT_WALL" --transition-type none
     echo "$DEFAULT_WALL" > "$CURRENT_FILE"

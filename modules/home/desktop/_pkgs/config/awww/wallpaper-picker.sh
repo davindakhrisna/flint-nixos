@@ -5,7 +5,7 @@
 
 # Wallpaper source directories
 WALLPAPER_DIRS=(
-    "$HOME/.config/awww/wallpapers"
+    "${FLINT_DIR:-$HOME/.config/flint}/modules/home/desktop/_pkgs/config/awww/wallpapers"
     # "$HOME/Pictures/Wallpaper"
 )
 
@@ -91,5 +91,5 @@ for dir in "${WALLPAPER_DIRS[@]}"; do
 done
 
 if [ "$FOUND" -eq 0 ]; then
-    echo -en "No wallpapers found in ~/.config/awww/wallpapers\0icon\x1fdialog-information\x1fnonselectable\x1ftrue\n"
+    echo -en "No wallpapers found in ${FLINT_DIR:-$HOME/.config/flint}/modules/home/desktop/_pkgs/config/awww/wallpapers\0icon\x1fdialog-information\x1fnonselectable\x1ftrue\n"
 fi
