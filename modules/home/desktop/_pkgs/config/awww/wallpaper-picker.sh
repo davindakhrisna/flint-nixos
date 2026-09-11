@@ -6,7 +6,7 @@
 # Wallpaper source directories
 WALLPAPER_DIRS=(
     "${FLINT_DIR:-$HOME/.config/flint}/modules/home/desktop/_pkgs/config/awww/wallpapers"
-    # "$HOME/Pictures/Wallpaper"
+    "$HOME/Pictures/Wallpaper"
 )
 
 # Cache directory for image preview thumbnails

@@ -3,10 +3,18 @@
     pkgs.awww
   ];
 
-  xdg.configFile."awww" = {
-    source = ./config/awww;
-    recursive = true;
-    force = true;
+  # Keep the wallpaper library in the Flint checkout.  Deploy only the
+  # runtime scripts, so Home Manager does not duplicate the image library
+  # under ~/.config/awww.
+  xdg.configFile = {
+    "awww/init.sh" = {
+      source = ./config/awww/init.sh;
+      force = true;
+    };
+    "awww/wallpaper-picker.sh" = {
+      source = ./config/awww/wallpaper-picker.sh;
+      force = true;
+    };
   };
 
   systemd.user.services = {
