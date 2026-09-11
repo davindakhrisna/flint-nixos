@@ -18,6 +18,57 @@
   flintLaunch = pkgs.writeShellScriptBin "flint-launch" ''
     exec ${pkgs.uwsm}/bin/uwsm app -- "$@"
   '';
+
+  # Helium is based on ungoogled-chromium, whose Chrome Web Store downloads
+  # are deliberately disabled.  Keep extensions in the Nix store and load the
+  # unpacked copies instead of relying on ExtensionInstallForcelist (which
+  # would ask Helium to download them at runtime).
+  heliumExtensionSources = {
+    dbepggeogbaibhgnhhndojpepiihcmeb = {
+      name = "vimium";
+      hash = "sha256-MZjCaqcZvkYt6lhQUPvtm4uAYo1X6oihE7q/UzTFUXw=";
+    };
+    gcknhkkoolaabfmlnjonogaaifnjlfnp = {
+      name = "foxyproxy";
+      hash = "sha256-TGndbBMHcmEV7WyXhkYd52x3zeRxM+fZeDfaK0yc+iA=";
+    };
+    ghmbeldphafepmbegfdlkpapadhbakde = {
+      name = "proton-pass";
+      hash = "sha256-xU0UTOYPtMGwBdHaCVOMdmo/aB2wFARiZwBzAcB1Jsg=";
+    };
+    mdjildafknihdffpkfmmpnpoiajfjnjd = {
+      name = "consent-o-matic";
+      hash = "sha256-qdMdkakBMffTyrLcPjN+Q/dfTyto5/3oEuDNJKgTvpg=";
+    };
+    pkehgijcmpdhfbdbbnkijodmdjhbjlgp = {
+      name = "privacy-badger";
+      hash = "sha256-s+9bp6ERdUJfm43voMTTxyJrwTktPPU+dgTYKhEv3yc=";
+    };
+    nngceckbapebfimnlniiiahkandclblb = {
+      name = "bitwarden";
+      hash = "sha256-0aWULZwjTQM4LamSeZMgVQZMquejLMmxV5QMhjFl1Z8=";
+    };
+  };
+
+  heliumExtensions = lib.mapAttrs (
+    extensionId: extension:
+      pkgs.stdenvNoCC.mkDerivation {
+        pname = "helium-extension-${extension.name}";
+        version = "${extensionId}-2026-09-11";
+        src = pkgs.fetchurl {
+          url = "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=150.0.0.0&acceptformat=crx2,crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc";
+          inherit (extension) hash;
+        };
+        dontUnpack = true;
+        nativeBuildInputs = [pkgs.unzip];
+        installPhase = ''
+          mkdir -p "$out"
+          # CRX3 prefixes a valid ZIP archive with its own header.  unzip
+          # extracts it correctly but returns 1 to report that prefix.
+          unzip -q "$src" -d "$out" || test -f "$out/manifest.json"
+        '';
+      }
+  ) heliumExtensionSources;
 in {
   imports = lib.optional (inputs ? helium) inputs.helium.homeModules.default;
 
@@ -80,6 +131,10 @@ in {
     helium = {
       enable = true;
 
+      flags = [
+        "--load-extension=${lib.concatStringsSep "," (map toString (builtins.attrValues heliumExtensions))}"
+      ];
+
       policies = {
         BrowserSignin = 0;
         SyncDisabled = true;
@@ -115,13 +170,6 @@ in {
 
         BookmarkBarEnabled = false;
 
-        ExtensionInstallForcelist = [
-          "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimiu
-          "gcknhkkoolaabfmlnjonogaaifnjlfnp" # FoxyProxy
-          "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
-          "mdjildafknihdffpkfmmpnpoiajfjnjd" # Consent-O-Matic
-          "pkehgijcmpdhfbdbbnkijodmdjhbjlgp" # Privacy Badger
-        ];
       };
     };
   };
