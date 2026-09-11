@@ -39,5 +39,20 @@
       updatetime = 200;
       confirm = true;
     };
+
+    # Let Kitty provide the background (including its configured opacity and
+    # blur) while retaining foreground and syntax highlight colors.
+    highlightOverride = {
+      Normal.bg = "NONE";
+      NormalNC.bg = "NONE";
+      NormalFloat.bg = "NONE";
+      FloatBorder.bg = "NONE";
+      SignColumn.bg = "NONE";
+      FoldColumn.bg = "NONE";
+      EndOfBuffer.bg = "NONE";
+      LineNr.bg = "NONE";
+      CursorLineNr.bg = "NONE";
+      WinSeparator.bg = "NONE";
+    };
   };
 }

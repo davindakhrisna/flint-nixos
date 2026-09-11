@@ -25,9 +25,15 @@ if [ -s "$TEMP_FILE" ]; then
     wl-copy --type image/png < "$TEMP_FILE"
     notify-send -u low -i camera-photo "Screenshot Taken" "Copied to clipboard. Opening annotator..."
     
-    # Open annotation tool (Satty or Swappy)
+    # Satty owns copying the annotated image.  The initial wl-copy above keeps
+    # the unedited capture available if it is cancelled; its Copy button now
+    # explicitly invokes wl-copy with the edited image.
     if command -v satty >/dev/null 2>&1; then
-        satty --filename "$TEMP_FILE" --early-exit all
+        satty --filename "$TEMP_FILE" \
+            --copy-command wl-copy \
+            --actions-on-right-click save-to-clipboard \
+            --actions-on-enter save-to-clipboard \
+            --early-exit all
     elif command -v swappy >/dev/null 2>&1; then
         swappy -f "$TEMP_FILE"
     fi

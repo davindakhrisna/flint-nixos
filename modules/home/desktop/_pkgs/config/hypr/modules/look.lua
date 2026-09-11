@@ -4,60 +4,64 @@
 -- =============================================================================
 
 hl.config({
-    general = {
-        gaps_in  = 6,
-        gaps_out = 20,
+  general = {
+    gaps_in          = 6,
+    gaps_out         = 20,
 
-        border_size = 1,
+    border_size      = 1,
 
-        col = {
-            active_border   = "rgba(255, 255, 255, 0.4)",
-            inactive_border = "rgba(0, 0, 0, 1)",
-        },
-
-        -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
-        resize_on_border = false,
-
-        allow_tearing = false,
-        layout = "dwindle",
+    col              = {
+      active_border   = "rgba(255, 255, 255, 0.4)",
+      inactive_border = "rgba(0, 0, 0, 1)",
     },
 
-    decoration = {
-        rounding       = 0,
-        rounding_power = 0,
+    -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
+    resize_on_border = false,
 
-        -- Transparency of focused and unfocused windows
-        active_opacity   = 1.0,
-        inactive_opacity = 1.0,
+    allow_tearing    = false,
+    layout           = "dwindle",
+  },
 
-        shadow = {
-            enabled      = true,
-            range        = 4,
-            render_power = 3,
-            color        = 0xee1a1a1a,
-        },
+  decoration = {
+    rounding         = 0,
+    rounding_power   = 0,
 
-        blur = {
-            enabled        = true,
-            size           = 6,
-            passes         = 2,
-            vibrancy       = 0.1696,
-            ignore_opacity = false,
-        },
+    -- Transparency of focused and unfocused windows
+    active_opacity   = 1.0,
+    inactive_opacity = 1.0,
+
+    shadow           = {
+      enabled      = true,
+      range        = 4,
+      render_power = 3,
+      color        = 0xee1a1a1a,
     },
 
-    misc = {
-        force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = true,  -- Disables the random hyprland logo / background
+    blur             = {
+      enabled        = true,
+      size           = 6,
+      passes         = 2,
+      vibrancy       = 0.1696,
+      ignore_opacity = false,
     },
+  },
 
-    cursor = {
-        no_hardware_cursors  = false, -- KMS hardware cursor plane prevents full-frame re-render on mouse movement
-        enable_hyprcursor    = true,
-        sync_gsettings_theme = true,
-    },
+  misc = {
+    force_default_wallpaper = -1,   -- Set to 0 or 1 to disable the anime mascot wallpapers
+    disable_hyprland_logo   = true, -- Disables the random hyprland logo / background
+  },
 
-    render = {
-        direct_scanout = 1, -- Direct scanout for fullscreen apps bypasses compositor
-    },
+  cursor = {
+    no_hardware_cursors  = false, -- KMS hardware cursor plane prevents full-frame re-render on mouse movement
+    enable_hyprcursor    = true,
+    sync_gsettings_theme = true,
+  },
+
+  render = {
+    -- Chromium/Helium can fail to redraw when leaving fullscreen through
+    -- direct scanout, especially on hybrid GPU systems.  Compositing the
+    -- fullscreen frame is slightly less optimal but keeps the browser
+    -- visible and interactive after Escape.
+    direct_scanout = 0,
+  },
 })

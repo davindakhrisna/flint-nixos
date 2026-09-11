@@ -15,6 +15,7 @@
     (import ./nixvim/_editor.nix {})
     (import ./nixvim/_git.nix {})
     (import ./nixvim/_keymaps.nix {})
+    (import ./nixvim/_terminal.nix {})
     (import ./nixvim/_ui.nix {})
   ]);
 }

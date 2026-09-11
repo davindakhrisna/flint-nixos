@@ -74,6 +74,9 @@
         # Change default
         vim = "nvim";
         vi = "nvim";
+        # `kitten ssh` installs kitty's terminfo on demand, avoiding terminal
+        # input/rendering glitches on hosts that do not know `xterm-kitty`.
+        ssh = "kitten ssh";
         mkdir = "mkdir -p";
         nix-shell = "nix-shell --command zsh";
         diff = "diff --color=auto";

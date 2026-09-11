@@ -37,6 +37,19 @@ _: {
       options.desc = "Quit without saving";
     }
     {
+      key = "<C-/>";
+      mode = ["n" "t"];
+      action = "<cmd>execute v:count1 . 'ToggleTerm direction=float'<CR>";
+      options.desc = "Toggle terminal";
+    }
+    # Some terminal emulators send Ctrl-/ as Ctrl-_.
+    {
+      key = "<C-_>";
+      mode = ["n" "t"];
+      action = "<cmd>execute v:count1 . 'ToggleTerm direction=float'<CR>";
+      options.desc = "Toggle terminal";
+    }
+    {
       key = "<C-h>";
       mode = "n";
       action = "<C-w>h";

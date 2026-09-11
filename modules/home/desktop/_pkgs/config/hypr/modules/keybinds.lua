@@ -17,7 +17,17 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(launcher))
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + W", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + W", function()
+  local window = hl.get_active_window()
+  if window == nil then return end
+
+  if window.floating then
+    hl.dispatch(hl.dsp.window.float({ action = "unset" }))
+  else
+    hl.dispatch(hl.dsp.window.float({ action = "set" }))
+    hl.dispatch(hl.dsp.window.center())
+  end
+end)
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(app .. "hyprlock"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
