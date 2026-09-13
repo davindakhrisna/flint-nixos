@@ -240,6 +240,20 @@ in {
     '';
   };
 
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = "helium.desktop";
+      "text/xml" = "helium.desktop";
+      "application/xhtml+xml" = "helium.desktop";
+      "x-scheme-handler/http" = "helium.desktop";
+      "x-scheme-handler/https" = "helium.desktop";
+      "x-scheme-handler/about" = "helium.desktop";
+      "x-scheme-handler/unknown" = "helium.desktop";
+      "x-scheme-handler/discord" = "vesktop.desktop";
+    };
+  };
+
   # KIO's SMB worker delegates credential prompts to kpasswdserver, which is
   # hosted by kiod. Plasma starts it automatically; standalone Hyprland does
   # not, so start it with the graphical session.
