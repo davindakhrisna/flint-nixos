@@ -81,7 +81,6 @@ in {
     kdePackages.kio-extras
     kdePackages.kio-fuse
     kdePackages.kwallet
-    kdePackages.kwallet-pam
     kdePackages.kwalletmanager
 
     # Audio & Bluetooth
@@ -189,6 +188,14 @@ in {
       source = ./config/kdeglobals;
       force = true;
     };
+    "kwalletrc" = {
+      force = true;
+      text = ''
+        [Wallet]
+        Default Wallet=kdewallet
+        Enabled=false
+      '';
+    };
     "electron-flags.conf" = {
       source = ./config/electron-flags.conf;
       force = true;
@@ -233,20 +240,21 @@ in {
     '';
   };
 
-  # Ly passes the login password to KWallet through PAM. Hyprland does not
-  # provide Plasma's startup target, so connect to that PAM socket explicitly.
-  systemd.user.services.plasma-kwallet-pam = {
+  # KIO's SMB worker delegates credential prompts to kpasswdserver, which is
+  # hosted by kiod. Plasma starts it automatically; standalone Hyprland does
+  # not, so start it with the graphical session.
+  systemd.user.services.kde-kiod = {
     Unit = {
-      Description = "Unlock KWallet from PAM credentials";
+      Description = "KDE I/O daemon";
       PartOf = ["graphical-session.target"];
       After = ["graphical-session-pre.target"];
     };
-    Install = {
-      WantedBy = ["graphical-session.target"];
-    };
+    Install.WantedBy = ["graphical-session.target"];
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
+      ExecStart = "${pkgs.kdePackages.kio}/libexec/kf6/kiod6";
+      Restart = "on-failure";
     };
   };
+
 }
