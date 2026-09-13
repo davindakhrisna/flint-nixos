@@ -36,7 +36,6 @@
       };
 
       home.packages = with pkgs; [
-        # Game Compatibility & Launchers
         protonup-qt
         heroic
         gamescope

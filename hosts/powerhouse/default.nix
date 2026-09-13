@@ -22,16 +22,13 @@
         };
       }
 
-      # System modules
       self.nixosModules.system
 
-      # Host-specific Configuration
       ({pkgs, ...}: {
         networking.hostName = "powerhouse";
         time.timeZone = "Asia/Jakarta";
         i18n.defaultLocale = "en_US.UTF-8";
 
-        # User Account (System-level)
         users.users.kryisnn = {
           isNormalUser = true;
           shell = pkgs.zsh;
@@ -44,9 +41,8 @@
           ];
         };
 
-        # Hardware & Flake Path
         var = {
-          flakePath = "/home/kryisnn/.config/flint"; # Path to your flint flake repository
+          flakePath = "/home/kryisnn/.config/flint";
           cpu = "intel";
           gpu = "nvidia";
           nvidia = {
@@ -74,14 +70,7 @@
           };
         };
 
-        # Prefer the Intel iGPU for Hyprland while keeping the Nvidia GPU
-        # available for render offload and outputs wired to it.
-        # Aquamarine uses ':' as the device-list separator, so PCI by-path
-        # names (which contain ':') cannot be used here.  Keep the integrated
-        # Intel GPU primary and the NVIDIA GPU secondary for hybrid rendering.
         environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
-
-        # User Configuration (Home Manager level)
         home-manager.users.kryisnn = {...}: {
           imports = with self.homeModules; [
             home-manager
@@ -93,7 +82,6 @@
             entertainment-gaming
           ];
 
-          # Dev Environment Profile: "minimal" | "full"
           dev = "full";
         };
 
