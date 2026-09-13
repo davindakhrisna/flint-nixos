@@ -50,5 +50,22 @@ _: {
         };
       };
     };
+    security.polkit.extraConfig = ''
+      polkit.addRule(function(action, subject) {
+        if (
+          subject.isInGroup("wheel") &&
+          (
+            action.id === "org.freedesktop.udisks2.filesystem-mount-system" ||
+            action.id === "org.freedesktop.udisks2.filesystem-mount" ||
+            action.id === "org.freedesktop.udisks2.encrypted-unlock-system" ||
+            action.id === "org.freedesktop.udisks2.filesystem-mount-other-seat" ||
+            action.id === "org.freedesktop.udisks2.filesystem-unmount-others" ||
+            action.id === "org.freedesktop.udisks2.power-off-drive-system"
+          )
+        ) {
+          return polkit.Result.YES;
+        }
+      });
+    '';
   };
 }

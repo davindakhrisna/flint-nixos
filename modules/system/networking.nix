@@ -14,6 +14,16 @@ _: {
 
     services = {
       tailscale.enable = config.var.features.tailscale;
+      avahi = {
+        enable = true;
+        nssmdns4 = true;
+        openFirewall = true;
+      };
+      samba-wsdd = {
+        enable = true;
+        openFirewall = true;
+      };
+      gvfs.enable = true;
       resolved = {
         enable = true;
         settings.Resolve = {

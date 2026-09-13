@@ -76,8 +76,12 @@ in {
     wtype
     pinentry-gnome3
 
-    # File manager
+    # File manager & network storage
     kdePackages.dolphin
+    kdePackages.kio-extras
+    kdePackages.kio-fuse
+    kdePackages.kwallet
+    kdePackages.kwalletmanager
 
     # Audio & Bluetooth
     wiremix

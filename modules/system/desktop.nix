@@ -37,8 +37,12 @@
         QT_STYLE_OVERRIDE = "adwaita-dark";
       };
 
-      # PAM authentication for Hyprlock (instant zero-delay login)
-      security.pam.services.hyprlock = {};
+      # PAM authentication for Hyprlock and KWallet auto-unlock
+      security.pam.services = {
+        hyprlock.kwallet.enable = true;
+        ly.kwallet.enable = true;
+        login.kwallet.enable = true;
+      };
 
       hardware.bluetooth = {
         enable = config.var.features.bluetooth;
