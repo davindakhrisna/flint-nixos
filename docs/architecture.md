@@ -138,12 +138,13 @@ Daemon remains enabled for every host to retain power-aware operation.
 ```nix
 var.dualBoot = {
   enable = true;
-  windowsEntry = "uuid(EFI-UUID):/EFI/Microsoft/Boot/bootmgfw.efi";
+  windowsEntry = "uuid(EFI-PARTUUID):/EFI/Microsoft/Boot/bootmgfw.efi";
 };
 ```
 
-Find the Windows EFI UUID with `lsblk -f`. Limine is configured with five
-generations to keep useful rollback entries without an oversized boot menu.
+Find the Windows EFI PARTUUID with `lsblk -o NAME,PARTUUID` or `/dev/disk/by-partuuid`
+(Limine requires a 36-character GPT partition GUID, not a FAT32 filesystem UUID).
+Limine is configured with five generations to keep useful rollback entries without an oversized boot menu.
 
 ---
 
