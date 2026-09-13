@@ -9,22 +9,22 @@ SCRIPTS_DIR="$HOME/.config/hypr/scripts"
 if [ -n "$1" ]; then
     case "$1" in
         *"Screenshot (Regional)"*)
-            "$SCRIPTS_DIR/screenshot.sh" region >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/screenshot.sh" region) >/dev/null 2>&1 &
             ;;
         *"Screenshot (Full)"*|*"Screenshot (Full Screen)"*)
-            "$SCRIPTS_DIR/screenshot.sh" full >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/screenshot.sh" full) >/dev/null 2>&1 &
             ;;
         *"Screen Record"*)
-            "$SCRIPTS_DIR/screenrecord.sh" >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/screenrecord.sh") >/dev/null 2>&1 &
             ;;
         *"Color Picker"*)
-            "$SCRIPTS_DIR/hyprpicker.sh" >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/hyprpicker.sh") >/dev/null 2>&1 &
             ;;
         *"Game Mode"*)
-            "$SCRIPTS_DIR/gamemode.sh" >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/gamemode.sh") >/dev/null 2>&1 &
             ;;
         *"Focus Mode"*)
-            "$SCRIPTS_DIR/focusmode.sh" >/dev/null 2>&1 &
+            (sleep 0.5; "$SCRIPTS_DIR/focusmode.sh") >/dev/null 2>&1 &
             ;;
     esac
     exit 0

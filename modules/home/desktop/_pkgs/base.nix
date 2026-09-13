@@ -32,10 +32,6 @@
       name = "foxyproxy";
       hash = "sha256-TGndbBMHcmEV7WyXhkYd52x3zeRxM+fZeDfaK0yc+iA=";
     };
-    ghmbeldphafepmbegfdlkpapadhbakde = {
-      name = "proton-pass";
-      hash = "sha256-xU0UTOYPtMGwBdHaCVOMdmo/aB2wFARiZwBzAcB1Jsg=";
-    };
     mdjildafknihdffpkfmmpnpoiajfjnjd = {
       name = "consent-o-matic";
       hash = "sha256-qdMdkakBMffTyrLcPjN+Q/dfTyto5/3oEuDNJKgTvpg=";
@@ -123,6 +119,9 @@ in {
     (writeShellScriptBin "flint-wallpaper-picker" ''
       exec "$HOME/.config/awww/wallpaper-picker.sh" "$@"
     '')
+    (writeShellScriptBin "flint-powermenu" ''
+      exec "$HOME/.config/hypr/scripts/powermenu.sh" "$@"
+    '')
   ];
 
   programs = {
@@ -154,18 +153,14 @@ in {
         DefaultBrowserSettingEnabled = false;
         DeveloperToolsAvailability = 1;
 
-        DnsOverHttpsMode = "automatic";
-        DnsOverHttpsTemplates = "https://dns.quad9.net/dns-query";
-
         DefaultSearchProviderEnabled = true;
         DefaultSearchProviderName = "Duckduckgo";
         DefaultSearchProviderSearchURL = "https://www.duckduckgo.com/?q={searchTerms}";
         DefaultSearchProviderSuggestURL = "https://www.duckduckgo.com/?q={searchTerms}";
 
-        NewTabPageLocation = "http://127.0.0.1:8888";
-        HomepageIsNewTabPage = false;
-        HomepageLocation = "http://127.0.0.1:8888";
-        ShowHomeButton = false;
+        HomepageIsNewTabPage = true;
+        HomepageLocation = "https://homelab.auxois-searobin.ts.net/";
+        ShowHomeButton = true;
         RestoreOnStartup = 4;
 
         BookmarkBarEnabled = false;
@@ -214,9 +209,6 @@ in {
     };
   };
 
-  # A user-local desktop entry takes precedence over the package entry. Manage
-  # it directly so upgrades cannot leave an old X11 launcher shadowing this
-  # Wayland/dark-mode command.
   xdg.dataFile."applications/helium.desktop" = {
     force = true;
     text = ''

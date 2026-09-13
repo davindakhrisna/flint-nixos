@@ -25,9 +25,11 @@ hl.bind(mainMod .. " + W", function()
     hl.dispatch(hl.dsp.window.float({ action = "unset" }))
   else
     hl.dispatch(hl.dsp.window.float({ action = "set" }))
+    hl.dispatch(hl.dsp.window.resize({ x = 1024, y = 768 }))
     hl.dispatch(hl.dsp.window.center())
   end
 end)
+
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(app .. "hyprlock"))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 
@@ -92,6 +94,9 @@ hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(scriptsDir .. "/gamemode.sh")
 
 -- Focus Mode Toggle
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(scriptsDir .. "/focusmode.sh"))
+
+-- Power Menu
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(scriptsDir .. "/powermenu.sh"))
 
 -- =============================================================================
 -- Apps
