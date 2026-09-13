@@ -71,8 +71,45 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  name   = "center-file-dialog",
-  match  = { title = "^(Open|Open File|Save|Save File|Select Folder|Choose File|Choose Folder).*" },
+  name   = "center-modal-dialogs",
+  match  = { modal = true },
+  float  = true,
+  center = true,
+})
+
+hl.window_rule({
+  name   = "center-all-floating",
+  match  = {
+    float = true,
+    class = ".+",
+  },
+  center = true,
+})
+
+hl.window_rule({
+  name   = "center-system-dialogs",
+  match  = {
+    class = "^(xdg-desktop-portal-.*|org\\.freedesktop\\.impl\\.portal\\..*|.*polkit.*|pavucontrol)$",
+  },
+  float  = true,
+  center = true,
+})
+
+hl.window_rule({
+  name   = "center-common-dialogs",
+  match  = {
+    title = "^(Open.*|Save.*|Select.*|Choose.*|Preferences.*|Settings.*|Confirm.*|Properties.*|About.*|Export.*|Insert.*)",
+  },
+  float  = true,
+  center = true,
+})
+
+hl.window_rule({
+  name   = "center-onlyoffice-dialogs",
+  match  = {
+    class = "^(ONLYOFFICE|DesktopEditors)$",
+    title = "negative:^(ONLYOFFICE)$",
+  },
   float  = true,
   center = true,
 })
