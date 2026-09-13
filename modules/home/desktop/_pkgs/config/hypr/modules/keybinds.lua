@@ -7,7 +7,7 @@ local mainMod     = "SUPER"
 
 -- Applications & Launchers
 local app         = "flint-launch "
-local terminal    = app .. 'kitty zsh -c "fetch || true; exec zsh"'
+local terminal    = app .. 'kitty "$HOME/.config/hypr/scripts/terminal-fetch.sh"'
 local fileManager = app .. "dolphin"
 local menu        = app .. "rofi -show drun"
 local launcher    = app .. "rofi -show drun"

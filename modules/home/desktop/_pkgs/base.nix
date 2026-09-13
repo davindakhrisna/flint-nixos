@@ -81,6 +81,7 @@ in {
     kdePackages.kio-extras
     kdePackages.kio-fuse
     kdePackages.kwallet
+    kdePackages.kwallet-pam
     kdePackages.kwalletmanager
 
     # Audio & Bluetooth
@@ -232,9 +233,11 @@ in {
     '';
   };
 
-  systemd.user.services.polkit-gnome-authentication-agent-1 = {
+  # Ly passes the login password to KWallet through PAM. Hyprland does not
+  # provide Plasma's startup target, so connect to that PAM socket explicitly.
+  systemd.user.services.plasma-kwallet-pam = {
     Unit = {
-      Description = "polkit-gnome-authentication-agent-1";
+      Description = "Unlock KWallet from PAM credentials";
       PartOf = ["graphical-session.target"];
       After = ["graphical-session-pre.target"];
     };
@@ -243,10 +246,7 @@ in {
     };
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
-      Restart = "on-failure";
-      RestartSec = 1;
-      TimeoutStopSec = 10;
+      ExecStart = "${pkgs.kdePackages.kwallet-pam}/libexec/pam_kwallet_init";
     };
   };
 }

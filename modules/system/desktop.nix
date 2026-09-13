@@ -40,8 +40,14 @@
       # PAM authentication for Hyprlock and KWallet auto-unlock
       security.pam.services = {
         hyprlock.kwallet.enable = true;
-        ly.kwallet.enable = true;
-        login.kwallet.enable = true;
+        ly.kwallet = {
+          enable = true;
+          forceRun = true;
+        };
+        login.kwallet = {
+          enable = true;
+          forceRun = true;
+        };
       };
 
       hardware.bluetooth = {
