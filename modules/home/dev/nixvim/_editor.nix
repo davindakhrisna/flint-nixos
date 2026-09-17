@@ -18,6 +18,8 @@ _: {
           lsp_format = "fallback";
         };
         formatters_by_ft = {
+          c = ["clang_format"];
+          cpp = ["clang_format"];
           nix = ["alejandra"];
           lua = ["stylua"];
           javascript = ["prettier"];
@@ -61,6 +63,7 @@ _: {
       inlayHints = true;
       servers = {
         nil_ls.enable = true;
+        clangd.enable = true;
         lua_ls.enable = true;
         bashls.enable = true;
         rust_analyzer = {
