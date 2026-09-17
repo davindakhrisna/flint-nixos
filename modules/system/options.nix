@@ -25,15 +25,16 @@ _: {
         audio = lib.mkEnableOption "PipeWire audio";
         bluetooth = lib.mkEnableOption "Bluetooth support";
         removableStorage = lib.mkEnableOption "UDisks removable-storage support";
+        developerKernelAccess = lib.mkEnableOption "debugging and performance profiling";
         tailscale = lib.mkEnableOption "Tailscale networking";
         ollama = lib.mkEnableOption "the Ollama model server";
         docker = lib.mkEnableOption "Docker containers";
         waydroid = lib.mkEnableOption "Waydroid Android containers";
+        libvirt = lib.mkEnableOption "Libvirt daemon and Virt-Manager for KVM virtualization";
         gaming = lib.mkEnableOption "Steam and system gaming support";
         steamRemotePlay = lib.mkEnableOption "Steam Remote Play firewall ports";
         steamDedicatedServer = lib.mkEnableOption "Steam dedicated-server firewall ports";
         steamLocalTransfers = lib.mkEnableOption "Steam local-transfer firewall ports";
-        developerKernelAccess = lib.mkEnableOption "debugging and performance profiling";
       };
     };
 

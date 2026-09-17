@@ -56,7 +56,7 @@ _: {
         bruno
         google-antigravity-ide
         codex
-        claude-code
+        opencode
       ];
     };
   };

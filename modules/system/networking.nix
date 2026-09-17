@@ -11,6 +11,7 @@ _: {
         wifi.backend = "wpa_supplicant";
       };
     };
+    systemd.services.NetworkManager-wait-online.enable = false;
 
     services = {
       tailscale.enable = config.var.features.tailscale;

@@ -3,9 +3,6 @@
   pkgs,
   ...
 }: let
-  # Hyprland 0.56 uses Lua dispatch expressions while Waybar still emits
-  # legacy workspace IPC. The shim also preserves the vertical-bar tooltip
-  # placement. Keep it scoped to Waybar and build it from reviewed source.
   compatibilityShim = pkgs.stdenv.mkDerivation {
     pname = "flint-waybar-hyprland-compat";
     version = "0.56";

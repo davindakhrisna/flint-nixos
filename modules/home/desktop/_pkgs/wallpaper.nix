@@ -3,9 +3,6 @@
     pkgs.awww
   ];
 
-  # Keep the wallpaper library in the Flint checkout.  Deploy only the
-  # runtime scripts, so Home Manager does not duplicate the image library
-  # under ~/.config/awww.
   xdg.configFile = {
     "awww/init.sh" = {
       source = ./config/awww/init.sh;

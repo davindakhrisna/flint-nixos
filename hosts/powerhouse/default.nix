@@ -38,6 +38,7 @@
             "networkmanager"
             "docker"
             "adbusers"
+            "libvirtd"
           ];
         };
 
@@ -56,17 +57,27 @@
             windowsEntry = "uuid(dc68ee6b-9b35-49c8-b40f-3995d7f44547):/EFI/Microsoft/Boot/bootmgfw.efi";
           };
           features = {
+            # Desktop
             desktop = true;
+            developerKernelAccess = true;
             audio = true;
             bluetooth = true;
             removableStorage = true;
+
+            # Mesh VPN
             tailscale = true;
-            ollama = true;
+
+            # AI
+            ollama = false;
+
+            # Virtualization
             docker = true;
             waydroid = true;
-            gaming = true;
-            steamLocalTransfers = true;
-            developerKernelAccess = true;
+            libvirt = true;
+
+            # Gaming
+            gaming = false;
+            steamLocalTransfers = false;
           };
         };
 
@@ -74,11 +85,11 @@
           imports = with self.homeModules; [
             home-manager
             desktop
-            shell
-            productivity
             dev
             entertainment-social
             entertainment-gaming
+            shell
+            productivity
           ];
 
           dev = "full";

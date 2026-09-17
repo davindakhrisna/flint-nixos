@@ -196,22 +196,6 @@ in {
         Enabled=false
       '';
     };
-    "electron-flags.conf" = {
-      source = ./config/electron-flags.conf;
-      force = true;
-    };
-    "code-flags.conf" = {
-      source = ./config/code-flags.conf;
-      force = true;
-    };
-    "obsidian-flags.conf" = {
-      source = ./config/obsidian-flags.conf;
-      force = true;
-    };
-    "spotify-flags.conf" = {
-      source = ./config/spotify-flags.conf;
-      force = true;
-    };
     "systemd/user/xdg-desktop-portal-gtk.service.d/theme.conf" = {
       force = true;
       text = ''
