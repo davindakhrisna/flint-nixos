@@ -12,11 +12,11 @@
       areofyl-fetch
 
       # Modern CLI replacements
-      bat # cat
-      duf # df
-      eza # ls
-      ripgrep # grep
-      fd # find
+      bat       # cat
+      duf       # df
+      eza       # ls
+      ripgrep   # grep
+      fd        # find
 
       # Compatibility & execution
       appimage-run

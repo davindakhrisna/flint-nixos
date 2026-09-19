@@ -7,7 +7,7 @@ _: {
     ...
   }: {
     imports = [
-      ./_nixvim.nix
+      ./_lazyvim.nix
       ./_mkenv.nix
     ];
 
@@ -54,7 +54,7 @@ _: {
         netcat-gnu
         dbgate
         bruno
-        google-antigravity-ide
+        google-antigravity-cli
         codex
         opencode
       ];

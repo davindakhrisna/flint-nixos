@@ -1,7 +1,7 @@
 <p align="center">
   <strong>F L I N T</strong>
   <br>
-  <em>One flake to rule them all.</em>
+  <em>One flake to rule them all</em>
 </p>
 
 ---
@@ -21,7 +21,7 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 |:------|:-------------|
 | **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers |
 | **Shell** | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
-| **Editor** | Nixvim (LazyVim workflow) — Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
+| **Editor** | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
 | **Dev** | `minimal` / `full` workstation profiles, direnv + nix-direnv, `mkenv` project environments |
 | **System** | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS |
 | **Gaming** | Steam, Gamescope, MangoHud, GameMode |
@@ -33,7 +33,7 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 Set `dev = "minimal"` or `dev = "full"` per host. Both provide the daily development workstation; `full` adds resource-heavy creative and compatibility applications.
 
 ```
-minimal → Git/GitHub CLI, direnv, Nixvim, Zed, mkenv, CLI/container/database tools, AI coding tools
+minimal → Git/GitHub CLI, direnv, LazyVim, Zed, mkenv, CLI/container/database tools, AI coding tools
 full    → minimal + Godot, Blender, LibreSprite, Winboat
 ```
 
@@ -108,4 +108,4 @@ See [docs/offline-installation.md](docs/offline-installation.md) for the full gu
 
 ---
 
-<sub>NixOS unstable · flake-parts · home-manager · nixvim · hyprland</sub>
+<sub>NixOS unstable · flake-parts · home-manager · lazyvim · hyprland</sub>

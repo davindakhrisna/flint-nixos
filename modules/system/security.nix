@@ -32,7 +32,7 @@ _: {
         serviceConfig = {
           Type = "oneshot";
           ExecStart = "${pkgs.vulnix}/bin/vulnix --system";
-          Nice = 20;
+          Nice = 19;
           IOSchedulingClass = "idle";
           NoNewPrivileges = true;
           PrivateTmp = true;

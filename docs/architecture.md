@@ -53,7 +53,7 @@ home-manager.users.kryisnn = { ... }: {
 | Directory | Responsibility |
 |:----------|:---------------|
 | `desktop/` | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Awww, GTK theming |
-| `dev/` | Development profiles, Nixvim (LazyVim workflow), `mkenv` bootstrapper, templates |
+| `dev/` | Development profiles, LazyVim, `mkenv` bootstrapper, templates |
 | `shell/` | Zsh (vi-mode, plugins), Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
 | `entertainment/` | Gaming (MangoHud, Sober) and social (Discord, Spotify) |
 | `productivity/` | Obsidian, Sioyek, TUI tools |

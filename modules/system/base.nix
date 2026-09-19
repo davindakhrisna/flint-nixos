@@ -4,7 +4,6 @@
     inputs,
     ...
   }: {
-    # Retain power-aware operation across laptops and desktops.
     services.power-profiles-daemon.enable = true;
 
     programs = {
@@ -25,8 +24,6 @@
     nixpkgs.config = {
       allowUnfree = true;
       allowBroken = false;
-      # Winboat 0.9.0 cannot rebuild its native argon2 dependency for Electron
-      # 41 because its locked electron-rebuild/node-abi stack predates ABI 145.
       permittedInsecurePackages = ["electron-40.10.5"];
     };
 

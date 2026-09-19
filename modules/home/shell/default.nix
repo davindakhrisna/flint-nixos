@@ -8,7 +8,6 @@
       ];
     };
 
-    # Aliases for backwards and multi-module compatibility
     utils = self.homeModules.shell;
     shell-zsh = self.homeModules.utils-zsh;
     shell-starship = self.homeModules.utils-starship;

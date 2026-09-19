@@ -46,25 +46,27 @@
     };
   };
 
-  heliumExtensions = lib.mapAttrs (
-    extensionId: extension:
-      pkgs.stdenvNoCC.mkDerivation {
-        pname = "helium-extension-${extension.name}";
-        version = "${extensionId}-2026-09-11";
-        src = pkgs.fetchurl {
-          url = "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=150.0.0.0&acceptformat=crx2,crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc";
-          inherit (extension) hash;
-        };
-        dontUnpack = true;
-        nativeBuildInputs = [pkgs.unzip];
-        installPhase = ''
-          mkdir -p "$out"
-          # CRX3 prefixes a valid ZIP archive with its own header.  unzip
-          # extracts it correctly but returns 1 to report that prefix.
-          unzip -q "$src" -d "$out" || test -f "$out/manifest.json"
-        '';
-      }
-  ) heliumExtensionSources;
+  heliumExtensions =
+    lib.mapAttrs (
+      extensionId: extension:
+        pkgs.stdenvNoCC.mkDerivation {
+          pname = "helium-extension-${extension.name}";
+          version = "${extensionId}-2026-09-11";
+          src = pkgs.fetchurl {
+            url = "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=150.0.0.0&acceptformat=crx2,crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc";
+            inherit (extension) hash;
+          };
+          dontUnpack = true;
+          nativeBuildInputs = [pkgs.unzip];
+          installPhase = ''
+            mkdir -p "$out"
+            # CRX3 prefixes a valid ZIP archive with its own header.  unzip
+            # extracts it correctly but returns 1 to report that prefix.
+            unzip -q "$src" -d "$out" || test -f "$out/manifest.json"
+          '';
+        }
+    )
+    heliumExtensionSources;
 in {
   imports = lib.optional (inputs ? helium) inputs.helium.homeModules.default;
 
@@ -168,7 +170,6 @@ in {
         RestoreOnStartup = 4;
 
         BookmarkBarEnabled = false;
-
       };
     };
   };
@@ -182,10 +183,6 @@ in {
     "kitty" = {
       source = ./config/kitty;
       recursive = true;
-      force = true;
-    };
-    "kdeglobals" = {
-      source = ./config/kdeglobals;
       force = true;
     };
     "kwalletrc" = {
@@ -254,5 +251,4 @@ in {
       Restart = "on-failure";
     };
   };
-
 }
