@@ -4,9 +4,6 @@
   inputs,
   ...
 }: let
-  # Hyprland also ships a direct launcher named start-hyprland.  Install this
-  # wrapper at a higher Home Manager package priority so every shell resolves
-  # the UWSM-managed entry point, independent of ~/.local/bin ordering.
   startHyprland = lib.hiPrio (pkgs.writeShellScriptBin "start-hyprland" ''
     if ! ${pkgs.uwsm}/bin/uwsm check may-start; then
       echo "A UWSM session cannot be started from this login context." >&2
@@ -19,27 +16,7 @@
     exec ${pkgs.uwsm}/bin/uwsm app -- "$@"
   '';
 
-  # Helium is based on ungoogled-chromium, whose Chrome Web Store downloads
-  # are deliberately disabled.  Keep extensions in the Nix store and load the
-  # unpacked copies instead of relying on ExtensionInstallForcelist (which
-  # would ask Helium to download them at runtime).
   heliumExtensionSources = {
-    dbepggeogbaibhgnhhndojpepiihcmeb = {
-      name = "vimium";
-      hash = "sha256-MZjCaqcZvkYt6lhQUPvtm4uAYo1X6oihE7q/UzTFUXw=";
-    };
-    gcknhkkoolaabfmlnjonogaaifnjlfnp = {
-      name = "foxyproxy";
-      hash = "sha256-TGndbBMHcmEV7WyXhkYd52x3zeRxM+fZeDfaK0yc+iA=";
-    };
-    mdjildafknihdffpkfmmpnpoiajfjnjd = {
-      name = "consent-o-matic";
-      hash = "sha256-qdMdkakBMffTyrLcPjN+Q/dfTyto5/3oEuDNJKgTvpg=";
-    };
-    pkehgijcmpdhfbdbbnkijodmdjhbjlgp = {
-      name = "privacy-badger";
-      hash = "sha256-s+9bp6ERdUJfm43voMTTxyJrwTktPPU+dgTYKhEv3yc=";
-    };
     nngceckbapebfimnlniiiahkandclblb = {
       name = "bitwarden";
       hash = "sha256-0aWULZwjTQM4LamSeZMgVQZMquejLMmxV5QMhjFl1Z8=";
@@ -77,6 +54,7 @@ in {
     rofi-rbw-wayland
     wtype
     pinentry-gnome3
+    lua
 
     # File manager & network storage
     kdePackages.dolphin
@@ -137,6 +115,8 @@ in {
       enable = true;
 
       flags = [
+        "--ozone-platform=wayland"
+        "--enable-features=WaylandWindowDecorations"
         "--load-extension=${lib.concatStringsSep "," (map toString (builtins.attrValues heliumExtensions))}"
       ];
 
@@ -174,64 +154,66 @@ in {
     };
   };
 
-  xdg.configFile = {
-    "rofi" = {
-      source = ./config/rofi;
-      recursive = true;
-      force = true;
+  xdg = {
+    configFile = {
+      "rofi" = {
+        source = ./config/rofi;
+        recursive = true;
+        force = true;
+      };
+      "kitty" = {
+        source = ./config/kitty;
+        recursive = true;
+        force = true;
+      };
+      "kwalletrc" = {
+        force = true;
+        text = ''
+          [Wallet]
+          Default Wallet=kdewallet
+          Enabled=false
+        '';
+      };
+      "systemd/user/xdg-desktop-portal-gtk.service.d/theme.conf" = {
+        force = true;
+        text = ''
+          [Service]
+          Environment=GTK_THEME=adw-gtk3-dark
+        '';
+      };
     };
-    "kitty" = {
-      source = ./config/kitty;
-      recursive = true;
-      force = true;
-    };
-    "kwalletrc" = {
+
+    dataFile."applications/helium.desktop" = {
       force = true;
       text = ''
-        [Wallet]
-        Default Wallet=kdewallet
-        Enabled=false
+        [Desktop Entry]
+        Type=Application
+        Version=1.0
+        Name=Helium
+        GenericName=Web Browser
+        Comment=Browse the web
+        Exec=helium --ozone-platform=wayland --force-dark-mode %U
+        Icon=helium
+        Terminal=false
+        Categories=Network;WebBrowser;
+        MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+        StartupNotify=true
+        StartupWMClass=Helium
       '';
     };
-    "systemd/user/xdg-desktop-portal-gtk.service.d/theme.conf" = {
-      force = true;
-      text = ''
-        [Service]
-        Environment=GTK_THEME=adw-gtk3-dark
-      '';
-    };
-  };
 
-  xdg.dataFile."applications/helium.desktop" = {
-    force = true;
-    text = ''
-      [Desktop Entry]
-      Type=Application
-      Version=1.0
-      Name=Helium
-      GenericName=Web Browser
-      Comment=Browse the web
-      Exec=helium --ozone-platform=wayland --force-dark-mode %U
-      Icon=helium
-      Terminal=false
-      Categories=Network;WebBrowser;
-      MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
-      StartupNotify=true
-      StartupWMClass=Helium
-    '';
-  };
-
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications = {
-      "text/html" = "helium.desktop";
-      "text/xml" = "helium.desktop";
-      "application/xhtml+xml" = "helium.desktop";
-      "x-scheme-handler/http" = "helium.desktop";
-      "x-scheme-handler/https" = "helium.desktop";
-      "x-scheme-handler/about" = "helium.desktop";
-      "x-scheme-handler/unknown" = "helium.desktop";
-      "x-scheme-handler/discord" = "vesktop.desktop";
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "helium.desktop";
+        "text/xml" = "helium.desktop";
+        "application/xhtml+xml" = "helium.desktop";
+        "x-scheme-handler/http" = "helium.desktop";
+        "x-scheme-handler/https" = "helium.desktop";
+        "x-scheme-handler/about" = "helium.desktop";
+        "x-scheme-handler/unknown" = "helium.desktop";
+        "x-scheme-handler/discord" = "vesktop.desktop";
+      };
     };
   };
 

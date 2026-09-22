@@ -31,7 +31,8 @@
         i18n.defaultLocale = "en_US.UTF-8";
 
         # User Account (System-level)
-        users.users.yourusername = { # CHANGEME: Username
+        users.users.yourusername = {
+          # CHANGEME: Username
           isNormalUser = true;
           shell = pkgs.zsh;
           extraGroups = [
@@ -49,7 +50,7 @@
           flakePath = "/etc/nixos"; # CHANGEME: Path to your flake repository
           # CHANGEME: your hardware specs
           cpu = "intel"; # intel/amd/null
-          gpu = "amd";   # nvidia/amd/intel/null
+          gpu = "amd"; # nvidia/amd/intel/null
 
           # nvidia = {
           #   open = true;

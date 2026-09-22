@@ -45,7 +45,7 @@ hl.window_rule({
 hl.window_rule({
   name      = "clean-browser-popups",
   match     = {
-    class = "^(Helium|chromium|google-chrome)$",
+    class = "^([Hh]elium|chromium|google-chrome)$",
     float = true,
   },
   no_shadow = true,
@@ -87,21 +87,25 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  name   = "center-system-dialogs",
-  match  = {
+  name      = "center-system-dialogs",
+  match     = {
     class = "^(xdg-desktop-portal-.*|org\\.freedesktop\\.impl\\.portal\\..*|.*polkit.*|pavucontrol)$",
   },
-  float  = true,
-  center = true,
+  float     = true,
+  center    = true,
+  no_shadow = true,
+  no_blur   = true,
 })
 
 hl.window_rule({
-  name   = "center-common-dialogs",
-  match  = {
+  name      = "center-common-dialogs",
+  match     = {
     title = "^(Open.*|Save.*|Select.*|Choose.*|Preferences.*|Settings.*|Confirm.*|Properties.*|About.*|Export.*|Insert.*)",
   },
-  float  = true,
-  center = true,
+  float     = true,
+  center    = true,
+  no_shadow = true,
+  no_blur   = true,
 })
 
 hl.window_rule({

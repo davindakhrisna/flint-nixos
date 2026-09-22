@@ -46,7 +46,7 @@
 
       hardware.bluetooth = {
         enable = config.var.features.bluetooth;
-        powerOnBoot = config.var.features.bluetooth;
+        powerOnBoot = false;
       };
       services.udisks2.enable = config.var.features.removableStorage;
 

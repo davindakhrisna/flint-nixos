@@ -1,5 +1,9 @@
 _: {
-  flake.nixosModules.containers = {config, pkgs, ...}: {
+  flake.nixosModules.containers = {
+    config,
+    pkgs,
+    ...
+  }: {
     virtualisation = {
       docker.enable = config.var.features.docker;
       waydroid.enable = config.var.features.waydroid;

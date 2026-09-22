@@ -76,9 +76,29 @@
       gtk3.extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };
+      gtk3.extraCss = ''
+        decoration,
+        window.csd,
+        window.solid-csd,
+        .window-frame,
+        .window-frame:backdrop {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+      '';
       gtk4.extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };
+      gtk4.extraCss = ''
+        window.csd,
+        window.solid-csd,
+        decoration {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+      '';
     };
 
     dconf.settings = {

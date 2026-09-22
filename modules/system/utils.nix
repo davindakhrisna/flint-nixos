@@ -17,7 +17,7 @@
       # Utilities
       wget
       tmux
-      psmisc 
+      psmisc
     ];
   };
 }

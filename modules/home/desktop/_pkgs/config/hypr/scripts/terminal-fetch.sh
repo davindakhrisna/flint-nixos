@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+# shellcheck disable=SC1071
 
 # Start an interactive shell immediately when the user types. If the terminal
 # remains untouched for five seconds, show fetch before starting the shell.

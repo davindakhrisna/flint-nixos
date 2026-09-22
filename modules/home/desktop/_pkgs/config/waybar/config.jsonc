@@ -13,6 +13,7 @@
         "hyprland/submap",
         "cpu",
         "memory",
+        "custom/focusmode",
         "custom/arrow-down"
     ],
     "modules-center": [
@@ -38,7 +39,8 @@
         "justify": "center",
         "tooltip": true,
         "tooltip-format": "Launch Applications (rofi)",
-        "on-click": "flint-launch rofi -show drun"
+        "on-click": "flint-launch rofi -show drun",
+        "cursor": true
     },
     // Hyprland Workspaces
     "hyprland/workspaces": {
@@ -97,12 +99,26 @@
         "tooltip-format": "{player} ({status}): {dynamic}",
         "on-click": "playerctl play-pause",
         "on-scroll-up": "playerctl next",
-        "on-scroll-down": "playerctl previous"
+        "on-scroll-down": "playerctl previous",
+        "cursor": true
+    },
+    // Focus Mode Toggle
+    "custom/focusmode": {
+        "align": 0.5,
+        "justify": "center",
+        "exec": "~/.config/hypr/scripts/focusmode-status.sh",
+        "return-type": "json",
+        "interval": 2,
+        "signal": 8,
+        "on-click": "~/.config/hypr/scripts/focusmode.sh",
+        "cursor": true,
+        "tooltip": true
     },
     // System Tray
     "tray": {
         "icon-size": 16,
-        "spacing": 6
+        "spacing": 6,
+        "cursor": true
     },
     // Audio / Volume
     "pulseaudio": {
@@ -117,7 +133,8 @@
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-click-right": "~/.config/hypr/scripts/tui-app.sh wiremix",
         "on-scroll-up": "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+",
-        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+        "cursor": true
     },
     // Brightness / Backlight
     "backlight": {
@@ -140,7 +157,8 @@
         "tooltip-format-wifi": "Wi-Fi: {essid} ({signalStrength}%)\nIP: {ipaddr}\nUp: {bandwidthUpBytes} Down: {bandwidthDownBytes}",
         "tooltip-format-ethernet": "Ethernet: {ipaddr}\nUp: {bandwidthUpBytes} Down: {bandwidthDownBytes}",
         "tooltip-format-disconnected": "Network Disconnected",
-        "on-click": "~/.config/hypr/scripts/tui-app.sh gazelle"
+        "on-click": "~/.config/hypr/scripts/tui-app.sh gazelle",
+        "cursor": true
     },
     // Bluetooth
     "bluetooth": {
@@ -156,7 +174,8 @@
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
         "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t({device_battery_percentage}%)",
         "on-click": "~/.config/hypr/scripts/tui-app.sh bluetui",
-        "on-click-right": "~/.config/waybar/scripts/bluetooth-toggle.sh"
+        "on-click-right": "~/.config/waybar/scripts/bluetooth-toggle.sh",
+        "cursor": true
     },
     // Battery
     "battery": {
@@ -171,7 +190,8 @@
         "format-charging": "BAT\n{capacity}%+",
         "format-plugged": "BAT\n{capacity}%=",
         "tooltip-format": "Battery: {capacity}%\nStatus: {timeTo}",
-        "on-click": "~/.config/waybar/scripts/powerprofile.sh"
+        "on-click": "~/.config/waybar/scripts/powerprofile.sh",
+        "cursor": true
     },
     // CPU Usage
     "cpu": {
@@ -196,6 +216,7 @@
         "format": "",
         "tooltip": true,
         "tooltip-format": "Power Options",
-        "on-click": "flint-powermenu"
+        "on-click": "flint-powermenu",
+        "cursor": true
     }
 }

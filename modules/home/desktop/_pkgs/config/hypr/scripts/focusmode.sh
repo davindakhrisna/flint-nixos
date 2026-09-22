@@ -19,3 +19,6 @@ else
     systemctl --user stop hypridle.service 2>/dev/null || pkill -x hypridle 2>/dev/null || true
     notify-send -u normal -i preferences-desktop-screensaver "Focus Mode" "Focus Mode <b>ENABLED</b>\nIdle timer and screen lock turned off."
 fi
+
+# Signal Waybar to refresh custom/focusmode immediately (signal 8)
+pkill -RTMIN+8 waybar 2>/dev/null || true

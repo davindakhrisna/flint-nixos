@@ -2,6 +2,7 @@
   flake.nixosModules.hardware = {
     config,
     lib,
+    pkgs,
     ...
   }: let
     cfg = config.var;
@@ -21,8 +22,8 @@
 
       nvidia = {
         open = lib.mkOption {
-          type = lib.types.nullOr lib.types.bool;
-          default = null;
+          type = lib.types.bool;
+          default = true;
           description = "Use Nvidia's open kernel modules; recommended for Turing and newer GPUs";
         };
         mode = lib.mkOption {
@@ -133,6 +134,17 @@
       # GPU: Intel (Mesa is provided by hardware.graphics).
       (lib.mkIf (cfg.gpu == "intel") {
         hardware.graphics.enable = true;
+      })
+
+      # Video Acceleration: Intel VA-API & QuickSync
+      (lib.mkIf (cfg.gpu == "intel" || (cfg.gpu == "nvidia" && cfg.nvidia.igpu == "intel") || cfg.cpu == "intel") {
+        hardware.graphics = {
+          enable = true;
+          extraPackages = with pkgs; [
+            intel-media-driver # LIBVA / VA-API (iHD) driver for modern Intel GPUs
+            vpl-gpu-rt # oneVPL runtime for Intel QuickSync Video
+          ];
+        };
       })
     ];
   };

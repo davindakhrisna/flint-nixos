@@ -83,6 +83,7 @@
         # Shortcuts
         open = "${pkgs.xdg-utils}/bin/xdg-open";
         start-hyprland = "${config.home.profileDirectory}/bin/start-hyprland";
+        ncdu-clean = "ncdu ~";
 
         notes = "nvim ~/Notes/index.md --cmd 'cd ~/notes' -c ':lua Snacks.picker.smart()'";
 
