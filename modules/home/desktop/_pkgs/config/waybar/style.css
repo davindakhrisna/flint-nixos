@@ -81,6 +81,7 @@ tooltip label {
 #cpu:hover,
 #memory:hover,
 #custom-focusmode:hover,
+#tray:hover,
 #custom-power:hover {
     background-color: @base02;
     border-radius: 0;
@@ -231,14 +232,20 @@ tooltip label {
     padding: 4px 0;
 }
 
-#tray > .item {
+#tray > widget,
+#tray > .active,
+#tray > .passive,
+#tray > .needs-attention {
     padding: 2px 0;
-    transition: all 0.15s ease;
+    transition: background-color 0.15s ease;
 }
 
-#tray > .item:hover {
+#tray > widget:hover,
+#tray > .active:hover,
+#tray > .passive:hover,
+#tray > .needs-attention:hover {
     background: @base02;
-    border-radius: 2px;
+    border-radius: 0;
 }
 
 #custom-power {
