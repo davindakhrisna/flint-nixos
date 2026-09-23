@@ -9,6 +9,7 @@ _: {
     imports = [
       ./_lazyvim.nix
       ./_mkenv.nix
+      ./_skills.nix
     ];
 
     config = lib.mkIf (builtins.elem config.dev ["minimal" "full"]) {

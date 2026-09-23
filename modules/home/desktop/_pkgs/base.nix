@@ -147,6 +147,7 @@ in {
       flags = [
         "--ozone-platform=wayland"
         "--enable-features=WaylandWindowDecorations"
+        "--custom-ntp=https://homelab.auxois-searobin.ts.net/"
         "--load-extension=${lib.concatStringsSep "," (map toString ((builtins.attrValues heliumExtensions) ++ [newtabRedirectExtension]))}"
       ];
 
