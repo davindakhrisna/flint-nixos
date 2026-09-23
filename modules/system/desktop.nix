@@ -50,6 +50,30 @@
       };
       services.udisks2.enable = config.var.features.removableStorage;
 
+      # Browser Enterprise Policies (System-wide for Chromium/Helium)
+      environment.etc = {
+        "chromium/policies/managed/helium.json".text = builtins.toJSON {
+          NewTabPageLocation = "https://homelab.auxois-searobin.ts.net/";
+          HomepageIsNewTabPage = false;
+          HomepageLocation = "https://homelab.auxois-searobin.ts.net/";
+          ShowHomeButton = true;
+          RestoreOnStartup = 4;
+          RestoreOnStartupURLs = [
+            "https://homelab.auxois-searobin.ts.net/"
+          ];
+        };
+        "helium/policies/managed/helium.json".text = builtins.toJSON {
+          NewTabPageLocation = "https://homelab.auxois-searobin.ts.net/";
+          HomepageIsNewTabPage = false;
+          HomepageLocation = "https://homelab.auxois-searobin.ts.net/";
+          ShowHomeButton = true;
+          RestoreOnStartup = 4;
+          RestoreOnStartupURLs = [
+            "https://homelab.auxois-searobin.ts.net/"
+          ];
+        };
+      };
+
       # Global Fonts & Glyphs
       fonts = {
         fontconfig = {

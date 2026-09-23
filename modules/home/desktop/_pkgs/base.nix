@@ -44,6 +44,36 @@
         }
     )
     heliumExtensionSources;
+
+  newtabRedirectExtension = pkgs.linkFarm "helium-extension-newtab" [
+    {
+      name = "manifest.json";
+      path = pkgs.writeText "manifest.json" (builtins.toJSON {
+        manifest_version = 3;
+        name = "Homelab New Tab";
+        version = "1.0.0";
+        chrome_url_overrides = {
+          newtab = "newtab.html";
+        };
+      });
+    }
+    {
+      name = "newtab.html";
+      path = pkgs.writeText "newtab.html" ''
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>New Tab</title>
+            <script>
+              window.location.replace("https://homelab.auxois-searobin.ts.net/");
+            </script>
+          </head>
+          <body style="background-color: #121212;"></body>
+        </html>
+      '';
+    }
+  ];
 in {
   imports = lib.optional (inputs ? helium) inputs.helium.homeModules.default;
 
@@ -117,7 +147,7 @@ in {
       flags = [
         "--ozone-platform=wayland"
         "--enable-features=WaylandWindowDecorations"
-        "--load-extension=${lib.concatStringsSep "," (map toString (builtins.attrValues heliumExtensions))}"
+        "--load-extension=${lib.concatStringsSep "," (map toString ((builtins.attrValues heliumExtensions) ++ [newtabRedirectExtension]))}"
       ];
 
       policies = {
@@ -144,10 +174,14 @@ in {
         DefaultSearchProviderSearchURL = "https://www.duckduckgo.com/?q={searchTerms}";
         DefaultSearchProviderSuggestURL = "https://www.duckduckgo.com/?q={searchTerms}";
 
-        HomepageIsNewTabPage = true;
+        NewTabPageLocation = "https://homelab.auxois-searobin.ts.net/";
+        HomepageIsNewTabPage = false;
         HomepageLocation = "https://homelab.auxois-searobin.ts.net/";
         ShowHomeButton = true;
         RestoreOnStartup = 4;
+        RestoreOnStartupURLs = [
+          "https://homelab.auxois-searobin.ts.net/"
+        ];
 
         BookmarkBarEnabled = false;
       };
