@@ -232,15 +232,21 @@ tooltip label {
     padding: 4px 0;
 }
 
-#tray > widget,
-#tray > .active,
-#tray > .passive,
-#tray > .needs-attention {
-    padding: 2px 0;
+#tray,
+#tray * {
     transition: background-color 0.15s ease;
 }
 
+#tray > widget,
+#tray > * {
+    padding: 2px 0;
+}
+
 #tray > widget:hover,
+#tray > *:hover,
+#tray * :hover,
+#tray eventbox:hover,
+#tray image:hover,
 #tray > .active:hover,
 #tray > .passive:hover,
 #tray > .needs-attention:hover {
