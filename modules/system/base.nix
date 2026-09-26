@@ -53,6 +53,7 @@
 
     nixpkgs.overlays = [
       inputs.antigravity-nix.overlays.default
+      inputs.omp-nix.overlays.default
       (final: _: {
         areofyl-fetch = inputs.areofyl-fetch.packages.${final.stdenv.hostPlatform.system}.default;
         gazelle-tui = inputs.gazelle.packages.${final.stdenv.hostPlatform.system}.default.overrideAttrs (oldAttrs: {

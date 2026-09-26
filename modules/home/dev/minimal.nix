@@ -57,7 +57,7 @@ _: {
         bruno
         google-antigravity-cli
         codex
-        pi-coding-agent
+        oh-my-pi
       ];
     };
   };
