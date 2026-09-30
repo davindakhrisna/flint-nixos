@@ -84,6 +84,9 @@ _: {
 
     config = lib.mkIf (builtins.elem config.dev ["minimal" "maximal"]) {
       programs = {
+        # Keep terminal sessions local so Ctrl+C does not leave a shared daemon.
+        zsh.shellAliases.codex = "codex --disable daemon_auto_start";
+
         git = {
           enable = true;
           settings = {
