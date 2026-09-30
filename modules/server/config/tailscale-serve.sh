@@ -16,6 +16,7 @@ tailscale serve --bg --https=8449 http://127.0.0.1:9120
 tailscale serve --bg --https=8450 http://127.0.0.1:8000
 tailscale serve --bg --https=8451 http://127.0.0.1:8090
 tailscale serve --bg --https=8452 http://127.0.0.1:9117
+tailscale serve --bg --https=8453 http://127.0.0.1:3000
 
 if [ -n "$dns_name" ]; then
   mkdir -p /run/homelab

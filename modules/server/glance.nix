@@ -174,6 +174,13 @@ _: {
                         icon = "sh:jackett";
                         same-tab = true;
                       }
+                      {
+                        title = "Remote Browser";
+                        url = "https://\${HOMELAB_HOST}:8453";
+                        check-url = "http://127.0.0.1:3000";
+                        icon = "sh:firefox";
+                        same-tab = true;
+                      }
                     ];
                   }
                   {

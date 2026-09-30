@@ -69,3 +69,12 @@ after those services start.
 
 Keep the bundle until the machine has rebooted successfully. The previous
 system generation remains available in the boot menu for rollback.
+
+## Remote browser
+
+After deploying a configuration that includes the browser module, connect your
+phone to the tailnet and open `https://homelab.auxois-searobin.ts.net:8453`.
+Firefox runs on homelab and saves downloads to `/srv/nas/downloads`. Leaving
+the page or losing the phone connection does not stop the browser session or an
+active download. The browser image archive is included in the Nix system
+closure and loaded locally when the service starts.

@@ -27,6 +27,7 @@
       self.nixosModules.couchdb
       self.nixosModules.glance
       self.nixosModules.torrents
+      self.nixosModules.browser
 
       ({pkgs, ...}: {
         security.sudo.wheelNeedsPassword = false;
@@ -37,6 +38,7 @@
 
         users.users.kryisnn = {
           isNormalUser = true;
+          uid = 1001;
           shell = pkgs.zsh;
           extraGroups = [
             "seat"
@@ -46,6 +48,12 @@
             "adbusers"
             "libvirtd"
           ];
+        };
+
+        services.logind.settings.Login = {
+          HandleLidSwitch = "ignore";
+          HandleLidSwitchExternalPower = "ignore";
+          HandleLidSwitchDocked = "ignore";
         };
 
         var = {

@@ -19,6 +19,8 @@ _: {
         "d /srv/nas 2770 root nas -"
         "d /srv/nas/torrents 2770 qbittorrent nas -"
         "d /srv/nas/torrents/.incomplete 2770 qbittorrent nas -"
+        "d /srv/nas/downloads 2770 kryisnn nas -"
+        "d /var/lib/headless-browser 0700 kryisnn users -"
         "d /var/lib/qBittorrent/qBittorrent/data/nova3/engines 0755 qbittorrent nas -"
         "d /var/lib/jackett/.config/Jackett 0700 jackett jackett -"
         "d /var/lib/jackett/.config/Jackett/Indexers 0700 jackett jackett -"
