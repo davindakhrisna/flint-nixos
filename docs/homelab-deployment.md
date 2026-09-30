@@ -33,8 +33,8 @@ format any disk:
 
 ```bash
 bundle=/path/to/usb/flint-offline-homelab
-sudo nix copy --all --from "file://$bundle/cache"
 system_path=$(cat "$bundle/system-store-path")
+sudo nix copy --no-check-sigs --from "file://$bundle/cache" "$system_path"
 sudo nix path-info "$system_path"
 sudo nix-env --profile /nix/var/nix/profiles/system --set "$system_path"
 sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
@@ -43,6 +43,11 @@ sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
 The profile command records a bootable generation; the final command activates
 it now. No flake evaluation or source checkout is needed on homelab to switch
 this prebuilt closure.
+
+The cache is unsigned because it was exported from your own builder, so the
+import explicitly accepts it with `--no-check-sigs`. Importing only
+`system_path` also avoids copying flake inputs that are unnecessary for this
+switch.
 
 ## Provision secrets and inspect services
 

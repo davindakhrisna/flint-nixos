@@ -41,7 +41,7 @@ Flint offline installation bundle for: $host
 
 1. Mount the target filesystems under /mnt and this bundle under /mnt-usb.
 2. Import every closure and flake-input path:
-     nix copy --all --from file:///mnt-usb/cache
+     nix copy --no-check-sigs --all --from file:///mnt-usb/cache
 3. Install from the archived flake store path:
      nixos-install --flake path:$(cat "$destination/flake-store-path")#$host --no-channel-copy
 4. Set passwords when prompted, then reboot.

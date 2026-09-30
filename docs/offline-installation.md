@@ -40,7 +40,7 @@ device with `lsblk -f` before running formatting or mounting commands.
 Import the entire cache:
 
 ```bash
-nix copy --all --from file:///mnt-usb/flint-offline-powerhouse/cache
+nix copy --no-check-sigs --all --from file:///mnt-usb/flint-offline-powerhouse/cache
 ```
 
 Install from the immutable flake path recorded in the bundle:
