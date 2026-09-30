@@ -1,33 +1,15 @@
 _: {
-  flake.nixosModules.glance = {pkgs, ...}: let
-    dashboardAssets = pkgs.linkFarm "glance-assets" [
-      {
-        name = "glance.css";
-        path = ./config/glance.css;
-      }
-    ];
-  in {
+  flake.nixosModules.glance = {...}: {
     services.glance = {
       enable = true;
       settings = {
         server = {
           port = 8080;
           host = "127.0.0.1";
-          assets-path = toString dashboardAssets;
         };
         branding = {
           app-name = "Homelab";
           custom-footer = "flint · private";
-        };
-        theme = {
-          background-color = "0 0 3";
-          primary-color = "0 0 92";
-          positive-color = "0 0 72";
-          negative-color = "0 0 48";
-          contrast-multiplier = 1.2;
-          text-saturation-multiplier = 0;
-          custom-css-file = "/assets/glance.css";
-          disable-picker = true;
         };
         pages = [
           {
@@ -90,7 +72,6 @@ _: {
                 widgets = [
                   {
                     type = "server-stats";
-                    css-class = "infrastructure-card";
                     servers = [
                       {
                         type = "local";
@@ -189,7 +170,6 @@ _: {
                     limit = 10;
                     collapse-after = 10;
                     sort-by = "hot";
-                    css-class = "hacker-news-signal";
                   }
                 ];
               }
