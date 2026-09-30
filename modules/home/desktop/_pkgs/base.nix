@@ -17,6 +17,10 @@
   '';
 
   heliumExtensionSources = {
+    dhdgffkkebhmkfjojejmpbldmpobfkfo = {
+      name = "tampermonkey";
+      hash = "sha256-vK7AgsQ54RxN9oP0PQfprD1EOSUdcrkcW0Uvl32sFdU=";
+    };
     nngceckbapebfimnlniiiahkandclblb = {
       name = "bitwarden";
       hash = "sha256-0aWULZwjTQM4LamSeZMgVQZMquejLMmxV5QMhjFl1Z8=";
@@ -252,9 +256,6 @@ in {
     };
   };
 
-  # KIO's SMB worker delegates credential prompts to kpasswdserver, which is
-  # hosted by kiod. Plasma starts it automatically; standalone Hyprland does
-  # not, so start it with the graphical session.
   systemd.user.services.kde-kiod = {
     Unit = {
       Description = "KDE I/O daemon";
