@@ -29,3 +29,5 @@ require("modules.rules")
 
 -- 9. Keybindings
 require("modules.keybinds")
+
+pcall(require, "modules.lid")

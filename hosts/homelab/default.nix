@@ -14,6 +14,9 @@
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
+          extraSpecialArgs = {inherit inputs self;};
+          backupFileExtension = "backup";
+          sharedModules = [inputs.nix-flatpak.homeManagerModules.nix-flatpak];
         };
       }
 
@@ -29,7 +32,13 @@
       self.nixosModules.torrents
       self.nixosModules.browser
 
-      ({pkgs, ...}: {
+      ({
+        pkgs,
+        lib,
+        ...
+      }: {
+        boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_18;
+
         security.sudo.wheelNeedsPassword = false;
         networking.hostName = "homelab";
 
@@ -66,7 +75,7 @@
           };
           features = {
             # Desktop
-            desktop = false;
+            desktop = true;
             developerKernelAccess = true;
             audio = true;
             bluetooth = false;
@@ -86,9 +95,23 @@
           };
         };
 
-        home-manager.users.kryisnn = {
-          home.stateVersion = "26.05";
-          programs.zsh.enable = true;
+        home-manager.users.kryisnn = {lib, ...}: {
+          imports = with self.homeModules; [
+            home-manager
+            desktop
+            dev
+            entertainment-social
+            entertainment-gaming
+            shell
+            productivity
+          ];
+
+          dev = "maximal";
+          services.hypridle.enable = lib.mkForce false;
+          xdg.configFile."hypr/modules/lid.lua".text = ''
+            hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms off"), { locked = true })
+            hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms on"), { locked = true })
+          '';
         };
 
         system.stateVersion = "26.05";

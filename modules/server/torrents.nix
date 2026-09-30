@@ -66,7 +66,7 @@ _: {
           Address = "127.0.0.1";
           Port = qbittorrentPort;
           UseUPnP = false;
-          LocalHostAuth = true;
+          LocalHostAuth = false;
           AuthSubnetWhitelist = "";
           AuthSubnetWhitelistEnabled = false;
           ReverseProxySupportEnabled = true;
