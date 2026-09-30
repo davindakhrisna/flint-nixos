@@ -3,7 +3,7 @@
   lib,
   ...
 }: {
-  config = lib.mkIf (builtins.elem config.dev ["minimal" "full"]) {
+  config = lib.mkIf (builtins.elem config.dev ["minimal" "maximal"]) {
     home.file = {
       # Global Agent Skills
       ".agents/skills" = {

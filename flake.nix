@@ -16,10 +16,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    antigravity-nix = {
-      url = "github:jacopone/antigravity-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     areofyl-fetch = {
       url = "github:areofyl/fetch";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -38,10 +34,6 @@
     };
     helium = {
       url = "github:oxcl/nix-flake-helium-browser";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    omp-nix = {
-      url = "github:yuxqiu/omp-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

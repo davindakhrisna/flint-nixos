@@ -101,7 +101,7 @@
             entertainment-gaming
           ];
 
-          # Dev Environment Profile: "minimal" | "full"
+          # Dev Environment Profile: "minimal" | "maximal"
           dev = "minimal"; # CHANGEME
         };
 

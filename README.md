@@ -22,7 +22,7 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 | **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers |
 | **Shell** | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
 | **Editor** | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
-| **Dev** | `minimal` / `full` workstation profiles, direnv + nix-direnv, `mkenv` project environments |
+| **Dev** | `minimal` / `maximal` workstation profiles, direnv + nix-direnv, `mkenv` project environments |
 | **System** | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS |
 | **Gaming** | Steam, Gamescope, MangoHud, GameMode |
 
@@ -30,11 +30,11 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 
 ## Development Profiles
 
-Set `dev = "minimal"` or `dev = "full"` per host. Both provide the daily development workstation; `full` adds resource-heavy creative and compatibility applications.
+Set `dev = "minimal"` or `dev = "maximal"` per host. `maximal` includes `minimal`.
 
 ```
 minimal → Git/GitHub CLI, direnv, LazyVim, Zed, mkenv, CLI/container/database tools, AI coding tools
-full    → minimal + Godot, Blender, LibreSprite, Winboat
+maximal → minimal + Godot, Blender, LibreSprite, Winboat, RTK, Headroom, 9Router, and Graphify
 ```
 
 > [!TIP]
@@ -105,6 +105,7 @@ See [docs/offline-installation.md](docs/offline-installation.md) for the full gu
 
 - [Architecture & Module Structure](docs/architecture.md)
 - [Offline Installation Guide](docs/offline-installation.md)
+- [Maximal Coding Tools](docs/token-optimization.md)
 
 ---
 

@@ -1,20 +1,20 @@
 {self, ...}: {
   imports = [
     ./minimal.nix
-    ./full.nix
+    ./maximal.nix
   ];
 
   flake.homeModules = {
     dev = {lib, ...}: {
       options.dev = lib.mkOption {
-        type = lib.types.enum ["minimal" "full"];
+        type = lib.types.enum ["minimal" "maximal"];
         default = "minimal";
-        description = "Development workstation profile: minimal or full";
+        description = "Development workstation profile: minimal or maximal";
       };
 
       imports = with self.homeModules; [
         dev-minimal
-        dev-full
+        dev-maximal
       ];
     };
   };

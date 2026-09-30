@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: {
-  config = lib.mkIf (builtins.elem config.dev ["minimal" "full"]) {
+  config = lib.mkIf (builtins.elem config.dev ["minimal" "maximal"]) {
     home.sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
