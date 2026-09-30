@@ -48,7 +48,6 @@
         enable = config.var.features.bluetooth;
         powerOnBoot = false;
       };
-      services.udisks2.enable = config.var.features.removableStorage;
 
       # Browser Enterprise Policies (System-wide for Chromium/Helium)
       environment.etc = {

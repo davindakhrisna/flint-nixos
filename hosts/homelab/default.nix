@@ -9,22 +9,29 @@
     modules = [
       ./_hardware.nix
       inputs.home-manager.nixosModules.home-manager
+      inputs.hermes-agent.nixosModules.default
       {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          extraSpecialArgs = {inherit inputs self;};
-          backupFileExtension = "backup";
-          sharedModules = [
-            inputs.nix-flatpak.homeManagerModules.nix-flatpak
-          ];
         };
       }
 
       self.nixosModules.system
 
+      # Services
+      self.nixosModules.tailscale-server
+      self.nixosModules.nas
+      self.nixosModules.server-tmpfiles
+      self.nixosModules.services
+      self.nixosModules.couchdb
+      self.nixosModules.glance
+      self.nixosModules.torrents
+
       ({pkgs, ...}: {
+        security.sudo.wheelNeedsPassword = false;
         networking.hostName = "homelab";
+
         time.timeZone = "Asia/Jakarta";
         i18n.defaultLocale = "en_US.UTF-8";
 
@@ -43,35 +50,26 @@
 
         var = {
           flakePath = "/home/kryisnn/.config/flint";
-          cpu = "intel";
-          gpu = "nvidia";
-          nvidia = {
-            open = true;
-            mode = "desktop";
-            intelBusId = "PCI:0:2:0";
-            nvidiaBusId = "PCI:1:0:0";
-          };
+          cpu = "amd";
+          gpu = "amd";
           dualBoot = {
             enable = true;
             windowsEntry = "uuid(dc68ee6b-9b35-49c8-b40f-3995d7f44547):/EFI/Microsoft/Boot/bootmgfw.efi";
           };
           features = {
             # Desktop
-            desktop = true;
+            desktop = false;
             developerKernelAccess = true;
             audio = true;
-            bluetooth = true;
-            removableStorage = true;
-
-            # Mesh VPN
-            tailscale = true;
+            bluetooth = false;
 
             # AI
             ollama = false;
 
             # Virtualization
+            tailscale = true;
             docker = true;
-            waydroid = true;
+            waydroid = false;
             libvirt = true;
 
             # Gaming
@@ -80,18 +78,9 @@
           };
         };
 
-        home-manager.users.kryisnn = {...}: {
-          imports = with self.homeModules; [
-            home-manager
-            desktop
-            dev
-            entertainment-social
-            entertainment-gaming
-            shell
-            productivity
-          ];
-
-          dev = "maximal";
+        home-manager.users.kryisnn = {
+          home.stateVersion = "26.05";
+          programs.zsh.enable = true;
         };
 
         system.stateVersion = "26.05";

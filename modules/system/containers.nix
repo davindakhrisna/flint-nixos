@@ -17,6 +17,6 @@ _: {
       };
     };
 
-    programs.virt-manager.enable = config.var.features.libvirt;
+    programs.virt-manager.enable = config.var.features.libvirt && config.var.features.desktop;
   };
 }

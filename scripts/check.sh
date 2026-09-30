@@ -40,6 +40,7 @@ done
 
 echo "==> Checking shell scripts"
 shellcheck scripts/*.sh
+shellcheck scripts/server/*.sh modules/server/config/*.sh
 find modules/home -type f -name '*.sh' -print0 | xargs -0 shellcheck
 
 echo "==> Checking desktop configuration syntax"

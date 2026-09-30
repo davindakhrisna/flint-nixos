@@ -49,107 +49,111 @@ _: {
           RTK_TELEMETRY_DISABLED = "1";
         };
 
-        file.".codex/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
-          source = ./config/token-optimizer;
-          recursive = true;
+        file = {
+          ".codex/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
+            source = ./config/token-optimizer;
+            recursive = true;
+          };
+
+          ".codex/AGENTS.md" = lib.mkIf (config.dev == "maximal") {
+            text = ''
+              # Maximal-profile coding tools
+
+              - Always use `rtk` for supported noisy commands such as Git history, broad searches, builds, tests, and logs. Use raw commands only when exact output, complete diagnostics, unsupported flags, or security-sensitive evidence require it.
+              - Always use Headroom's MCP `headroom_compress` for large, eligible text already in context. Keep its hash and use `headroom_retrieve` when omitted details matter. Skip short text, secrets, and exact source patches. Do not proxy Codex traffic, change its OpenAI endpoint, or read its authentication files for Headroom.
+              - Before codebase exploration, check whether `./graphify-out/graph.json` exists in the current working directory. If it does, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Continue with normal file search if they decline or Graphify does not support the language.
+              - 9Router is an optional local CLI. Do not redirect Codex or Oh My Pi through it unless the user explicitly requests a provider configuration compliant with that provider's terms.
+            '';
+          };
+
+          ".omp/agent/RULES.md" = lib.mkIf (config.dev == "maximal") {
+            text = ''
+              # Graphify
+
+              Before codebase exploration, check for `./graphify-out/graph.json` in the current working directory. If it exists, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Use normal file search if they decline or Graphify does not support the language.
+            '';
+          };
         };
 
-        file.".codex/AGENTS.md" = lib.mkIf (config.dev == "maximal") {
-          text = ''
-            # Maximal-profile coding tools
-
-            - Always use `rtk` for supported noisy commands such as Git history, broad searches, builds, tests, and logs. Use raw commands only when exact output, complete diagnostics, unsupported flags, or security-sensitive evidence require it.
-            - Always use Headroom's MCP `headroom_compress` for large, eligible text already in context. Keep its hash and use `headroom_retrieve` when omitted details matter. Skip short text, secrets, and exact source patches. Do not proxy Codex traffic, change its OpenAI endpoint, or read its authentication files for Headroom.
-            - Before codebase exploration, check whether `./graphify-out/graph.json` exists in the current working directory. If it does, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Continue with normal file search if they decline or Graphify does not support the language.
-            - 9Router is an optional local CLI. Do not redirect Codex or Oh My Pi through it unless the user explicitly requests a provider configuration compliant with that provider's terms.
+        activation = {
+          installFullTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            if [[ ${lib.escapeShellArg config.dev} == maximal && -z "''${DRY_RUN_CMD:-}" ]]; then
+              ${pkgs.coreutils}/bin/timeout 300 ${lib.getExe installFullTools} ||
+                echo "Warning: 9Router installation failed; run flint-install-maximal-tools to retry." >&2
+            fi
           '';
-        };
 
-        file.".omp/agent/RULES.md" = lib.mkIf (config.dev == "maximal") {
-          text = ''
-            # Graphify
+          manageHeadroomMcp = lib.hm.dag.entryAfter ["updateAiTools"] ''
+            state_dir="$HOME/.local/state/flint"
+            state_file="$state_dir/headroom-mcp-command"
+            codex="$HOME/.local/bin/codex"
 
-            Before codebase exploration, check for `./graphify-out/graph.json` in the current working directory. If it exists, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Use normal file search if they decline or Graphify does not support the language.
-          '';
-        };
+            current_headroom() {
+              [[ -x "$codex" ]] && "$codex" mcp get headroom --json 2>/dev/null || true
+            }
 
-        activation.installFullTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
-          if [[ ${lib.escapeShellArg config.dev} == maximal && -z "''${DRY_RUN_CMD:-}" ]]; then
-            ${pkgs.coreutils}/bin/timeout 300 ${lib.getExe installFullTools} ||
-              echo "Warning: 9Router installation failed; run flint-install-maximal-tools to retry." >&2
-          fi
-        '';
+            matches_managed_headroom() {
+              ${jq} -e --arg command "$1" \
+                '.transport.command == $command
+                  and .transport.args == ["mcp", "serve"]' \
+                >/dev/null 2>&1
+            }
 
-        activation.manageHeadroomMcp = lib.hm.dag.entryAfter ["updateAiTools"] ''
-          state_dir="$HOME/.local/state/flint"
-          state_file="$state_dir/headroom-mcp-command"
-          codex="$HOME/.local/bin/codex"
+            matches_current_headroom() {
+              ${jq} -e \
+                --arg command ${lib.escapeShellArg headroomExe} \
+                --arg cache ${lib.escapeShellArg "${tiktokenCache}"} \
+                '.transport.command == $command
+                  and .transport.args == ["mcp", "serve"]
+                  and .transport.env.TIKTOKEN_CACHE_DIR == $cache
+                  and .transport.env.HEADROOM_BEACON == "off"
+                  and .transport.env.HEADROOM_MCP_CHECK_PROXY == "0"
+                  and .transport.env.HEADROOM_TELEMETRY == "off"' \
+                >/dev/null 2>&1
+            }
 
-          current_headroom() {
-            [[ -x "$codex" ]] && "$codex" mcp get headroom --json 2>/dev/null || true
-          }
-
-          matches_managed_headroom() {
-            ${jq} -e --arg command "$1" \
-              '.transport.command == $command
-                and .transport.args == ["mcp", "serve"]' \
-              >/dev/null 2>&1
-          }
-
-          matches_current_headroom() {
-            ${jq} -e \
-              --arg command ${lib.escapeShellArg headroomExe} \
-              --arg cache ${lib.escapeShellArg "${tiktokenCache}"} \
-              '.transport.command == $command
-                and .transport.args == ["mcp", "serve"]
-                and .transport.env.TIKTOKEN_CACHE_DIR == $cache
-                and .transport.env.HEADROOM_BEACON == "off"
-                and .transport.env.HEADROOM_MCP_CHECK_PROXY == "0"
-                and .transport.env.HEADROOM_TELEMETRY == "off"' \
-              >/dev/null 2>&1
-          }
-
-          if [[ ${lib.escapeShellArg config.dev} == maximal ]]; then
-            if [[ ! -x "$codex" ]]; then
-              echo "Warning: Codex is not installed yet; skipping Headroom MCP registration." >&2
-            else
-              current="$(current_headroom)"
-              if ! printf '%s' "$current" | matches_current_headroom; then
-                if [[ -n "$current" ]]; then
-                  $DRY_RUN_CMD "$codex" mcp remove headroom
+            if [[ ${lib.escapeShellArg config.dev} == maximal ]]; then
+              if [[ ! -x "$codex" ]]; then
+                echo "Warning: Codex is not installed yet; skipping Headroom MCP registration." >&2
+              else
+                current="$(current_headroom)"
+                if ! printf '%s' "$current" | matches_current_headroom; then
+                  if [[ -n "$current" ]]; then
+                    $DRY_RUN_CMD "$codex" mcp remove headroom
+                  fi
+                  $DRY_RUN_CMD "$codex" mcp add \
+                    --env HEADROOM_BEACON=off \
+                    --env HEADROOM_MCP_CHECK_PROXY=0 \
+                    --env HEADROOM_TELEMETRY=off \
+                    --env TIKTOKEN_CACHE_DIR=${tiktokenCache} \
+                    headroom -- ${headroomExe} mcp serve
                 fi
-                $DRY_RUN_CMD "$codex" mcp add \
-                  --env HEADROOM_BEACON=off \
-                  --env HEADROOM_MCP_CHECK_PROXY=0 \
-                  --env HEADROOM_TELEMETRY=off \
-                  --env TIKTOKEN_CACHE_DIR=${tiktokenCache} \
-                  headroom -- ${headroomExe} mcp serve
+                $DRY_RUN_CMD mkdir -p "$state_dir"
+                if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
+                  printf '%s\n' ${lib.escapeShellArg headroomExe} > "$state_file"
+                fi
               fi
-              $DRY_RUN_CMD mkdir -p "$state_dir"
-              if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
-                printf '%s\n' ${lib.escapeShellArg headroomExe} > "$state_file"
+            elif [[ -f "$state_file" ]]; then
+              managed_command="$(<"$state_file")"
+              current="$(current_headroom)"
+              if printf '%s' "$current" | matches_managed_headroom "$managed_command"; then
+                $DRY_RUN_CMD "$codex" mcp remove headroom
               fi
+              $DRY_RUN_CMD rm -f "$state_file"
             fi
-          elif [[ -f "$state_file" ]]; then
-            managed_command="$(<"$state_file")"
-            current="$(current_headroom)"
-            if printf '%s' "$current" | matches_managed_headroom "$managed_command"; then
-              $DRY_RUN_CMD "$codex" mcp remove headroom
-            fi
-            $DRY_RUN_CMD rm -f "$state_file"
-          fi
-        '';
+          '';
 
-        activation.removeSerena = lib.hm.dag.entryAfter ["updateAiTools"] ''
-          codex="$HOME/.local/bin/codex"
-          if [[ -x "$codex" ]] && "$codex" mcp get serena --json >/dev/null 2>&1; then
-            $DRY_RUN_CMD "$codex" mcp remove serena
-          fi
-          if [[ -x "$HOME/.local/bin/serena" ]]; then
-            $DRY_RUN_CMD ${lib.getExe pkgs.uv} tool uninstall serena-agent
-          fi
-          $DRY_RUN_CMD rm -f "$HOME/.local/state/flint/serena-mcp-command"
-        '';
+          removeSerena = lib.hm.dag.entryAfter ["updateAiTools"] ''
+            codex="$HOME/.local/bin/codex"
+            if [[ -x "$codex" ]] && "$codex" mcp get serena --json >/dev/null 2>&1; then
+              $DRY_RUN_CMD "$codex" mcp remove serena
+            fi
+            if [[ -x "$HOME/.local/bin/serena" ]]; then
+              $DRY_RUN_CMD ${lib.getExe pkgs.uv} tool uninstall serena-agent
+            fi
+            $DRY_RUN_CMD rm -f "$HOME/.local/state/flint/serena-mcp-command"
+          '';
+        };
       };
     };
   };

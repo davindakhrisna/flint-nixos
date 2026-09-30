@@ -70,7 +70,6 @@
             developerKernelAccess = true;
             audio = true;
             bluetooth = true;
-            removableStorage = true;
 
             # Mesh VPN
             tailscale = true;

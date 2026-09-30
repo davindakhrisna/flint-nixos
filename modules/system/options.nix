@@ -24,7 +24,6 @@ _: {
         desktop = lib.mkEnableOption "the UWSM-managed Hyprland Wayland workstation";
         audio = lib.mkEnableOption "PipeWire audio";
         bluetooth = lib.mkEnableOption "Bluetooth support";
-        removableStorage = lib.mkEnableOption "UDisks removable-storage support";
         developerKernelAccess = lib.mkEnableOption "debugging and performance profiling";
         tailscale = lib.mkEnableOption "Tailscale networking";
         ollama = lib.mkEnableOption "the Ollama model server";
@@ -58,10 +57,6 @@ _: {
       {
         assertion = !config.var.features.bluetooth || config.var.features.desktop;
         message = "var.features.bluetooth requires var.features.desktop.";
-      }
-      {
-        assertion = !config.var.features.removableStorage || config.var.features.desktop;
-        message = "var.features.removableStorage requires var.features.desktop.";
       }
     ];
   };

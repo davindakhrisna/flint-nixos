@@ -39,7 +39,7 @@
       enableZshIntegration = true;
     };
 
-    services.udiskie = lib.mkIf (osConfig.var.features.removableStorage or false) {
+    services.udiskie = lib.mkIf (osConfig.var.features.desktop or false) {
       enable = true;
       notify = true;
       automount = true;

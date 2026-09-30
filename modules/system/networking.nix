@@ -1,5 +1,9 @@
 _: {
-  flake.nixosModules.networking = {config, ...}: {
+  flake.nixosModules.networking = {
+    config,
+    lib,
+    ...
+  }: {
     networking = {
       nameservers = [
         "9.9.9.9"
@@ -18,11 +22,11 @@ _: {
       avahi = {
         enable = true;
         nssmdns4 = true;
-        openFirewall = true;
+        openFirewall = lib.mkDefault true;
       };
       samba-wsdd = {
         enable = true;
-        openFirewall = true;
+        openFirewall = lib.mkDefault true;
       };
       gvfs.enable = true;
       resolved = {

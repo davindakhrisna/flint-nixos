@@ -56,6 +56,7 @@
 
     config = lib.mkMerge [
       {
+        services.udisks2.enable = true;
         assertions = [
           {
             assertion = cfg.gpu != "nvidia" || cfg.nvidia.open != null;
