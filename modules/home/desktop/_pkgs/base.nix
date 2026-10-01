@@ -23,7 +23,9 @@
     };
     nngceckbapebfimnlniiiahkandclblb = {
       name = "bitwarden";
-      hash = "sha256-0aWULZwjTQM4LamSeZMgVQZMquejLMmxV5QMhjFl1Z8=";
+      version = "2026.9.2";
+      url = "https://github.com/bitwarden/clients/releases/download/browser-v2026.9.2/dist-chrome-2026.9.2.zip";
+      hash = "sha256-tNVYnbVkz1C4LFQlA+Z065ZUGAW1TZqwK/Fn5QM4kew=";
     };
   };
 
@@ -32,9 +34,9 @@
       extensionId: extension:
         pkgs.stdenvNoCC.mkDerivation {
           pname = "helium-extension-${extension.name}";
-          version = "${extensionId}-2026-09-11";
+          version = extension.version or "${extensionId}-2026-09-11";
           src = pkgs.fetchurl {
-            url = "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=150.0.0.0&acceptformat=crx2,crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc";
+            url = extension.url or "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=150.0.0.0&acceptformat=crx2,crx3&x=id%3D${extensionId}%26installsource%3Dondemand%26uc";
             inherit (extension) hash;
           };
           dontUnpack = true;
