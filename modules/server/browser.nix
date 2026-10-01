@@ -27,13 +27,15 @@ _: {
         TZ = "Asia/Jakarta";
         UMASK = "002";
         FILE_MANAGER_PATH = "/config/Downloads";
+        SELKIES_ENCODER = "h264enc";
+        SELKIES_FRAMERATE = "30,8-30";
       };
       volumes = [
         "/var/lib/headless-browser:/config"
         "/srv/nas/downloads:/config/Downloads"
         "${firefoxPolicies}:/etc/firefox/policies:ro"
       ];
-      extraOptions = ["--shm-size=1g" "--memory=2g"];
+      extraOptions = ["--device=/dev/dri" "--shm-size=1g" "--memory=4g"];
     };
   };
 }
