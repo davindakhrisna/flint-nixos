@@ -90,7 +90,6 @@ _: {
         serviceConfig = {
           ExecStartPre = ["+${prepareJackett}"];
           ReadWritePaths = ["/var/lib/secrets"];
-          StartLimitIntervalSec = 0;
         };
       };
 
@@ -112,6 +111,8 @@ _: {
         after = ["jackett.service"];
         wants = ["jackett.service"];
         serviceConfig = {
+          Restart = "on-success";
+          RestartSec = "5s";
           ReadWritePaths = [downloadDir];
           UMask = "0007";
           ExecStartPre = [
@@ -135,6 +136,8 @@ _: {
         serviceConfig = {
           Type = "oneshot";
           TimeoutStartSec = "60s";
+          Restart = "on-failure";
+          RestartSec = "20s";
           ExecStart = seedQbittorrentRss;
         };
       };

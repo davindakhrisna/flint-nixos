@@ -1,6 +1,6 @@
 _: {
   flake.nixosModules.nas = _: let
-    directInterface = "enp2s0";
+    directInterface = "enp1s0f0";
     serverAddress = "192.168.50.1/24";
     sharesPath = "/srv/nas";
   in {
@@ -41,6 +41,7 @@ _: {
     services = {
       samba = {
         enable = true;
+        nmbd.enable = false;
         openFirewall = false;
         settings = {
           global = {
