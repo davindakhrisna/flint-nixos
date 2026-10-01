@@ -102,7 +102,9 @@ _: {
         environment.JACKETT_PORT = toString jackettPort;
         serviceConfig = {
           Type = "oneshot";
-          TimeoutStartSec = "120s";
+          TimeoutStartSec = "210s";
+          Restart = "on-failure";
+          RestartSec = "30s";
           ExecStart = seedJackettIndexers;
         };
       };

@@ -4,11 +4,11 @@ set -euo pipefail
 api_key=$(</var/lib/secrets/jackett-api-key)
 jackett="http://127.0.0.1:${JACKETT_PORT}"
 
-for attempt in {1..30}; do
+for attempt in {1..180}; do
   if curl --connect-timeout 2 --max-time 5 -fsS "$jackett/api/v2.0/server/config?apikey=$api_key" >/dev/null 2>&1; then
     break
   fi
-  if [ "$attempt" -eq 30 ]; then
+  if [ "$attempt" -eq 180 ]; then
     echo "Jackett did not become ready in time" >&2
     exit 1
   fi
