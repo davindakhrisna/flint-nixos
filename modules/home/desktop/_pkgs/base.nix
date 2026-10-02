@@ -142,6 +142,9 @@ in {
     (writeShellScriptBin "flint-powermenu" ''
       exec "$HOME/.config/hypr/scripts/powermenu.sh" "$@"
     '')
+    (writeShellScriptBin "flint-reload-desktop" ''
+      exec "$HOME/.config/hypr/scripts/reload-desktop.sh" "$@"
+    '')
   ];
 
   programs = {

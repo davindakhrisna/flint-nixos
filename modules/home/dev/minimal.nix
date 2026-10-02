@@ -140,8 +140,8 @@ _: {
 
         activation.updateAiTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
           if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
-            ${pkgs.coreutils}/bin/timeout 300 ${lib.getExe updateAiTools} ||
-              echo "Warning: AI CLI update failed; the user timer will retry." >&2
+            ${pkgs.systemd}/bin/systemctl --user start --no-block flint-update-ai-tools.service ||
+              echo "Warning: AI CLI update could not start; the user timer will retry." >&2
           fi
         '';
       };
@@ -151,6 +151,7 @@ _: {
           Unit.Description = "Update Codex, OhMyPi, and Antigravity CLI";
           Service = {
             Type = "oneshot";
+            TimeoutStartSec = "5min";
             ExecStart = lib.getExe updateAiTools;
           };
         };

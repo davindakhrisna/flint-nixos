@@ -33,7 +33,7 @@ end, { desc = "Toggle Floating Window" })
 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(app .. "hyprlock"), { desc = "Lock Screen" })
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }), { desc = "Toggle Fullscreen" })
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("systemctl --user restart waybar"), { desc = "Reload Waybar" })
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(scriptsDir .. "/reload-desktop.sh"), { desc = "Reload Desktop (Waybar, Wallpaper, Rofi)" })
 hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd(scriptsDir .. "/keybinds-cheatsheet.sh"), { desc = "Keybinds Cheatsheet" })
 
 -- Window Focus (Super + Arrow keys)

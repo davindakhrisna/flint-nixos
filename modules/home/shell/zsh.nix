@@ -104,7 +104,7 @@
         gcm = "git commit -m";
 
         # Nix & System Management (nh)
-        nos = "nh os switch";
+        nos = "nh os switch --show-activation-logs";
         not = "nh os test";
         nob = "nh os boot";
         nclean = "nh clean all";
