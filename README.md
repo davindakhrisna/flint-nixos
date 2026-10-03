@@ -1,11 +1,3 @@
-<p align="center">
-  <strong>F L I N T</strong>
-  <br>
-  <em>One flake to rule them all</em>
-</p>
-
----
-
 ## What is this?
 
 Flint is my personal NixOS configuration. It manages everything from kernel parameters to Neovim keybindings in a single, reproducible flake. Drop a new host file in `hosts/`, set a few options, and `nh os switch` gives you the whole stack.
