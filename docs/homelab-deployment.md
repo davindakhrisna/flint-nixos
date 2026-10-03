@@ -74,7 +74,41 @@ system generation remains available in the boot menu for rollback.
 
 After deploying a configuration that includes the browser module, connect your
 phone to the tailnet and open `https://homelab.auxois-searobin.ts.net:8453`.
+Start it first with `sudo firefox start`; use `sudo firefox stop` to terminate
+the session and `sudo firefox status` to inspect it. Firefox stays stopped at
+boot. Glance uses its standard HTTP monitor for Remote Browser, so a stopped
+browser appears unavailable. Headroom and Obsidian Sync are omitted from the
+dashboard.
+
 Firefox runs on homelab and saves downloads to `/srv/nas/downloads`. Leaving
 the page or losing the phone connection does not stop the browser session or an
 active download. The browser image archive is included in the Nix system
 closure and loaded locally when the service starts.
+
+## Boot recovery
+
+Docker retries every 30 seconds without exhausting its boot start limit. Each
+automatically started Docker container requires Docker, starts after it is
+ready, and restarts with it. This covers FlareSolverr when slow boot I/O causes
+Docker's managed containerd to time out. Manual Firefox starts also require
+Docker, but Firefox is excluded from automatic startup.
+
+CouchDB initialization waits up to 120 seconds for its HTTP endpoint. Tmpfiles
+cleanup retries transient failures up to three times within five minutes; a
+persistent failure remains visible in `systemctl --failed`.
+
+Tmpfiles restores Hermes state ownership to `hermes:hermes`. Homelab activation
+disables the legacy `hermes-gateway` user unit, since the NixOS `hermes-agent`
+service owns that state. The `kryisnn` user belongs to the `hermes` group for
+interactive access. AI CLI updates use a shared file lock so activation and
+the user timer cannot concurrently delete an installer's staging files.
+
+After a switch or reboot, inspect both service managers:
+
+```bash
+systemctl --failed
+systemctl --user --failed
+systemctl status docker docker-firefox docker-flaresolverr hermes-agent hermes-backend
+journalctl -b -u docker -u systemd-tmpfiles-clean -u couchdb-init-databases
+journalctl --user -b -u flint-update-ai-tools
+```

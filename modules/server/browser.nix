@@ -15,11 +15,26 @@ _: {
     firefoxPolicies = pkgs.writeTextDir "policies.json" (builtins.toJSON {
       policies.DownloadDirectory = "/config/Downloads";
     });
+    firefoxCommand = pkgs.writeShellApplication {
+      name = "firefox";
+      text = ''
+        case "$#:''${1:-}" in
+          1:start|1:stop|1:restart|1:status)
+            exec ${pkgs.systemd}/bin/systemctl "$1" docker-firefox.service
+            ;;
+          *) echo "Usage: sudo firefox {start|stop|restart|status}" >&2; exit 2 ;;
+        esac
+      '';
+    };
   in {
+    environment.systemPackages = [firefoxCommand];
+
+    systemd.services.docker-firefox.requires = ["docker.service"];
+
     virtualisation.oci-containers.containers.firefox = {
       image = "${imageName}:flint";
       imageFile = firefoxImage;
-      autoStart = true;
+      autoStart = false;
       ports = ["127.0.0.1:3000:3000"];
       environment = {
         PUID = toString config.users.users.kryisnn.uid;

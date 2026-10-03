@@ -19,11 +19,16 @@ _: {
         gzip
         patchelf
         procps
+        util-linux
       ];
       text = ''
         interpreter=${lib.escapeShellArg pkgs.stdenv.cc.bintools.dynamicLinker}
         export PATH="$HOME/.local/bin:$PATH"
         mkdir -p "$HOME/.local/bin"
+        # Activation and the timer share installers with fixed staging paths.
+        mkdir -p "$HOME/.cache/flint"
+        exec 9>"$HOME/.cache/flint/update-ai-tools.lock"
+        flock 9
         status=0
 
         patch_for_nixos() {

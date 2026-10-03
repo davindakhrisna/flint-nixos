@@ -114,20 +114,6 @@ _: {
                         same-tab = true;
                       }
                       {
-                        title = "Obsidian Sync";
-                        url = "https://\${HOMELAB_HOST}:8446/_utils";
-                        check-url = "http://127.0.0.1:5984";
-                        icon = "si:obsidian";
-                        same-tab = true;
-                      }
-                      {
-                        title = "Headroom";
-                        url = "https://\${HOMELAB_HOST}:8448";
-                        check-url = "http://127.0.0.1:8787/health";
-                        icon = "mdi:brain";
-                        same-tab = true;
-                      }
-                      {
                         title = "Hermes Agent";
                         url = "https://\${HOMELAB_HOST}:8449";
                         check-url = "http://127.0.0.1:9120";
