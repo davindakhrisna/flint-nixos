@@ -30,6 +30,9 @@ _: {
         "f /run/homelab/glance.env 0644 root root - HOMELAB_HOST=homelab.auxois-searobin.ts.net"
         "f /run/homelab/hermes.env 0644 root root - -"
 
+        # Migrate state created by earlier root/user CLI sessions to the service account.
+        "Z ${hermes.stateDir}/.hermes - ${hermes.user} ${hermes.group} - -"
+
         # Service secrets
         "d /var/lib/secrets 0711 root root - -"
         "f /var/lib/secrets/vaultwarden.env 0600 root root - -"
@@ -41,6 +44,16 @@ _: {
       ];
 
       services = {
+        systemd-tmpfiles-clean = {
+          unitConfig = {
+            StartLimitIntervalSec = 300;
+            StartLimitBurst = 3;
+          };
+          serviceConfig = {
+            Restart = "on-failure";
+            RestartSec = "30s";
+          };
+        };
         vaultwarden.serviceConfig.EnvironmentFile = [
           "-/run/homelab/vaultwarden.env"
           "-/var/lib/secrets/vaultwarden.env"

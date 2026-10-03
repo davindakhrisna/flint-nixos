@@ -6,7 +6,7 @@ admin_user=$2
 password=$(<"$secret_file")
 auth_header="Authorization: Basic $(printf '%s' "${admin_user}:${password}" | base64 -w 0)"
 
-for _ in {1..30}; do
+for _ in {1..120}; do
   if curl -fsS http://127.0.0.1:5984/_up >/dev/null 2>&1; then
     break
   fi

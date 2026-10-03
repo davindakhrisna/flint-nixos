@@ -54,6 +54,7 @@
             "wheel"
             "networkmanager"
             "docker"
+            "hermes"
             "adbusers"
             "libvirtd"
           ];
@@ -107,6 +108,14 @@
           ];
 
           dev = "maximal";
+          # The NixOS Hermes service owns shared state; retire the old user gateway.
+          home.activation.disableLegacyHermesGateway = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            if [[ -z "''${DRY_RUN_CMD:-}" ]] &&
+              [[ -e "$HOME/.config/systemd/user/hermes-gateway.service" ]]; then
+              ${pkgs.systemd}/bin/systemctl --user disable --now hermes-gateway.service
+              ${pkgs.systemd}/bin/systemctl --user reset-failed hermes-gateway.service || true
+            fi
+          '';
           services.hypridle.enable = lib.mkForce false;
           xdg.configFile."hypr/modules/lid.lua".text = ''
             hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms off"), { locked = true })
