@@ -35,15 +35,6 @@ _: {
           SIGNUPS_ALLOWED = false;
         };
       };
-
-      # Hermes Agent
-      hermes-agent = {
-        enable = true;
-        settings.model.default = "anthropic/claude-sonnet-4";
-        backend.mode = "dashboard";
-        backend.port = 9120;
-        addToSystemPackages = true;
-      };
     };
   };
 }

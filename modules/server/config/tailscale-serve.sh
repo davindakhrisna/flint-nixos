@@ -6,7 +6,7 @@ done
 
 dns_name=$(tailscale status --json | jq -er '.Self.DNSName | select(type == "string" and length > 0) | rtrimstr(".")' || true)
 
-tailscale serve reset
+# Reconcile managed ports without deleting Hermes project previews.
 tailscale serve --bg --https=443 http://127.0.0.1:8080
 tailscale serve --bg --https=8443 http://127.0.0.1:2283
 tailscale serve --bg --https=8444 http://127.0.0.1:8222

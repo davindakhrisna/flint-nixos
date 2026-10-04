@@ -12,9 +12,9 @@ _: {
       rev = "0635b77ad09c36d4deca55ea044374ea66a18b94";
       hash = "sha256-FRK6W7FfM3+fci7/XRYnZlOmrviGxtp9FUC2jVRwYVw=";
     };
-    prepareJackett = pkgs.writeShellScript "prepare-jackett" (builtins.readFile ./config/prepare-jackett.sh);
-    seedJackettIndexers = pkgs.writeShellScript "seed-jackett-indexers" (builtins.readFile ./config/seed-jackett-indexers.sh);
-    seedQbittorrentRss = pkgs.writeShellScript "seed-qbittorrent-rss" (builtins.readFile ./config/seed-qbittorrent-rss.sh);
+    prepareJackett = pkgs.writeShellScript "prepare-jackett" (builtins.readFile ./config/torrent/prepare-jackett.sh);
+    seedJackettIndexers = pkgs.writeShellScript "seed-jackett-indexers" (builtins.readFile ./config/torrent/seed-jackett-indexers.sh);
+    seedQbittorrentRss = pkgs.writeShellScript "seed-qbittorrent-rss" (builtins.readFile ./config/torrent/seed-qbittorrent-rss.sh);
   in {
     virtualisation.oci-containers = {
       backend = "docker";
@@ -120,7 +120,7 @@ _: {
           ExecStartPre = [
             "${pkgs.coreutils}/bin/install -d -m 0755 /var/lib/qBittorrent/qBittorrent/data/nova3/engines"
             "${pkgs.coreutils}/bin/install -m 0444 ${searchPlugins}/nova3/engines/jackett.py /var/lib/qBittorrent/qBittorrent/data/nova3/engines/jackett.py"
-            "${pkgs.python3}/bin/python3 ${./config/apply-qbittorrent-credentials.py}"
+            "${pkgs.python3}/bin/python3 ${./config/torrent/apply-qbittorrent-credentials.py}"
           ];
         };
       };

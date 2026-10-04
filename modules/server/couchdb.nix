@@ -7,8 +7,8 @@ _: {
     adminPasswordFile = "/var/lib/secrets/obsidian-sync-admin-password";
     adminUser = "admin";
     syncUser = "kryisnn";
-    prepare = pkgs.writeShellScript "prepare-couchdb" (builtins.readFile ./config/prepare-couchdb.sh);
-    initDatabases = pkgs.writeShellScript "init-couchdb-databases" (builtins.readFile ./config/init-couchdb-databases.sh);
+    prepare = pkgs.writeShellScript "prepare-couchdb" (builtins.readFile ./config/couchdb/prepare-couchdb.sh);
+    initDatabases = pkgs.writeShellScript "init-couchdb-databases" (builtins.readFile ./config/couchdb/init-couchdb-databases.sh);
   in {
     services.couchdb = {
       enable = true;

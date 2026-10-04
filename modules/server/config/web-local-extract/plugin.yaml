@@ -1,0 +1,6 @@
+name: web-local-extract
+version: 1.0.0
+description: Local HTML extraction without a hosted API.
+kind: backend
+provides_web_providers:
+  - local-extract

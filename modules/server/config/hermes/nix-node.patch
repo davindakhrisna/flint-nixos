@@ -1,0 +1,14 @@
+--- a/hermes_constants.py
++++ b/hermes_constants.py
+@@ -496,0 +497,5 @@
++    # Nix owns this toolchain; never download a second Node/npm through PM.
++    explicit_node = os.environ.get("HERMES_NODE")
++    if explicit_node and command in {"node", "npm", "npx"}:
++        executable = Path(explicit_node) if command == "node" else Path(explicit_node).parent / command
++        return shutil.which(str(executable))
+@@ -531,0 +537,5 @@
++    explicit_node = os.environ.get("HERMES_NODE")
++    if explicit_node:
++        result = dict(os.environ if env is None else env)
++        result["PATH"] = str(Path(explicit_node).parent) + os.pathsep + result.get("PATH", "")
++        return result

@@ -9,7 +9,6 @@
     modules = [
       ./_hardware.nix
       inputs.home-manager.nixosModules.home-manager
-      inputs.hermes-agent.nixosModules.default
       {
         home-manager = {
           useGlobalPkgs = true;
@@ -27,6 +26,7 @@
       self.nixosModules.nas
       self.nixosModules.server-tmpfiles
       self.nixosModules.services
+      self.nixosModules.hermes
       self.nixosModules.couchdb
       self.nixosModules.glance
       self.nixosModules.torrents
@@ -108,7 +108,6 @@
           ];
 
           dev = "maximal";
-          # The NixOS Hermes service owns shared state; retire the old user gateway.
           home.activation.disableLegacyHermesGateway = lib.hm.dag.entryAfter ["writeBoundary"] ''
             if [[ -z "''${DRY_RUN_CMD:-}" ]] &&
               [[ -e "$HOME/.config/systemd/user/hermes-gateway.service" ]]; then

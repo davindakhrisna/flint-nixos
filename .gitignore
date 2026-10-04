@@ -1,2 +1,6 @@
 .direnv/
 result
+.env
+scripts/server/.secrets.env
+scripts/server/secrets.env
+graphify-out/
