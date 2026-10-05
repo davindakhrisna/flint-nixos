@@ -133,6 +133,10 @@ in {
     startHyprland
     flintLaunch
 
+    (writeShellScriptBin "flint-academia" ''
+      exec ${pkgs.python3}/bin/python3 "$HOME/.config/academia/main.py" "$@"
+    '')
+
     (writeShellScriptBin "flint-rofi-tools" ''
       exec "$HOME/.config/hypr/scripts/rofi-tools.sh" "$@"
     '')

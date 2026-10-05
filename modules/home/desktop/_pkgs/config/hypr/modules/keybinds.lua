@@ -66,6 +66,10 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, desc 
 -- Utility & Script Binds
 -- =============================================================================
 
+-- Academia: screenshot answer notification without opening a terminal
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-academia"), { desc = "Academia Screenshot Answer" })
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-academia --clear"), { desc = "Clear All Notifications" })
+
 -- Multimedia Keys: Volume & Display Brightness with Dunst OSD
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh up"), { locked = true, repeating = true, desc = "Volume Up" })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh down"), { locked = true, repeating = true, desc = "Volume Down" })
