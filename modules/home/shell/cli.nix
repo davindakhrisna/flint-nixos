@@ -8,7 +8,6 @@
     home.packages = with pkgs; [
       # Nix search & system info
       nix-search-tv
-      fastfetch
       areofyl-fetch
 
       # Modern CLI replacements

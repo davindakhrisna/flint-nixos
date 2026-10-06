@@ -113,8 +113,6 @@
         monospace-font-name = "Iosevka Nerd Font 12";
       };
 
-      # Show dot-directories in GTK file chooser dialogs used by developer
-      # applications (for example, when selecting a project folder).
       "org/gtk/settings/file-chooser" = {
         show-hidden = true;
       };
@@ -129,7 +127,6 @@
       style.name = "adwaita-dark";
     };
 
-    # Xresources are consumed only by legacy applications under Xwayland.
     xresources.path = "${config.xdg.configHome}/X11/Xresources";
 
     programs.home-manager.enable = true;

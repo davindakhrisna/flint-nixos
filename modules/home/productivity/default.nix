@@ -1,14 +1,7 @@
 {
   flake.homeModules.productivity = {pkgs, ...}: {
-    services.flatpak = {
-      enable = true;
-      packages = [
-        "com.obsproject.Studio"
-      ];
-    };
-
     home.packages = with pkgs; [
-      # TUI Productivity Suite
+      obs-studio
       obsidian
       xournalpp
       onlyoffice-desktopeditors
