@@ -22,6 +22,7 @@
       extraPackages = with pkgs; [
         # Core LazyVim tools
         git
+        glib # gio: system Trash and safe restore for the file explorer
         gcc
         gnumake
         ripgrep
