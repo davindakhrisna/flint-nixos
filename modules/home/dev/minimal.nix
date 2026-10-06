@@ -137,9 +137,7 @@ _: {
           bubblewrap
           jq
           lazydocker
-          netcat-gnu
           dbgate
-          bruno
           updateAiTools
         ];
 
