@@ -6,7 +6,7 @@ return {
       servers = {
         nil_ls = {},
         lua_ls = {},
-        clangd = {},
+        clangd = { mason = false },
         bashls = {},
         rust_analyzer = {},
         gopls = {},

@@ -141,8 +141,9 @@ All added tool backends run on homelab:
   `headroom mcp serve`, with telemetry disabled and a prebuilt tokenizer cache.
 
 Edit `modules/server/config/hermes/hermes-soul.md` to change personality and project
-workflow. Nix installs it as `/var/lib/hermes/.hermes/SOUL.md`; direct edits to
-that managed copy are replaced on activation. It includes the owner's Codex
+workflow. The agent introduces itself as **Junggo**; service names and runtime paths
+continue to use Hermes. Nix installs it as `/var/lib/hermes/.hermes/SOUL.md`; direct
+edits to that managed copy are replaced on activation. It includes the owner's Codex
 AGENTS.md baseline and explicitly authorizes Graphify initialization for every
 new project. It also requires Headroom compression, bounded Codex delegation,
 verification, and Tailscale Serve for serveable projects.

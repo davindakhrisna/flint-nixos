@@ -50,6 +50,33 @@ _: {
         };
 
         file = {
+          ".gemini/config/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
+            source = ./config/token-optimizer;
+            recursive = true;
+          };
+
+          ".gemini/config/AGENTS.md" = lib.mkIf (config.dev == "maximal") {
+            text = ''
+              # Codex-style engineering workflow
+
+              Act as a practical, candid engineering partner. Treat requests to fix or build something as instructions to complete the work. Inspect the source, make the smallest correct change, run meaningful checks, and report the result and any remaining limitations honestly. Continue until the task is complete or genuinely blocked. Never claim a tool ran or a check passed without evidence.
+
+              Read the project's AGENTS.md and follow the user's current instructions. Proceed with authorized, reversible work without repeated confirmation. Ask only for missing information that affects correctness or for actions outside the authorized scope. Preserve unrelated user changes. Do not commit, push, switch systems, or publish unless requested.
+
+              Give concise progress updates during sustained work. Explain what changed and how it was checked in plain language, with file paths when useful. Use available terminal, file, browser, and MCP tools directly; report missing capabilities instead of inventing tool calls.
+
+              ## Provisioned skills
+
+              Discover skills in ~/.gemini/config/skills and project skill directories. Read the relevant SKILL.md before applying it and follow its referenced resources. Use explicitly requested skills; otherwise select skills by their descriptions and the actual task. Use ponytail for coding, frontend-design and impeccable for UI work, and codebase-design for module design. Use improve-codebase-architecture and thermo-nuclear-code-quality-review when their scope matches the request. Use Antigravity's built-in /grill-me for that workflow. User instructions take precedence over skill guidance.
+
+              ## Maximal-profile coding tools
+
+              ${config.home.file.".codex/AGENTS.md".text}
+
+              Apply these tool rules to Antigravity CLI as well. Headroom is a local stdio MCP server registered as headroom; call headroom_compress for large eligible text, retain its hash, and call headroom_retrieve when omitted details matter. Never compress secrets or exact source patches. Do not proxy agent traffic, alter provider endpoints, or read authentication files for token optimization. Do not route Antigravity through 9Router unless explicitly requested.
+            '';
+          };
+
           ".codex/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
             source = ./config/token-optimizer;
             recursive = true;
@@ -76,6 +103,37 @@ _: {
         };
 
         activation = {
+          manageAntigravityHeadroomMcp = lib.hm.dag.entryAfter ["updateAiTools"] ''
+            agy="$HOME/.local/bin/agy"
+            state_file="$HOME/.local/state/flint/antigravity-headroom-mcp-command"
+            mcp_config="$HOME/.gemini/config/mcp_config.json"
+
+            if [[ ${lib.escapeShellArg config.dev} == maximal ]]; then
+              if [[ -x "$agy" ]]; then
+                $DRY_RUN_CMD "$agy" mcp add \
+                  --env HEADROOM_BEACON=off \
+                  --env HEADROOM_MCP_CHECK_PROXY=0 \
+                  --env HEADROOM_TELEMETRY=off \
+                  --env TIKTOKEN_CACHE_DIR=${tiktokenCache} \
+                  headroom ${headroomExe} mcp serve
+                $DRY_RUN_CMD mkdir -p "$HOME/.local/state/flint"
+                if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
+                  printf '%s\n' ${lib.escapeShellArg headroomExe} > "$state_file"
+                fi
+              else
+                echo "Warning: Antigravity CLI is not installed yet; skipping Headroom MCP registration." >&2
+              fi
+            elif [[ -f "$state_file" && -x "$agy" ]]; then
+              managed_command="$(<"$state_file")"
+              if [[ -s "$mcp_config" ]] && ${jq} -e --arg command "$managed_command" \
+                '.mcpServers.headroom.command == $command and .mcpServers.headroom.args == ["mcp", "serve"]' \
+                "$mcp_config" >/dev/null; then
+                $DRY_RUN_CMD "$agy" mcp remove headroom
+              fi
+              $DRY_RUN_CMD rm -f "$state_file"
+            fi
+          '';
+
           installFullTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
             if [[ ${lib.escapeShellArg config.dev} == maximal && -z "''${DRY_RUN_CMD:-}" ]]; then
               ${pkgs.coreutils}/bin/timeout 300 ${lib.getExe installFullTools} ||

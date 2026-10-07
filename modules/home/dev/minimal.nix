@@ -129,7 +129,7 @@ _: {
       home = {
         sessionPath = [
           "$HOME/.local/bin"
-          "$HOME/.local/state/nix/profiles/home-manager/home-path/bin"
+          "${config.home.profileDirectory}/bin"
         ];
 
         packages = with pkgs; [

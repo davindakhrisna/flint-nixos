@@ -124,6 +124,10 @@
       };
 
       initContent = lib.mkMerge [
+        (lib.mkOrder 500 (lib.optionalString (config.home.sessionPath != []) ''
+          # Terminals can inherit PATH from a session started before a system switch.
+          export PATH="${lib.concatStringsSep ":" config.home.sessionPath}''${PATH:+:$PATH}"
+        ''))
         (lib.mkOrder 550 ''
           function zvm_config() {
             ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BEAM
