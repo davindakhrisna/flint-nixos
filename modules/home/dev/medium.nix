@@ -1,12 +1,12 @@
 _: {
-  flake.homeModules.dev-maximal = {
+  flake.homeModules.dev-medium = {
     config,
     lib,
     pkgs,
     ...
   }: let
     installFullTools = pkgs.writeShellApplication {
-      name = "flint-install-maximal-tools";
+      name = "flint-install-medium-tools";
       runtimeInputs = with pkgs; [nodejs];
       text = ''
         mkdir -p "$HOME/.local/bin"
@@ -31,11 +31,7 @@ _: {
   in {
     config = {
       home = {
-        packages = lib.mkIf (config.dev == "maximal") (with pkgs; [
-          godot_4
-          blender
-          libresprite
-          winboat
+        packages = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) (with pkgs; [
           graphify
           nodejs
           installFullTools
@@ -43,19 +39,19 @@ _: {
           headroom
         ]);
 
-        sessionVariables = lib.mkIf (config.dev == "maximal") {
+        sessionVariables = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
           HEADROOM_BEACON = "off";
           HEADROOM_TELEMETRY = "off";
           RTK_TELEMETRY_DISABLED = "1";
         };
 
         file = {
-          ".gemini/config/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
+          ".gemini/config/skills/token-optimizer" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
             source = ./config/token-optimizer;
             recursive = true;
           };
 
-          ".gemini/config/AGENTS.md" = lib.mkIf (config.dev == "maximal") {
+          ".gemini/config/AGENTS.md" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
             text = ''
               # Codex-style engineering workflow
 
@@ -69,7 +65,7 @@ _: {
 
               Discover skills in ~/.gemini/config/skills and project skill directories. Read the relevant SKILL.md before applying it and follow its referenced resources. Use explicitly requested skills; otherwise select skills by their descriptions and the actual task. Use ponytail for coding, frontend-design and impeccable for UI work, and codebase-design for module design. Use improve-codebase-architecture and thermo-nuclear-code-quality-review when their scope matches the request. Use Antigravity's built-in /grill-me for that workflow. User instructions take precedence over skill guidance.
 
-              ## Maximal-profile coding tools
+              ## Medium/heavy-profile coding tools
 
               ${config.home.file.".codex/AGENTS.md".text}
 
@@ -77,14 +73,14 @@ _: {
             '';
           };
 
-          ".codex/skills/token-optimizer" = lib.mkIf (config.dev == "maximal") {
+          ".codex/skills/token-optimizer" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
             source = ./config/token-optimizer;
             recursive = true;
           };
 
-          ".codex/AGENTS.md" = lib.mkIf (config.dev == "maximal") {
+          ".codex/AGENTS.md" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
             text = ''
-              # Maximal-profile coding tools
+              # Medium/heavy-profile coding tools
 
               - Always use `rtk` for supported noisy commands such as Git history, broad searches, builds, tests, and logs. Use raw commands only when exact output, complete diagnostics, unsupported flags, or security-sensitive evidence require it.
               - Always use Headroom's MCP `headroom_compress` for large, eligible text already in context. Keep its hash and use `headroom_retrieve` when omitted details matter. Skip short text, secrets, and exact source patches. Do not proxy Codex traffic, change its OpenAI endpoint, or read its authentication files for Headroom.
@@ -93,7 +89,7 @@ _: {
             '';
           };
 
-          ".omp/agent/RULES.md" = lib.mkIf (config.dev == "maximal") {
+          ".omp/agent/RULES.md" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
             text = ''
               # Graphify
 
@@ -108,7 +104,7 @@ _: {
             state_file="$HOME/.local/state/flint/antigravity-headroom-mcp-command"
             mcp_config="$HOME/.gemini/config/mcp_config.json"
 
-            if [[ ${lib.escapeShellArg config.dev} == maximal ]]; then
+            if [[ ${lib.escapeShellArg config.dev} != light ]]; then
               if [[ -x "$agy" ]]; then
                 $DRY_RUN_CMD "$agy" mcp add \
                   --env HEADROOM_BEACON=off \
@@ -135,9 +131,9 @@ _: {
           '';
 
           installFullTools = lib.hm.dag.entryAfter ["writeBoundary"] ''
-            if [[ ${lib.escapeShellArg config.dev} == maximal && -z "''${DRY_RUN_CMD:-}" ]]; then
+            if [[ ${lib.escapeShellArg config.dev} != light && -z "''${DRY_RUN_CMD:-}" ]]; then
               ${pkgs.coreutils}/bin/timeout 300 ${lib.getExe installFullTools} ||
-                echo "Warning: 9Router installation failed; run flint-install-maximal-tools to retry." >&2
+                echo "Warning: 9Router installation failed; run flint-install-medium-tools to retry." >&2
             fi
           '';
 
@@ -170,7 +166,7 @@ _: {
                 >/dev/null 2>&1
             }
 
-            if [[ ${lib.escapeShellArg config.dev} == maximal ]]; then
+            if [[ ${lib.escapeShellArg config.dev} != light ]]; then
               if [[ ! -x "$codex" ]]; then
                 echo "Warning: Codex is not installed yet; skipping Headroom MCP registration." >&2
               else

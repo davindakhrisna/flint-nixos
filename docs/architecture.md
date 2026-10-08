@@ -20,7 +20,7 @@ home-manager.users.kryisnn = { ... }: {
     home-manager desktop shell productivity dev
     entertainment-social entertainment-gaming
   ];
-  dev = "maximal";  # or "minimal"
+  dev = "heavy";  # or "light" / "medium"
 };
 ```
 
@@ -67,18 +67,21 @@ Defined in `modules/home/dev/default.nix` as an enum option:
 
 ```nix
 options.dev = lib.mkOption {
-  type = lib.types.enum [ "minimal" "maximal" ];
-  default = "minimal";
+  type = lib.types.enum [ "light" "medium" "heavy" ];
+  default = "light";
 };
 ```
 
-The profiles are deliberately workstation-focused:
+The profiles are cumulative:
 
-- `minimal.nix` supplies editors, Git/GitHub, direnv, `mkenv`, daily database/container/network utilities, and rolling AI CLIs. Their official installers run on activation and hourly; Flint patches the generic OMP and Antigravity binaries for NixOS. None are pinned in `flake.lock`.
-- `maximal.nix` adds Godot, Blender, LibreSprite, Winboat, RTK, a pinned Headroom package, 9Router, and Graphify on top of `minimal`.
+- `light.nix` supplies LazyVim, Git/GitHub, direnv, `mkenv`, CLI/container utilities, study tools, agent skills, and rolling AI CLIs. Their official installers run on activation and hourly; Flint patches the generic OMP and Antigravity binaries for NixOS. None are pinned in `flake.lock`.
+- `medium.nix` adds RTK, a pinned Headroom package, 9Router, and Graphify on top of `light`.
+- `heavy.nix` adds all development GUI apps: Zed, DBGate, Godot, Blender, LibreSprite, and Winboat.
+
+Support modules (`_lazyvim.nix`, `_mkenv.nix`, `_skills.nix`, and `_study.nix`) live under `dev/config/`. Homelab uses `medium`, powerhouse uses `heavy`, and the host template defaults to `light`.
 
 > [!TIP]
-> Compilers, runtimes, SDKs, and formatters are not Home Manager packages. `_mkenv.nix` ships `mkenv`, which generates per-project `flake.nix` + `.envrc` files for the `c`, `go`, `ts`, `py`, `rust`, `flutter`, and `nix` stacks. Their caches and mutable state live under the ignored `.direnv/` directory.
+> Compilers, runtimes, SDKs, and formatters are not Home Manager packages. `config/_mkenv.nix` ships `mkenv`, which generates per-project `flake.nix` + `.envrc` files for the `c`, `go`, `ts`, `py`, `rust`, `flutter`, and `nix` stacks. Their caches and mutable state live under the ignored `.direnv/` directory.
 
 Flint itself follows the same workflow. Its tracked `.envrc` runs `use flake`, and `devShells.x86_64-linux.default` provides Alejandra, nixfmt, deadnix, statix, ShellCheck, Lua, and nix-prefetch-github.
 

@@ -100,8 +100,8 @@
             entertainment-gaming
           ];
 
-          # Dev Environment Profile: "minimal" | "maximal"
-          dev = "minimal"; # CHANGEME
+          # Dev Environment Profile: "light" | "medium" | "heavy"
+          dev = "light"; # CHANGEME
         };
 
         system.stateVersion = "26.05";

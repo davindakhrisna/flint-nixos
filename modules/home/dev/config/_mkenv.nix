@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  templatesDir = ./templates;
+  templatesDir = ../templates;
 
   mkenvScript = pkgs.writeShellApplication {
     name = "mkenv";

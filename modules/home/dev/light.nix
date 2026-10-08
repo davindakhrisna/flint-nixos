@@ -1,5 +1,5 @@
 _: {
-  flake.homeModules.dev-minimal = {
+  flake.homeModules.dev-light = {
     config,
     lib,
     pkgs,
@@ -81,13 +81,13 @@ _: {
     };
   in {
     imports = [
-      ./_lazyvim.nix
-      ./_mkenv.nix
-      ./_skills.nix
-      ./_study.nix
+      ./config/_lazyvim.nix
+      ./config/_mkenv.nix
+      ./config/_skills.nix
+      ./config/_study.nix
     ];
 
-    config = lib.mkIf (builtins.elem config.dev ["minimal" "maximal"]) {
+    config = lib.mkIf (builtins.elem config.dev ["light" "medium" "heavy"]) {
       programs = {
         # Keep terminal sessions local so Ctrl+C does not leave a shared daemon.
         zsh.shellAliases.codex = "codex --disable daemon_auto_start";
@@ -115,15 +115,6 @@ _: {
           enable = true;
           nix-direnv.enable = true;
         };
-
-        zed-editor = {
-          enable = true;
-          userSettings = {
-            tab_size = 4;
-            vim_mode = true;
-            cursor_blink = true;
-          };
-        };
       };
 
       home = {
@@ -137,7 +128,6 @@ _: {
           bubblewrap
           jq
           lazydocker
-          dbgate
           updateAiTools
         ];
 

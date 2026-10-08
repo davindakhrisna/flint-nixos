@@ -1,20 +1,22 @@
 {self, ...}: {
   imports = [
-    ./minimal.nix
-    ./maximal.nix
+    ./light.nix
+    ./medium.nix
+    ./heavy.nix
   ];
 
   flake.homeModules = {
     dev = {lib, ...}: {
       options.dev = lib.mkOption {
-        type = lib.types.enum ["minimal" "maximal"];
-        default = "minimal";
-        description = "Development workstation profile: minimal or maximal";
+        type = lib.types.enum ["light" "medium" "heavy"];
+        default = "light";
+        description = "Development profile: light CLI tools, medium coding tools, or heavy GUI apps";
       };
 
       imports = with self.homeModules; [
-        dev-minimal
-        dev-maximal
+        dev-light
+        dev-medium
+        dev-heavy
       ];
     };
   };

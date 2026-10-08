@@ -90,7 +90,7 @@
             productivity
           ];
 
-          dev = "maximal";
+          dev = "heavy";
         };
 
         system.stateVersion = "26.05";

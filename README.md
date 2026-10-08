@@ -14,7 +14,7 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 | **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers |
 | **Shell** | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
 | **Editor** | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
-| **Dev** | `minimal` / `maximal` workstation profiles, direnv + nix-direnv, `mkenv` project environments |
+| **Dev** | `light` / `medium` / `heavy` profiles, direnv + nix-direnv, `mkenv` project environments |
 | **System** | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS |
 | **Gaming** | Steam, Gamescope, MangoHud, GameMode |
 
@@ -22,11 +22,12 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 
 ## Development Profiles
 
-Set `dev = "minimal"` or `dev = "maximal"` per host. `maximal` includes `minimal`.
+Set `dev = "light"`, `dev = "medium"`, or `dev = "heavy"` per host. Each profile includes the lighter profiles.
 
 ```
-minimal → Git/GitHub CLI, direnv, LazyVim, Zed, mkenv, CLI/container/database tools, AI coding tools
-maximal → minimal + Godot, Blender, LibreSprite, Winboat, RTK, Headroom, 9Router, and Graphify
+light  → Git/GitHub CLI, direnv, LazyVim, mkenv, CLI/container tools, AI coding tools
+medium → light + RTK, Headroom, 9Router, and Graphify
+heavy  → medium + Zed, DBGate, Godot, Blender, LibreSprite, and Winboat
 ```
 
 > [!TIP]

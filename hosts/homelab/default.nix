@@ -107,7 +107,7 @@
             productivity
           ];
 
-          dev = "maximal";
+          dev = "medium";
           home.activation.disableLegacyHermesGateway = lib.hm.dag.entryAfter ["writeBoundary"] ''
             if [[ -z "''${DRY_RUN_CMD:-}" ]] &&
               [[ -e "$HOME/.config/systemd/user/hermes-gateway.service" ]]; then

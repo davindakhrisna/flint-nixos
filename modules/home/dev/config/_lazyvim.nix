@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: {
-  config = lib.mkIf (builtins.elem config.dev ["minimal" "maximal"]) {
+  config = lib.mkIf (builtins.elem config.dev ["light" "medium" "heavy"]) {
     home.sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
@@ -54,7 +54,7 @@
     };
 
     xdg.configFile."nvim" = {
-      source = ./config/nvim;
+      source = ./nvim;
       recursive = true;
       force = true;
     };
