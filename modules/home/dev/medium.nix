@@ -28,6 +28,29 @@ _: {
 
     headroomExe = lib.getExe headroom;
     jq = lib.getExe pkgs.jq;
+    headroomServer = {
+      command = headroomExe;
+      args = ["mcp" "serve"];
+      env = {
+        HEADROOM_BEACON = "off";
+        HEADROOM_MCP_CHECK_PROXY = "0";
+        HEADROOM_TELEMETRY = "off";
+        TIKTOKEN_CACHE_DIR = "${tiktokenCache}";
+      };
+    };
+    manageJsonHeadroom = pkgs.writeShellApplication {
+      name = "flint-manage-headroom-mcp";
+      runtimeInputs = [pkgs.coreutils pkgs.diffutils pkgs.jq];
+      text = builtins.readFile ./config/headroom-mcp.sh;
+    };
+    toolRules = initialize: ''
+      # Medium/heavy-profile coding tools
+
+      - Always use `rtk` for supported noisy commands such as Git history, broad searches, builds, tests, and logs. Use raw commands only when exact output, complete diagnostics, unsupported flags, or security-sensitive evidence require it.
+      - Always use Headroom's MCP `headroom_compress` for large, eligible text already in context. Keep its hash and use `headroom_retrieve` when omitted details matter. Skip short text, secrets, and exact source patches. Do not proxy agent traffic, change provider endpoints, or read authentication files for Headroom.
+      - Before codebase exploration, check whether `./graphify-out/graph.json` exists in the current working directory. If it does, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. ${initialize} Continue with normal file search if Graphify does not support the language or extraction fails; report that limitation once, without repeatedly retrying in the same session.
+      - 9Router is an optional local CLI. Do not redirect any harness through it unless the user explicitly requests a provider configuration compliant with that provider's terms.
+    '';
   in {
     config = {
       home = {
@@ -61,13 +84,17 @@ _: {
 
               Give concise progress updates during sustained work. Explain what changed and how it was checked in plain language, with file paths when useful. Use available terminal, file, browser, and MCP tools directly; report missing capabilities instead of inventing tool calls.
 
+              For substantial tasks, keep a short plan and carry it through implementation and verification. Treat follow-up messages as steering the current task unless the user changes the goal. Ask focused questions only when the answer changes correctness; continue independent work while waiting. Do not stop after proposing a fix when implementation is requested.
+
+              Prefer rg for source discovery and inspect relevant callers before changing behavior. Batch independent reads when supported, but keep dependent edits and checks sequential. Use the project's existing validation commands, investigate failures, and distinguish existing failures from regressions. Do not broaden the task with unrelated refactors or dependencies. Use subagents only when requested or when an applicable project instruction or skill requires them.
+
               ## Provisioned skills
 
-              Discover skills in ~/.gemini/config/skills and project skill directories. Read the relevant SKILL.md before applying it and follow its referenced resources. Use explicitly requested skills; otherwise select skills by their descriptions and the actual task. Use ponytail for coding, frontend-design and impeccable for UI work, and codebase-design for module design. Use improve-codebase-architecture and thermo-nuclear-code-quality-review when their scope matches the request. Use Antigravity's built-in /grill-me for that workflow. User instructions take precedence over skill guidance.
+              Discover CLI skills in ~/.gemini/antigravity-cli/skills (shared with ~/.gemini/config/skills) and project .agents/skills directories. Read the relevant SKILL.md before applying it and follow its referenced resources. Before each task, match the request against installed skill descriptions and automatically read the relevant skills without waiting for a slash command. Always honor explicitly named skills. Announce the selected skills briefly; do not load unrelated skills or every skill body. Use ponytail for every coding change, fix, refactor, review, or coding design decision, frontend-design and impeccable for UI work, and codebase-design for module design. Use improve-codebase-architecture and thermo-nuclear-code-quality-review when their scope matches the request, and study for Obsidian study sessions. Use Antigravity's built-in /grill-me for that workflow. User instructions take precedence over skill guidance.
 
               ## Medium/heavy-profile coding tools
 
-              ${config.home.file.".codex/AGENTS.md".text}
+              ${toolRules "If it does not exist, the user has authorized initializing Graphify for this coding session: run `graphify extract . --code-only` once without asking again. This is also part of `/init`."}
 
               Apply these tool rules to Antigravity CLI as well. Headroom is a local stdio MCP server registered as headroom; call headroom_compress for large eligible text, retain its hash, and call headroom_retrieve when omitted details matter. Never compress secrets or exact source patches. Do not proxy agent traffic, alter provider endpoints, or read authentication files for token optimization. Do not route Antigravity through 9Router unless explicitly requested.
             '';
@@ -79,55 +106,48 @@ _: {
           };
 
           ".codex/AGENTS.md" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
-            text = ''
-              # Medium/heavy-profile coding tools
+            text = toolRules "If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Continue with normal file search if they decline.";
+          };
 
-              - Always use `rtk` for supported noisy commands such as Git history, broad searches, builds, tests, and logs. Use raw commands only when exact output, complete diagnostics, unsupported flags, or security-sensitive evidence require it.
-              - Always use Headroom's MCP `headroom_compress` for large, eligible text already in context. Keep its hash and use `headroom_retrieve` when omitted details matter. Skip short text, secrets, and exact source patches. Do not proxy Codex traffic, change its OpenAI endpoint, or read its authentication files for Headroom.
-              - Before codebase exploration, check whether `./graphify-out/graph.json` exists in the current working directory. If it does, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Continue with normal file search if they decline or Graphify does not support the language.
-              - 9Router is an optional local CLI. Do not redirect Codex or Oh My Pi through it unless the user explicitly requests a provider configuration compliant with that provider's terms.
-            '';
+          ".omp/agent/skills/token-optimizer" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
+            source = ./config/token-optimizer;
+            recursive = true;
           };
 
           ".omp/agent/RULES.md" = lib.mkIf (builtins.elem config.dev ["medium" "heavy"]) {
-            text = ''
-              # Graphify
+            text =
+              config.home.file.".codex/AGENTS.md".text
+              + ''
 
-              Before codebase exploration, check for `./graphify-out/graph.json` in the current working directory. If it exists, use `graphify query "<question>"` to locate likely code paths and `graphify update .` after relevant code changes. Verify results against source. If it does not exist, ask the user whether to initialize Graphify; run `graphify extract . --code-only` only after they agree. Use normal file search if they decline or Graphify does not support the language.
-            '';
+                Select relevant installed skills automatically from their descriptions.
+                Read SKILL.md before applying a skill and briefly announce it. Use
+                ponytail for coding work. Headroom is registered in OMP's native
+                mcp.json; use its compression, retrieval, and stats tools directly.
+              '';
           };
         };
 
         activation = {
-          manageAntigravityHeadroomMcp = lib.hm.dag.entryAfter ["updateAiTools"] ''
-            agy="$HOME/.local/bin/agy"
-            state_file="$HOME/.local/state/flint/antigravity-headroom-mcp-command"
-            mcp_config="$HOME/.gemini/config/mcp_config.json"
+          manageAntigravityHeadroomMcp = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            $DRY_RUN_CMD ${lib.getExe manageJsonHeadroom} ${
+              if config.dev == "light"
+              then "disable"
+              else "enable"
+            } \
+              "$HOME/.gemini/config/mcp_config.json" \
+              "$HOME/.local/state/flint/antigravity-headroom-mcp-command" \
+              ${lib.escapeShellArg (builtins.toJSON headroomServer)}
+          '';
 
-            if [[ ${lib.escapeShellArg config.dev} != light ]]; then
-              if [[ -x "$agy" ]]; then
-                $DRY_RUN_CMD "$agy" mcp add \
-                  --env HEADROOM_BEACON=off \
-                  --env HEADROOM_MCP_CHECK_PROXY=0 \
-                  --env HEADROOM_TELEMETRY=off \
-                  --env TIKTOKEN_CACHE_DIR=${tiktokenCache} \
-                  headroom ${headroomExe} mcp serve
-                $DRY_RUN_CMD mkdir -p "$HOME/.local/state/flint"
-                if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
-                  printf '%s\n' ${lib.escapeShellArg headroomExe} > "$state_file"
-                fi
-              else
-                echo "Warning: Antigravity CLI is not installed yet; skipping Headroom MCP registration." >&2
-              fi
-            elif [[ -f "$state_file" && -x "$agy" ]]; then
-              managed_command="$(<"$state_file")"
-              if [[ -s "$mcp_config" ]] && ${jq} -e --arg command "$managed_command" \
-                '.mcpServers.headroom.command == $command and .mcpServers.headroom.args == ["mcp", "serve"]' \
-                "$mcp_config" >/dev/null; then
-                $DRY_RUN_CMD "$agy" mcp remove headroom
-              fi
-              $DRY_RUN_CMD rm -f "$state_file"
-            fi
+          manageOmpHeadroomMcp = lib.hm.dag.entryAfter ["writeBoundary"] ''
+            $DRY_RUN_CMD ${lib.getExe manageJsonHeadroom} ${
+              if config.dev == "light"
+              then "disable"
+              else "enable"
+            } \
+              "$HOME/.omp/agent/mcp.json" \
+              "$HOME/.local/state/flint/omp-headroom-mcp-command" \
+              ${lib.escapeShellArg (builtins.toJSON (headroomServer // {type = "stdio";}))}
           '';
 
           installFullTools = lib.hm.dag.entryAfter ["writeBoundary"] ''

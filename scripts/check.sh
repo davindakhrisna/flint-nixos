@@ -41,6 +41,7 @@ done
 echo "==> Checking shell scripts"
 shellcheck scripts/*.sh
 shellcheck scripts/server/*.sh
+bash scripts/check-ai-tools.sh
 find modules/server/config -type f -name '*.sh' -print0 | xargs -0 shellcheck
 find modules/home -type f -name '*.sh' -print0 | xargs -0 shellcheck
 
