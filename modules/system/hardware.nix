@@ -147,6 +147,16 @@
           ];
         };
       })
+      (lib.mkIf cfg.features.opentabletdriver {
+        hardware.opentabletdriver = {
+          enable = true;
+          daemon.enable = true;
+        };
+        hardware.uinput.enable = true;
+        services.udev.extraRules = ''
+          KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
+        '';
+      })
     ];
   };
 }

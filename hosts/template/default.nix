@@ -70,6 +70,7 @@
             developerKernelAccess = true;
             audio = true;
             bluetooth = true;
+            opentabletdriver = false;
 
             # Mesh VPN
             tailscale = true;

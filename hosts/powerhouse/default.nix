@@ -38,6 +38,8 @@
             "docker"
             "adbusers"
             "libvirtd"
+            "uinput"
+            "input"
           ];
         };
 
@@ -61,6 +63,7 @@
             developerKernelAccess = true;
             audio = true;
             bluetooth = true;
+            opentabletdriver = true;
 
             # Mesh VPN
             tailscale = true;

@@ -13,6 +13,7 @@
       };
       zsh.enable = true;
       git.enable = true;
+      nix-ld.enable = true;
     };
 
     environment.sessionVariables = {

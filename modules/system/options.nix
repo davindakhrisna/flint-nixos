@@ -34,6 +34,7 @@ _: {
         steamRemotePlay = lib.mkEnableOption "Steam Remote Play firewall ports";
         steamDedicatedServer = lib.mkEnableOption "Steam dedicated-server firewall ports";
         steamLocalTransfers = lib.mkEnableOption "Steam local-transfer firewall ports";
+        opentabletdriver = lib.mkEnableOption "OpenTabletDriver daemon and udev rules for drawing tablets";
       };
     };
 
@@ -57,6 +58,10 @@ _: {
       {
         assertion = !config.var.features.bluetooth || config.var.features.desktop;
         message = "var.features.bluetooth requires var.features.desktop.";
+      }
+      {
+        assertion = !config.var.features.opentabletdriver || config.var.features.desktop;
+        message = "var.features.opentabletdriver requires var.features.desktop.";
       }
     ];
   };
