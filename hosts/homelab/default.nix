@@ -1,3 +1,5 @@
+# This is my Homelab configured to be portable
+# You might want to change it since its not true-headless
 {
   self,
   inputs,
