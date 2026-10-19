@@ -59,6 +59,9 @@ _: {
           pkgs.dsh.dsh
           pkgs.coreutils
           pkgs.bash
+          pkgs.headroom
+          pkgs.rtk
+          pkgs.graphify
         ];
 
         serviceConfig = {

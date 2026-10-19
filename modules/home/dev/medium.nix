@@ -67,20 +67,50 @@ _: {
                 ${codexGraphifyRule}
               '';
             };
+
+            ".dsh/AGENTS.md" = {
+              force = true;
+              text = ''
+                # Medium/heavy-profile coding tools
+
+                ${sharedToolBullets}
+                ${antigravityGraphifyRule}
+                Apply these tool rules to DeepSeek Harness as well. Headroom is a local stdio MCP server registered as headroom; call headroom_compress for large eligible text, retain its hash, and call headroom_retrieve when omitted details matter. Never compress secrets or exact source patches. Do not proxy agent traffic, alter provider endpoints, or read authentication files for token optimization.
+              '';
+            };
           };
         };
 
-        programs.dsh.profiles.web = {
-          bundles = with pkgs.dsh.bundles; [
-            web-app
-            pkgs.dsh-agy-safe
-            better-sidebar
-            at-file
-            experimental-tool-worktree
-            security-audit
-            modlens
+        programs.dsh = {
+          patch = [
+            {
+              insert = [
+                {
+                  id = "mcp-headroom";
+                  name = "@deepseek-ai/dsh-mcp-client";
+                  config =
+                    headroomServer
+                    // {
+                      transport = "stdio";
+                      serverName = "headroom";
+                    };
+                }
+              ];
+            }
           ];
-          mode = "managed";
+
+          profiles.web = {
+            bundles = with pkgs.dsh.bundles; [
+              web-app
+              pkgs.dsh-agy-safe
+              better-sidebar
+              at-file
+              experimental-tool-worktree
+              security-audit
+              modlens
+            ];
+            mode = "managed";
+          };
         };
       })
 
