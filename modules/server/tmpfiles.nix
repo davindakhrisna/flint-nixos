@@ -1,18 +1,5 @@
 _: {
-  flake.nixosModules.server-tmpfiles = {
-    config,
-    lib,
-    pkgs,
-    ...
-  }: let
-    hermes = config.services.hermes-agent;
-    hermesEnvBase = pkgs.writeText "hermes-env-base" (
-      lib.concatStringsSep "\n" (lib.mapAttrsToList (name: value: "${name}=${value}") hermes.environment)
-      + lib.optionalString (hermes.environment != {}) "\n"
-    );
-    refreshHermesEnv = pkgs.writeShellScript "refresh-hermes-env" (builtins.readFile ./config/hermes/refresh-hermes-env.sh);
-    refreshHermesCommand = "+${refreshHermesEnv} ${lib.escapeShellArgs (["${hermes.stateDir}/.hermes/.env" hermes.user hermes.group hermesEnvBase] ++ hermes.environmentFiles)}";
-  in {
+  flake.nixosModules.server-tmpfiles = _: {
     systemd = {
       tmpfiles.rules = [
         # NAS
@@ -29,12 +16,6 @@ _: {
         "d /run/homelab 0755 root root - -"
         "f /run/homelab/glance.env 0644 root root - HOMELAB_HOST=homelab.auxois-searobin.ts.net"
 
-        # Hermes runtime state and environment inputs
-        "f /run/homelab/hermes.env 0644 root root - -"
-        "Z ${hermes.stateDir}/.hermes - ${hermes.user} ${hermes.group} - -"
-        "f /var/lib/secrets/hermes-provider.env 0600 root root - -"
-        "f /var/lib/secrets/hermes-dashboard.env 0600 root root - -"
-
         # Service secrets
         "d /var/lib/secrets 0711 root root - -"
         "f /var/lib/secrets/vaultwarden.env 0600 root root - -"
@@ -44,8 +25,6 @@ _: {
       ];
 
       services = {
-        hermes-agent.serviceConfig.ExecStartPre = [refreshHermesCommand];
-        hermes-backend.serviceConfig.ExecStartPre = [refreshHermesCommand];
         systemd-tmpfiles-clean = {
           unitConfig = {
             StartLimitIntervalSec = 300;

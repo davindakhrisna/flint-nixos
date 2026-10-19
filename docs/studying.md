@@ -1,17 +1,14 @@
-# Studying with OhMyPi
+# Studying in Obsidian
 
-Run:
+Open your AI coding assistant (e.g. Antigravity or Codex) within your Obsidian vault and run:
 
-```bash
-omp-study
+```text
+/study
 ```
 
-The first run asks for an Obsidian vault and stores that path in
-`$XDG_CONFIG_HOME/omp-study/vault`. Change it with `omp-study --set-vault`.
-
-OhMyPi opens in the vault, starts `/study`, shows unfinished and due reviews, and
+The agent opens the study session, shows unfinished and due reviews, and
 waits for a tagged Markdown note. It creates five adaptive questions in a separate
-session note. Answer them in Obsidian, then ask OhMyPi for a hint or say `turn in`.
+session note. Answer them in Obsidian, then ask the agent for a hint or say `turn in`.
 
 Sessions live under `Study Sessions/<source path>/`. The source note receives a
 managed, collapsible embed at its bottom. Completed sessions retain their questions,

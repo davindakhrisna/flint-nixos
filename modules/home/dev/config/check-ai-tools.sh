@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
-repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 validation_dir="$(mktemp -d)"
 trap 'rm -rf "$validation_dir"' EXIT
 config_file="$validation_dir/agent/mcp.json"
 state_file="$validation_dir/state/headroom"
 server='{"type":"stdio","command":"/managed/headroom","args":["mcp","serve"],"env":{"HEADROOM_MCP_CHECK_PROXY":"0"}}'
 manage() {
-  bash "$repo_root/modules/home/dev/config/headroom-mcp.sh" "$1" "$config_file" "$state_file" "$server"
+  bash "$script_dir/headroom-mcp.sh" "$1" "$config_file" "$state_file" "$server"
 }
 manage enable
 jq -e '.mcpServers.headroom.command == "/managed/headroom"' "$config_file" >/dev/null

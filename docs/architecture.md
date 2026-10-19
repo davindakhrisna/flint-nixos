@@ -74,11 +74,11 @@ options.dev = lib.mkOption {
 
 The profiles are cumulative:
 
-- `light.nix` supplies LazyVim, Git/GitHub, direnv, `mkenv`, CLI/container utilities, study tools, agent skills, and rolling AI CLIs. Their official installers run on activation and hourly; Flint patches the generic OMP and Antigravity binaries for NixOS. None are pinned in `flake.lock`.
-- `medium.nix` adds RTK, a pinned Headroom package, 9Router, and Graphify on top of `light`.
+- `light.nix` supplies LazyVim, Git/GitHub, direnv, `mkenv`, CLI/container utilities, study tools, agent skills, and rolling AI CLIs. Their official installers run on activation and hourly; Flint patches the generic Antigravity binary for NixOS. None are pinned in `flake.lock`.
+- `medium.nix` adds RTK, a pinned Headroom package, and Graphify on top of `light`.
 - `heavy.nix` adds all development GUI apps: Zed, DBGate, Godot, Blender, LibreSprite, and Winboat.
 
-Support modules (`_lazyvim.nix`, `_mkenv.nix`, `_skills.nix`, and `_study.nix`) live under `dev/config/`. Homelab uses `medium`, powerhouse uses `heavy`, and the host template defaults to `light`.
+Support modules (`_lazyvim.nix`, `_mkenv.nix`, and `instruction/` modules) live under `dev/config/`. Homelab uses `medium`, powerhouse uses `heavy`, and the host template defaults to `light`.
 
 > [!TIP]
 > Compilers, runtimes, SDKs, and formatters are not Home Manager packages. `config/_mkenv.nix` ships `mkenv`, which generates per-project `flake.nix` + `.envrc` files for the `c`, `go`, `ts`, `py`, `rust`, `flutter`, and `nix` stacks. Their caches and mutable state live under the ignored `.direnv/` directory.

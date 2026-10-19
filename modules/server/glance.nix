@@ -114,10 +114,10 @@ _: {
                         same-tab = true;
                       }
                       {
-                        title = "Hermes Agent";
+                        title = "DeepSeek Harness";
                         url = "https://\${HOMELAB_HOST}:8449";
-                        check-url = "http://127.0.0.1:9120";
-                        icon = "mdi:robot";
+                        check-url = "http://127.0.0.1:3080";
+                        icon = "si:deepseek";
                         same-tab = true;
                       }
                       {

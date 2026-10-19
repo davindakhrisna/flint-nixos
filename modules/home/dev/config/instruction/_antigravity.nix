@@ -46,7 +46,7 @@
       '';
     };
     handoff = {
-      description = "Create or consume a portable work handoff across Codex, Claude Code, OMP, and Antigravity; use for /handoff or continuing from a supplied handoff.";
+      description = "Create or consume a portable work handoff across Codex, Claude Code, and Antigravity; use for /handoff or continuing from a supplied handoff.";
       prompt = ''
         If the user supplies a handoff, read it, verify its paths and working-tree
         claims against the current workspace, and continue the outstanding task.

@@ -28,7 +28,7 @@
       self.nixosModules.nas
       self.nixosModules.server-tmpfiles
       self.nixosModules.services
-      self.nixosModules.hermes
+      self.nixosModules.dsh-web
       self.nixosModules.couchdb
       self.nixosModules.glance
       self.nixosModules.torrents
@@ -44,6 +44,11 @@
         security.sudo.wheelNeedsPassword = false;
         networking.hostName = "homelab";
 
+        services.dsh-web = {
+          enable = true;
+          publicUrl = "https://homelab.auxois-searobin.ts.net:8449";
+        };
+
         time.timeZone = "Asia/Jakarta";
         i18n.defaultLocale = "en_US.UTF-8";
 
@@ -56,7 +61,6 @@
             "wheel"
             "networkmanager"
             "docker"
-            "hermes"
             "adbusers"
             "libvirtd"
           ];
@@ -72,10 +76,6 @@
           flakePath = "/home/kryisnn/.config/flint";
           cpu = "amd";
           gpu = "amd";
-          dualBoot = {
-            enable = true;
-            windowsEntry = "uuid(dc68ee6b-9b35-49c8-b40f-3995d7f44547):/EFI/Microsoft/Boot/bootmgfw.efi";
-          };
           features = {
             # Desktop
             desktop = true;
@@ -110,13 +110,6 @@
           ];
 
           dev = "medium";
-          home.activation.disableLegacyHermesGateway = lib.hm.dag.entryAfter ["writeBoundary"] ''
-            if [[ -z "''${DRY_RUN_CMD:-}" ]] &&
-              [[ -e "$HOME/.config/systemd/user/hermes-gateway.service" ]]; then
-              ${pkgs.systemd}/bin/systemctl --user disable --now hermes-gateway.service
-              ${pkgs.systemd}/bin/systemctl --user reset-failed hermes-gateway.service || true
-            fi
-          '';
           services.hypridle.enable = lib.mkForce false;
           xdg.configFile."hypr/modules/lid.lua".text = ''
             hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms off"), { locked = true })

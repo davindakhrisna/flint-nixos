@@ -2,7 +2,7 @@
 
 Antigravity is configured for the full **53-command documented Codex CLI catalog** as checked on 2026-10-09, plus `/handoff` and the `/clean` alias. This is a workflow mapping: model internals, authentication, session databases, permissions, and product-only features cannot be transplanted by prompts.
 
-The source of truth is `modules/home/dev/config/_antigravity-commands.nix`. `/codex-workflows` exposes this map inside Antigravity. The catalog was compared with the [official Codex command reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli) and [Antigravity's CLI reference](https://www.antigravity.google/docs/cli/reference/).
+The source of truth is `modules/home/dev/config/instruction/_antigravity.nix`. `/codex-workflows` exposes this map inside Antigravity. The catalog was compared with the [official Codex command reference](https://learn.chatgpt.com/docs/developer-commands?surface=cli) and [Antigravity's CLI reference](https://www.antigravity.google/docs/cli/reference/).
 
 ## Native commands
 
@@ -18,7 +18,7 @@ For example, Antigravity `/fast` is an execution-mode control, not Codex's Fast 
 | --- | --- |
 | `/compact` | Prepare a portable context checkpoint for /compact when moving to a fresh Antigravity chat. |
 | `/debug-config` | Diagnose Antigravity rules, skills, settings and MCP discovery for /debug-config. |
-| `/handoff` | Create or consume a portable work handoff across Codex, Claude Code, OMP, and Antigravity; use for /handoff or continuing from a supplied handoff. |
+| `/handoff` | Create or consume a portable work handoff across Codex, Claude Code, and Antigravity; use for /handoff or continuing from a supplied handoff. |
 | `/import` | Adapt explicitly selected prompts, skills or handoffs from another coding harness for /import. |
 | `/init` | Initialize repository instructions and Graphify for a new coding session; use for /init or a request to initialize the workspace. |
 | `/mention` | Read user-named files into the current task context for /mention. |
@@ -28,7 +28,7 @@ For example, Antigravity `/fast` is an execution-mode control, not Codex's Fast 
 
 `/init` initializes Graphify if absent and creates or carefully updates project `AGENTS.md` from actual source/build evidence. Existing instructions are preserved. Graphify initialization is already authorized for Antigravity coding sessions; failed or unsupported extraction falls back to normal search without repeated retries.
 
-`/handoff` writes `HANDOFF.md` (or your chosen path) with the task, constraints, decisions, changed files, test outcomes, Graphify status, and next action. It also consumes supplied handoffs from Codex, Claude Code, or OMP. `/compact` uses this checkpoint workflow and tells you to use `/clear` or `/new`; it cannot itself remove context messages.
+`/handoff` writes `HANDOFF.md` (or your chosen path) with the task, constraints, decisions, changed files, test outcomes, Graphify status, and next action. It also consumes supplied handoffs from Codex or Claude Code. `/compact` uses this checkpoint workflow and tells you to use `/clear` or `/new`; it cannot itself remove context messages.
 
 ## Compatibility commands
 
@@ -59,16 +59,8 @@ These names are available as skills. They explain the real native equivalent or 
 | `/theme` | Use native /config and colorScheme to choose an Antigravity theme; Codex theme identifiers do not transfer. |
 | `/vim` | Use native /config and the editorMode setting (vim or default). Do not claim to toggle the live composer from a prompt. |
 
-## Shared prompts and automatic skills
+## Automatic skills
 
-All directories under `modules/home/dev/config/skills/` are discovered at evaluation time; Antigravity uses native `/grill-me` instead of duplicating it. All Markdown prompts under `modules/home/dev/config/commands/` are imported intact, with positional and `$ARGUMENTS` binding explained to the model. Names colliding with a native command or skill are prefixed with `prompt-`:
+All directories under `modules/home/dev/config/instruction/skills/` are discovered at evaluation time; Antigravity uses native `/grill-me` instead of duplicating it. Global rules require choosing relevant skills without waiting for explicit commands: ponytail for coding, frontend-design/impeccable for UI, codebase-design for module design, study for Obsidian, and the review skills when their specific scope applies. Review skills are model-invocable. Explicit requests take precedence; irrelevant skills are not loaded. Selection remains model-driven, so `/skills` confirms availability, not guaranteed compliance on every turn.
 
-| Shared command | Antigravity command |
-| --- | --- |
-| `study.md` | `/prompt-study` (the full skill is also `/study`) |
-| `improve-codebase-architecture.md` | `/prompt-improve-codebase-architecture` (the full skill keeps its name) |
-| `thermo-nuclear.md` | `/thermo-nuclear` |
-
-Global rules require choosing relevant skills without waiting for explicit commands: ponytail for coding, frontend-design/impeccable for UI, codebase-design for module design, study for Obsidian, and the review skills when their specific scope applies. Review skills are model-invocable. Explicit requests take precedence; irrelevant skills are not loaded. Selection remains model-driven, so `/skills` confirms availability, not guaranteed compliance on every turn.
-
-Apply with `nh os switch`, then start a new `agy` session. `/skills`, `/codex-workflows`, `/config`, and `/mcp` show the resulting setup. In OMP, `/mcp test headroom` checks the native connection. Shared profile changes are validated with `./scripts/check.sh`.
+Apply with `nh os switch`, then start a new `agy` session. `/skills`, `/codex-workflows`, `/config`, and `/mcp` show the resulting setup. Shared profile changes are validated with `./scripts/check.sh`.

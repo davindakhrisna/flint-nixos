@@ -36,8 +36,8 @@
       url = "github:oxcl/nix-flake-helium-browser";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hermes-agent = {
-      url = "github:NousResearch/hermes-agent";
+    deepseek-harness = {
+      url = "github:moraxyc/deepseek-harness.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

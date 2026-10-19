@@ -26,7 +26,7 @@ Set `dev = "light"`, `dev = "medium"`, or `dev = "heavy"` per host. Each profile
 
 ```
 light  → Git/GitHub CLI, direnv, LazyVim, mkenv, CLI/container tools, AI coding tools
-medium → light + RTK, Headroom, 9Router, and Graphify
+medium → light + RTK, Headroom, and Graphify
 heavy  → medium + Zed, DBGate, Godot, Blender, LibreSprite, and Winboat
 ```
 

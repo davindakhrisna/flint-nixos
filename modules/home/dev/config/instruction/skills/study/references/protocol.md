@@ -2,8 +2,8 @@
 
 ## Opening
 
-Treat the current working directory as the study root. If the user launched `/study`
-elsewhere by mistake, tell them to restart with `omp-study`.
+Treat the current working directory as the study root (the Obsidian vault).
+If the user launched `/study` outside a vault, ask them to switch to their vault directory.
 
 When no note is selected:
 
@@ -39,7 +39,7 @@ For a new session:
 5. Create the session note and add its managed embed to the source note.
 
 Do not present a mode menu. Tell the user where the session note is and ask them to
-answer there, then return to OhMyPi for hints or turn-in.
+answer there, then return to the agent for hints or turn-in.
 
 ## Storage
 
@@ -84,13 +84,15 @@ Add all session embeds at the absolute bottom of the source note inside one mana
 block. Preserve everything outside the markers.
 
 ```markdown
-<!-- omp-study:start -->
+<!-- study:start -->
 ## Study History
 
 > [!note]- <date> - In progress
 > ![[Study Sessions/<source-path>/<timestamp>]]
-<!-- omp-study:end -->
+<!-- study:end -->
 ```
+
+Preserve existing `<!-- omp-study:start -->` blocks if present in existing notes.
 
 Insert later entries immediately before the end marker. On completion, update that
 session's callout title with its score and next review date.
@@ -101,7 +103,7 @@ For a hint request, re-read the relevant question and source context. Give one
 progressive cue in the terminal: first point toward the governing concept, then a
 relationship or constraint if asked again. Do not reveal the complete answer.
 Immediately add the question number to the session's `hints_used` frontmatter so it
-survives a resumed OhMyPi conversation. Do not write the hint itself into the note.
+survives a resumed conversation. Do not write the hint itself into the note.
 
 ## Turn-in
 
