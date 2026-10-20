@@ -72,6 +72,9 @@
               );
           });
           bundles = scoped.bundles.overrideScope (_: bundlesPrev: {
+            tui = bundlesPrev.tui.overrideAttrs (_: {
+              npmBuildScript = "compile";
+            });
             security-audit = bundlesPrev.security-audit.overrideAttrs (oldAttrs: {
               postInstall =
                 ''
