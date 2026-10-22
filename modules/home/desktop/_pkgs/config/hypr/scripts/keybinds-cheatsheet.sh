@@ -44,6 +44,7 @@ end
 
 local binds = {}
 local hl = {
+  config = function() end,
   bind = function(combo, handler, opts)
     local desc = (opts and (opts.desc or opts.description or opts.name)) or ""
     table.insert(binds, { combo = combo, desc = desc })

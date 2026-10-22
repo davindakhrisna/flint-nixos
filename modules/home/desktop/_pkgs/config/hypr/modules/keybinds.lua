@@ -3,15 +3,22 @@
 -- https://wiki.hypr.land/Configuring/Binds/
 -- =============================================================================
 
-local mainMod     = "SUPER"
+hl.config({
+	binds = {
+		-- Keep compositor shortcuts active even when a VM or remote viewer grabs keyboard focus
+		disable_keybind_grabbing = true,
+	},
+})
+
+local mainMod = "SUPER"
 
 -- Applications & Launchers
-local app         = "flint-launch "
-local terminal    = app .. 'kitty "$HOME/.config/hypr/scripts/terminal-fetch.sh"'
+local app = "flint-launch "
+local terminal = app .. 'kitty "$HOME/.config/hypr/scripts/terminal-fetch.sh"'
 local fileManager = app .. "dolphin"
-local menu        = app .. "rofi -show drun"
-local launcher    = app .. "rofi -show drun"
-local scriptsDir  = os.getenv("HOME") .. "/.config/hypr/scripts"
+local menu = app .. "rofi -show drun"
+local launcher = app .. "rofi -show drun"
+local scriptsDir = os.getenv("HOME") .. "/.config/hypr/scripts"
 
 -- Core Application Binds
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(launcher), { desc = "Application Launcher" })
@@ -19,22 +26,32 @@ hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal), { desc = "Terminal" }
 hl.bind(mainMod .. " + Q", hl.dsp.window.close(), { desc = "Close Window" })
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager), { desc = "File Manager" })
 hl.bind(mainMod .. " + W", function()
-  local window = hl.get_active_window()
-  if window == nil then return end
+	local window = hl.get_active_window()
+	if window == nil then
+		return
+	end
 
-  if window.floating then
-    hl.dispatch(hl.dsp.window.float({ action = "unset" }))
-  else
-    hl.dispatch(hl.dsp.window.float({ action = "set" }))
-    hl.dispatch(hl.dsp.window.resize({ x = 1024, y = 768 }))
-    hl.dispatch(hl.dsp.window.center())
-  end
+	if window.floating then
+		hl.dispatch(hl.dsp.window.float({ action = "unset" }))
+	else
+		hl.dispatch(hl.dsp.window.float({ action = "set" }))
+		hl.dispatch(hl.dsp.window.resize({ x = 1024, y = 768 }))
+		hl.dispatch(hl.dsp.window.center())
+	end
 end, { desc = "Toggle Floating Window" })
 
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(app .. "hyprlock"), { desc = "Lock Screen" })
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }), { desc = "Toggle Fullscreen" })
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(scriptsDir .. "/reload-desktop.sh"), { desc = "Reload Desktop (Waybar, Wallpaper, Rofi)" })
-hl.bind(mainMod .. " + slash", hl.dsp.exec_cmd(scriptsDir .. "/keybinds-cheatsheet.sh"), { desc = "Keybinds Cheatsheet" })
+hl.bind(
+	mainMod .. " + R",
+	hl.dsp.exec_cmd(scriptsDir .. "/reload-desktop.sh"),
+	{ desc = "Reload Desktop (Waybar, Wallpaper, Rofi)" }
+)
+hl.bind(
+	mainMod .. " + slash",
+	hl.dsp.exec_cmd(scriptsDir .. "/keybinds-cheatsheet.sh"),
+	{ desc = "Keybinds Cheatsheet" }
+)
 
 -- Window Focus (Super + Arrow keys)
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }), { desc = "Focus Left" })
@@ -45,9 +62,13 @@ hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }), { desc = "Fo
 -- Workspaces (Super + [1-9, 0])
 -- Move active window to workspace (Super + Shift + [1-9, 0])
 for i = 1, 10 do
-  local key = i % 10 -- 10 maps to key 0
-  hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { desc = "Focus Workspace " .. key })
-  hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }), { desc = "Move to Workspace " .. key })
+	local key = i % 10 -- 10 maps to key 0
+	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { desc = "Focus Workspace " .. key })
+	hl.bind(
+		mainMod .. " + SHIFT + " .. key,
+		hl.dsp.window.move({ workspace = i }),
+		{ desc = "Move to Workspace " .. key }
+	)
 end
 
 -- Special Workspace (Scratchpad)
@@ -71,13 +92,36 @@ hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-academia"), { desc = "A
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-academia --clear"), { desc = "Clear All Notifications" })
 
 -- Multimedia Keys: Volume & Display Brightness with Dunst OSD
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh up"), { locked = true, repeating = true, desc = "Volume Up" })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh down"), { locked = true, repeating = true, desc = "Volume Down" })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mute"), { locked = true, repeating = true, desc = "Mute Volume" })
-hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mic-mute"), { locked = true, repeating = true, desc = "Mute Microphone" })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh up"), { locked = true, repeating = true, desc = "Brightness Up" })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh down"),
-  { locked = true, repeating = true, desc = "Brightness Down" })
+hl.bind(
+	"XF86AudioRaiseVolume",
+	hl.dsp.exec_cmd(scriptsDir .. "/volume.sh up"),
+	{ locked = true, repeating = true, desc = "Volume Up" }
+)
+hl.bind(
+	"XF86AudioLowerVolume",
+	hl.dsp.exec_cmd(scriptsDir .. "/volume.sh down"),
+	{ locked = true, repeating = true, desc = "Volume Down" }
+)
+hl.bind(
+	"XF86AudioMute",
+	hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mute"),
+	{ locked = true, repeating = true, desc = "Mute Volume" }
+)
+hl.bind(
+	"XF86AudioMicMute",
+	hl.dsp.exec_cmd(scriptsDir .. "/volume.sh mic-mute"),
+	{ locked = true, repeating = true, desc = "Mute Microphone" }
+)
+hl.bind(
+	"XF86MonBrightnessUp",
+	hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh up"),
+	{ locked = true, repeating = true, desc = "Brightness Up" }
+)
+hl.bind(
+	"XF86MonBrightnessDown",
+	hl.dsp.exec_cmd(scriptsDir .. "/brightness.sh down"),
+	{ locked = true, repeating = true, desc = "Brightness Down" }
+)
 
 -- Media Player Controls (requires playerctl)
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true, desc = "Next Track" })
@@ -86,11 +130,19 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true, desc = "Previous Track" })
 
 -- Screenshots: Print / Super+Shift+S (Region), Super+Print (Full Screen)
-hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh region"), { desc = "Screenshot Region" })
+hl.bind(
+	mainMod .. " + SHIFT + P",
+	hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh region"),
+	{ desc = "Screenshot Region" }
+)
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(scriptsDir .. "/screenshot.sh full"), { desc = "Screenshot Full Screen" })
 
 -- Screen Recording Toggle (Super + Alt + R)
-hl.bind(mainMod .. " + ALT + R", hl.dsp.exec_cmd(scriptsDir .. "/screenrecord.sh"), { desc = "Screen Recording Toggle" })
+hl.bind(
+	mainMod .. " + ALT + R",
+	hl.dsp.exec_cmd(scriptsDir .. "/screenrecord.sh"),
+	{ desc = "Screen Recording Toggle" }
+)
 
 -- Color Picker
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(scriptsDir .. "/hyprpicker.sh"), { desc = "Color Picker" })
