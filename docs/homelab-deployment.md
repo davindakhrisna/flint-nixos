@@ -76,15 +76,12 @@ DeepSeek Harness runs as a managed systemd service (`dsh-web.service`) for user
 Tailscale Serve forwards `https://homelab.auxois-searobin.ts.net:8449` directly
 to DSH Web, and Glance monitors it with an application card.
 
-Browser sessions authenticate via signed cookies exchanged from the tokenized
-startup URL. To retrieve the session launch URL after boot:
-
-```bash
-journalctl -u dsh-web -n 20 --no-pager
-```
-
-DeepSeek API credentials can be configured directly in the Web UI settings or in
-`~/.dsh/.credentials.yaml`.
+The service runs the Home Manager DSH environment for `kryisnn`, loading the
+`nix-web` profile and all declared plugins (`dsh-agy-safe`, etc.). Requests
+originating through trusted hosts (including Tailscale) authenticate
+automatically so the web UI can be opened directly from Glance without needing
+to pass a token. DeepSeek API credentials can be configured directly in the
+Web UI settings or in `~/.dsh/.credentials.yaml`.
 
 ## Remote browser
 

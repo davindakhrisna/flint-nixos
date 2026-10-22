@@ -6,9 +6,19 @@ _: {
     ...
   }: let
     cfg = config.services.dsh-web;
+    dshBin =
+      if config.home-manager.users ? ${cfg.user}
+      then "/etc/profiles/per-user/${cfg.user}/bin/dsh"
+      else "${cfg.package}/bin/dsh";
   in {
     options.services.dsh-web = {
       enable = lib.mkEnableOption "DeepSeek Harness Web GUI service";
+
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = pkgs.dsh.dsh;
+        description = "Fallback package providing the dsh binary.";
+      };
 
       port = lib.mkOption {
         type = lib.types.port;
@@ -56,7 +66,8 @@ _: {
         };
 
         path = [
-          pkgs.dsh.dsh
+          "/etc/profiles/per-user/${cfg.user}"
+          cfg.package
           pkgs.coreutils
           pkgs.bash
           pkgs.headroom
@@ -72,10 +83,10 @@ _: {
           Restart = "on-failure";
           RestartSec = "10s";
 
-          ExecStartPre = "${pkgs.dsh.dsh}/bin/dsh --version";
+          ExecStartPre = "${dshBin} --version";
           ExecStart = lib.concatStringsSep " " (
             [
-              "${pkgs.dsh.dsh}/bin/dsh"
+              dshBin
               "web"
               "--no-open"
               "--host"

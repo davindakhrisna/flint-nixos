@@ -11,7 +11,6 @@ _: {
         godot_4
         blender
         libresprite
-        winboat
       ];
     };
   };

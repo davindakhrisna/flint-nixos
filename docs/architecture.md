@@ -28,20 +28,20 @@ home-manager.users.kryisnn = { ... }: {
 
 ## System Modules (`modules/system/`)
 
-| File | Responsibility |
-|:-----|:---------------|
-| `options.nix` | Shared system feature and host options, imported once by the aggregate system module |
-| `base.nix` | Nix daemon, power profiles, shell helpers, and package overlays |
-| `boot.nix` | Limine, UEFI, dual boot, and generation retention |
-| `security.nix` | Kernel/network hardening and the sandboxed Vulnix timer |
-| `networking.nix` | NetworkManager, Quad9 DNS-over-TLS/DNSSEC, and Tailscale |
-| `audio.nix` | Feature-gated PipeWire, PulseAudio compatibility, JACK, and RTKit |
-| `containers.nix` | Feature-gated Docker and Waydroid |
-| `compute.nix` | Hardware-aware Ollama service |
-| `desktop.nix` | Feature-gated Hyprland UWSM session and system fonts |
-| `hardware.nix` | Declarative `var.cpu` / `var.gpu` / `var.nvidia.mode` abstraction |
-| `gaming.nix` | Steam, GameMode, Gamescope |
-| `utils.nix` | System-wide CLI utilities and helpers |
+| File             | Responsibility                                                                       |
+| :--------------- | :----------------------------------------------------------------------------------- |
+| `options.nix`    | Shared system feature and host options, imported once by the aggregate system module |
+| `base.nix`       | Nix daemon, power profiles, shell helpers, and package overlays                      |
+| `boot.nix`       | Limine, UEFI, dual boot, and generation retention                                    |
+| `security.nix`   | Kernel/network hardening and the sandboxed Vulnix timer                              |
+| `networking.nix` | NetworkManager, Quad9 DNS-over-TLS/DNSSEC, and Tailscale                             |
+| `audio.nix`      | Feature-gated PipeWire, PulseAudio compatibility, JACK, and RTKit                    |
+| `containers.nix` | Feature-gated Docker and Waydroid                                                    |
+| `compute.nix`    | Hardware-aware Ollama service                                                        |
+| `desktop.nix`    | Feature-gated Hyprland UWSM session and system fonts                                 |
+| `hardware.nix`   | Declarative `var.cpu` / `var.gpu` / `var.nvidia.mode` abstraction                    |
+| `gaming.nix`     | Steam, GameMode, Gamescope                                                           |
+| `utils.nix`      | System-wide CLI utilities and helpers                                                |
 
 > [!NOTE]
 > `hardware.nix` uses `lib.mkIf` guards — unused hardware paths are completely eliminated. An AMD machine never evaluates Nvidia driver logic.
@@ -50,14 +50,14 @@ home-manager.users.kryisnn = { ... }: {
 
 ## Home Modules (`modules/home/`)
 
-| Directory | Responsibility |
-|:----------|:---------------|
-| `desktop/` | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Awww, GTK theming |
-| `dev/` | Development profiles, LazyVim, `mkenv` bootstrapper, templates |
-| `shell/` | Zsh (vi-mode, plugins), Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
-| `entertainment/` | Gaming (MangoHud, Sober) and social (Discord, Spotify) |
-| `productivity/` | Obsidian, Sioyek, TUI tools |
-| `home.nix` | Base HM config, XDG compliance, session variables |
+| Directory        | Responsibility                                                                       |
+| :--------------- | :----------------------------------------------------------------------------------- |
+| `desktop/`       | Hyprland config (Lua via Hyprlang), Waybar, Dunst, Rofi, Hyprlock, Awww, GTK theming |
+| `dev/`           | Development profiles, LazyVim, `mkenv` bootstrapper, templates                       |
+| `shell/`         | Zsh (vi-mode, plugins), Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide          |
+| `entertainment/` | Gaming (MangoHud, Sober) and social (Discord, Spotify)                               |
+| `productivity/`  | Obsidian, Sioyek, TUI tools                                                          |
+| `home.nix`       | Base HM config, XDG compliance, session variables                                    |
 
 ---
 
@@ -76,7 +76,7 @@ The profiles are cumulative:
 
 - `light.nix` supplies LazyVim, Git/GitHub, direnv, `mkenv`, CLI/container utilities, study tools, agent skills, and rolling AI CLIs. Their official installers run on activation and hourly; Flint patches the generic Antigravity binary for NixOS. None are pinned in `flake.lock`.
 - `medium.nix` adds RTK, a pinned Headroom package, and Graphify on top of `light`.
-- `heavy.nix` adds all development GUI apps: Zed, DBGate, Godot, Blender, LibreSprite, and Winboat.
+- `heavy.nix` adds all development GUI apps: Zed, DBGate, Godot, Blender, LibreSprite.
 
 Support modules (`_lazyvim.nix`, `_mkenv.nix`, and `instruction/` modules) live under `dev/config/`. Homelab uses `medium`, powerhouse uses `heavy`, and the host template defaults to `light`.
 

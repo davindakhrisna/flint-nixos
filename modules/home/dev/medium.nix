@@ -84,6 +84,16 @@ _: {
         programs.dsh = {
           patch = [
             {
+              id = "llm-pi-ai";
+              config = {
+                providers = {
+                  opencode = {
+                    apiKeyEnv = "OPENCODE_API_KEY";
+                  };
+                };
+              };
+            }
+            {
               insert = [
                 {
                   id = "mcp-headroom";
