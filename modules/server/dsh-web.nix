@@ -66,6 +66,7 @@ _: {
         };
 
         path = [
+          "/home/${cfg.user}/.local/bin"
           "/etc/profiles/per-user/${cfg.user}"
           cfg.package
           pkgs.coreutils
