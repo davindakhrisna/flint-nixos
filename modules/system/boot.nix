@@ -21,6 +21,9 @@ _: {
         };
         efi.canTouchEfiVariables = true;
       };
+      extraModprobeConfig = ''
+        options snd-hda-intel model=dell-headset-multi
+      '';
     };
 
     time.hardwareClockInLocalTime = lib.mkIf config.var.dualBoot.enable true;

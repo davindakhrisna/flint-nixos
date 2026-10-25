@@ -6,19 +6,18 @@ _: {
     ...
   }: let
     cfg = config.services.dsh-web;
-    dshBin =
-      if config.home-manager.users ? ${cfg.user}
-      then "/etc/profiles/per-user/${cfg.user}/bin/dsh"
-      else "${cfg.package}/bin/dsh";
+    dshBin = "/home/${cfg.user}/.local/bin/dsh";
+    preStartScript = pkgs.writeShellScript "dsh-web-prestart" ''
+      export PATH="/home/${cfg.user}/.local/bin:${pkgs.nodejs}/bin:${pkgs.coreutils}/bin:$PATH"
+      export NPM_CONFIG_PREFIX="/home/${cfg.user}/.local"
+      if [ ! -x "${dshBin}" ]; then
+        ${pkgs.nodejs}/bin/npm install -g @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
+      fi
+      "${dshBin}" --version
+    '';
   in {
     options.services.dsh-web = {
       enable = lib.mkEnableOption "DeepSeek Harness Web GUI service";
-
-      package = lib.mkOption {
-        type = lib.types.package;
-        default = pkgs.dsh.dsh;
-        description = "Fallback package providing the dsh binary.";
-      };
 
       port = lib.mkOption {
         type = lib.types.port;
@@ -68,10 +67,9 @@ _: {
         path = [
           "/home/${cfg.user}/.local/bin"
           "/etc/profiles/per-user/${cfg.user}"
-          cfg.package
+          pkgs.nodejs
           pkgs.coreutils
           pkgs.bash
-          pkgs.headroom
           pkgs.rtk
           pkgs.graphify
         ];
@@ -84,7 +82,7 @@ _: {
           Restart = "on-failure";
           RestartSec = "10s";
 
-          ExecStartPre = "${dshBin} --version";
+          ExecStartPre = preStartScript;
           ExecStart = lib.concatStringsSep " " (
             [
               dshBin

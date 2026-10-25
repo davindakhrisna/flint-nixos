@@ -15,9 +15,6 @@
           useUserPackages = true;
           extraSpecialArgs = {inherit inputs self;};
           backupFileExtension = "backup";
-          sharedModules = [
-            inputs.nix-flatpak.homeManagerModules.nix-flatpak
-          ];
         };
       }
 
@@ -79,6 +76,12 @@
             # Gaming
             gaming = false;
             steamLocalTransfers = false;
+
+            # Coding
+            coding = true;
+            agents = true;
+            tools = true;
+            creative = true;
           };
         };
 
@@ -86,14 +89,15 @@
           imports = with self.homeModules; [
             home-manager
             desktop
-            dev
-            entertainment-social
-            entertainment-gaming
             shell
             productivity
+            entertainment-social
+            entertainment-gaming
+            coding
+            agents
+            tools
+            creative
           ];
-
-          dev = "heavy";
         };
 
         system.stateVersion = "26.05";

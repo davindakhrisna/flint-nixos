@@ -16,7 +16,6 @@ local mainMod = "SUPER"
 local app = "flint-launch "
 local terminal = app .. 'kitty "$HOME/.config/hypr/scripts/terminal-fetch.sh"'
 local fileManager = app .. "dolphin"
-local menu = app .. "rofi -show drun"
 local launcher = app .. "rofi -show drun"
 local scriptsDir = os.getenv("HOME") .. "/.config/hypr/scripts"
 
@@ -86,10 +85,6 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, desc 
 -- =============================================================================
 -- Utility & Script Binds
 -- =============================================================================
-
--- Academia: screenshot answer notification without opening a terminal
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-academia"), { desc = "Academia Screenshot Answer" })
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-academia --clear"), { desc = "Clear All Notifications" })
 
 -- Multimedia Keys: Volume & Display Brightness with Dunst OSD
 hl.bind(
@@ -164,3 +159,11 @@ hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(app .. "helium"), { desc = "H
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd(app .. "obsidian"), { desc = "Obsidian" })
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(app .. "spotify"), { desc = "Spotify" })
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(app .. "vesktop"), { desc = "Vesktop" })
+
+-- =============================================================================
+-- Custom Keybinds
+-- =============================================================================
+
+-- Example keybind
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-academia"), { desc = "Academia Screenshot Answer" })
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-academia --clear"), { desc = "Clear All Notifications" })

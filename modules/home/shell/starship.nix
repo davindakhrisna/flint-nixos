@@ -1,5 +1,5 @@
 {
-  flake.homeModules.utils-starship = {
+  flake.homeModules.utils-starship = {osConfig ? {}, ...}: {
     programs.starship = {
       enable = true;
       enableZshIntegration = true;
@@ -9,7 +9,7 @@
 
         format = ''
           [╭─](bright-black) $directory $git_branch$git_status$fill $nodejs$python$golang$nix_shell$cmd_duration[─╮](bright-black)
-          [╰─](bright-black)$character '';
+          [╰─ ${osConfig.networking.hostName or ""} ](bright-black)$character '';
 
         fill = {
           symbol = " ";

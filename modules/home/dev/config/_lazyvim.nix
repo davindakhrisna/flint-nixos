@@ -1,10 +1,12 @@
 {
-  config,
   lib,
+  osConfig ? {},
   pkgs,
   ...
-}: {
-  config = lib.mkIf (builtins.elem config.dev ["light" "medium" "heavy"]) {
+}: let
+  enabled = osConfig.var.features.coding or false;
+in {
+  config = lib.mkIf enabled {
     home.sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";

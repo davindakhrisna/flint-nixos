@@ -24,20 +24,8 @@
       url = "github:Zeus-Deus/gazelle-tui";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hacker-news-tui = {
-      url = "github:danfry1/hacker-news-tui";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    pomo = {
-      url = "github:Bahaaio/pomo";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     helium = {
       url = "github:oxcl/nix-flake-helium-browser";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    deepseek-harness = {
-      url = "github:moraxyc/deepseek-harness.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

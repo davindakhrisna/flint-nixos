@@ -17,13 +17,11 @@
           useUserPackages = true;
           extraSpecialArgs = {inherit inputs self;};
           backupFileExtension = "backup";
-          sharedModules = [inputs.nix-flatpak.homeManagerModules.nix-flatpak];
         };
       }
 
-      self.nixosModules.system
-
       # Services
+      self.nixosModules.system
       self.nixosModules.tailscale-server
       self.nixosModules.nas
       self.nixosModules.server-tmpfiles
@@ -95,6 +93,12 @@
             # Gaming
             gaming = false;
             steamLocalTransfers = false;
+
+            # Coding
+            coding = true;
+            agents = true;
+            tools = true;
+            creative = true;
           };
         };
 
@@ -102,14 +106,16 @@
           imports = with self.homeModules; [
             home-manager
             desktop
-            dev
-            entertainment-social
-            entertainment-gaming
             shell
             productivity
+            entertainment-social
+            entertainment-gaming
+            coding
+            agents
+            tools
+            creative
           ];
 
-          dev = "medium";
           services.hypridle.enable = lib.mkForce false;
           xdg.configFile."hypr/modules/lid.lua".text = ''
             hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms off"), { locked = true })

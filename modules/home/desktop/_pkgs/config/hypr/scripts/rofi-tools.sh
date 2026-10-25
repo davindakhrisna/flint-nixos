@@ -26,6 +26,9 @@ if [ -n "$1" ]; then
         *"Focus Mode"*)
             (sleep 0.5; "$SCRIPTS_DIR/focusmode.sh") >/dev/null 2>&1 &
             ;;
+        *"Do Not Disturb"*|*"DnD"*|*"DND"*)
+            (sleep 0.5; "$SCRIPTS_DIR/dnd.sh") >/dev/null 2>&1 &
+            ;;
     esac
     exit 0
 fi
@@ -37,3 +40,4 @@ printf '󰻃  Screen Record (Toggle)\0icon\x1fmedia-record\x1finfo\x1frecord\n'
 printf '󰈊  Color Picker (Hyprpicker)\0icon\x1fcolor-select\x1finfo\x1fpicker\n'
 printf '󰊴  Game Mode (Toggle)\0icon\x1finput-gaming\x1finfo\x1fgamemode\n'
 printf '󰈈  Focus Mode (Toggle)\0icon\x1fpreferences-desktop-screensaver\x1finfo\x1ffocusmode\n'
+printf '󰂛  Do Not Disturb (Toggle)\0icon\x1fpreferences-desktop-notification-bell\x1finfo\x1fdnd\n'

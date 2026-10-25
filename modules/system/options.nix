@@ -35,6 +35,10 @@ _: {
         steamDedicatedServer = lib.mkEnableOption "Steam dedicated-server firewall ports";
         steamLocalTransfers = lib.mkEnableOption "Steam local-transfer firewall ports";
         opentabletdriver = lib.mkEnableOption "OpenTabletDriver daemon and udev rules for drawing tablets";
+        coding = lib.mkEnableOption "coding environment (git, dev tools, and editors)";
+        agents = lib.mkEnableOption "AI agent configurations";
+        tools = lib.mkEnableOption "developer tools";
+        creative = lib.mkEnableOption "creative software (Godot, Blender, LibreSprite)";
       };
     };
 

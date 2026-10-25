@@ -15,9 +15,6 @@
           useUserPackages = true;
           extraSpecialArgs = {inherit inputs self;};
           backupFileExtension = "backup";
-          sharedModules = [
-            inputs.nix-flatpak.homeManagerModules.nix-flatpak
-          ];
         };
       }
 
@@ -86,6 +83,12 @@
             # Gaming
             gaming = false;
             steamLocalTransfers = false;
+
+            # Coding
+            coding = true;
+            agents = true;
+            tools = true;
+            creative = true;
           };
         };
 
@@ -96,13 +99,13 @@
             desktop
             shell
             productivity
-            dev
             entertainment-social
             entertainment-gaming
+            coding
+            agents
+            tools
+            creative
           ];
-
-          # Dev Environment Profile: "light" | "medium" | "heavy"
-          dev = "light"; # CHANGEME
         };
 
         system.stateVersion = "26.05";

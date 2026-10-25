@@ -1,4 +1,10 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  osConfig ? {},
+  ...
+}: let
+  enabled = osConfig.var.features.coding or false;
   templatesDir = ../templates;
 
   mkenvScript = pkgs.writeShellApplication {
@@ -286,5 +292,7 @@
     '';
   };
 in {
-  home.packages = [mkenvPkg];
+  config = lib.mkIf enabled {
+    home.packages = [mkenvPkg];
+  };
 }
