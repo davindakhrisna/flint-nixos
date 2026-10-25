@@ -23,6 +23,7 @@
       runtimeInputs = with pkgs; [
         coreutils
         curl
+        findutils
         gnugrep
         gnutar
         gzip
@@ -32,21 +33,21 @@
         util-linux
       ];
       text = ''
-                export PATH="$HOME/.local/bin:$PATH"
-                export PNPM_HOME="$HOME/.local/share/pnpm"
-                mkdir -p "$HOME/.local/bin" "$HOME/.cache" "$PNPM_HOME"
+        export PATH="$HOME/.local/bin:$PATH"
+        export PNPM_HOME="$HOME/.local/share/pnpm"
+        mkdir -p "$HOME/.local/bin" "$HOME/.cache" "$PNPM_HOME"
 
-                exec 9>"$HOME/.cache/update-ai-tools.lock"
-                flock -n 9 || exit 0
+        exec 9>"$HOME/.cache/update-ai-tools.lock"
+        flock -n 9 || exit 0
 
-                # 1. Codex + seed MCP servers into writable ~/.codex/config.toml
-                curl -fsSL https://chatgpt.com/codex/install.sh |
-                  CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh
+        # 1. Codex + seed MCP servers into writable ~/.codex/config.toml
+        curl -fsSL https://chatgpt.com/codex/install.sh |
+          CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh
 
-                mkdir -p "$HOME/.codex"
-                touch "$HOME/.codex/config.toml"
-                if ! grep -q "\[mcp_servers.codebase-memory\]" "$HOME/.codex/config.toml"; then
-                  cat >> "$HOME/.codex/config.toml" << 'EOF'
+        mkdir -p "$HOME/.codex"
+        touch "$HOME/.codex/config.toml"
+        if ! grep -q "\[mcp_servers.codebase-memory\]" "$HOME/.codex/config.toml"; then
+          cat >> "$HOME/.codex/config.toml" << 'EOF'
 
         [features]
         hooks = true
@@ -58,22 +59,87 @@
         command = "serena-mcp"
         startup_timeout_sec = 30
         EOF
-                fi
+        fi
 
-                curl -fsSL https://antigravity.google/cli/install.sh |
-                  bash -s -- --dir "$HOME/.local/bin"
-                patchelf --set-interpreter ${lib.escapeShellArg pkgs.stdenv.cc.bintools.dynamicLinker} \
-                  "$HOME/.local/bin/agy"
+        curl -fsSL https://antigravity.google/cli/install.sh |
+          bash -s -- --dir "$HOME/.local/bin"
+        if [[ -f "$HOME/.local/bin/agy" ]]; then
+          tmp_agy=$(mktemp "$HOME/.local/bin/agy.tmp.XXXXXX")
+          cp "$HOME/.local/bin/agy" "$tmp_agy"
+          patchelf --set-interpreter ${lib.escapeShellArg pkgs.stdenv.cc.bintools.dynamicLinker} "$tmp_agy"
+          chmod +x "$tmp_agy"
+          mv -f "$tmp_agy" "$HOME/.local/bin/agy"
+        fi
 
-                pnpm install -g @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
-                for bin in "$PNPM_HOME"/*; do
-                  [[ -f "$bin" && -x "$bin" ]] || continue
-                  target="$HOME/.local/bin/$(basename "$bin")"
-                  # shellcheck disable=SC2016
-                  printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" "$@"\n' \
-                    "${pkgs.nodejs}/bin" "$bin" > "$target"
-                  chmod +x "$target"
-                done
+        npm install -g --prefix "$HOME/.local" @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
+
+        find "$HOME/.local" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
+          if ! grep -q "expose-internals" "$target"; then
+            cat << 'EOF' > "$target"
+        "use strict";
+        var __importDefault = (this && this.__importDefault) || function (mod) {
+            return (mod && mod.__esModule) ? mod : { "default": mod };
+        };
+        Object.defineProperty(exports, "__esModule", { value: true });
+        exports.requireBuiltin = requireBuiltin;
+        exports.isAllowedInternalId = isAllowedInternalId;
+        exports.getBindingInfo = getBindingInfo;
+        const node_path_1 = __importDefault(require("node:path"));
+
+        let api = null;
+        function getApi() {
+            if (!api) {
+                const { createEntryApi } = require('node-addon-native-custom-loader');
+                api = createEntryApi(node_path_1.default.resolve(__dirname, '..'));
+            }
+            return api;
+        }
+
+        function requireBuiltin(moduleId) {
+            try {
+                return require(moduleId);
+            } catch {
+                return getApi().requireBuiltin(moduleId);
+            }
+        }
+        function isAllowedInternalId(moduleId) {
+            return typeof moduleId === 'string' && (moduleId.startsWith('internal/') || !moduleId.includes('/'));
+        }
+        function getBindingInfo() {
+            try {
+                return getApi().getBindingInfo();
+            } catch {
+                return { mode: 'napi', product: 'require-builtin', backend: 'expose-internals', abi: 'native' };
+            }
+        }
+        exports.default = {
+            requireBuiltin,
+            isAllowedInternalId,
+            getBindingInfo,
+        };
+        EOF
+          fi
+        done
+
+        dsh_bin="$HOME/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
+        if [[ -f "$dsh_bin" ]]; then
+          rm -f "$HOME/.local/bin/dsh"
+          # shellcheck disable=SC2016
+          printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+            "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_bin" > "$HOME/.local/bin/dsh"
+          chmod +x "$HOME/.local/bin/dsh"
+        fi
+
+        dsh_tui_bin="$HOME/.local/lib/node_modules/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js"
+        if [[ -f "$dsh_tui_bin" ]]; then
+          for cmd in dsh-tui dst; do
+            rm -f "$HOME/.local/bin/$cmd"
+            # shellcheck disable=SC2016
+            printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+              "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_tui_bin" > "$HOME/.local/bin/$cmd"
+            chmod +x "$HOME/.local/bin/$cmd"
+          done
+        fi
       '';
     };
   in {
