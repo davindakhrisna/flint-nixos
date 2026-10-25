@@ -165,5 +165,5 @@ hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(app .. "vesktop"), { desc = "
 -- =============================================================================
 
 -- Example keybind
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-academia"), { desc = "Academia Screenshot Answer" })
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-academia --clear"), { desc = "Clear All Notifications" })
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-stealth"), { desc = "Stealth" })
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-stealth --clear"), { desc = "Clear Prints" })
