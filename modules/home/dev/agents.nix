@@ -25,6 +25,7 @@
         curl
         findutils
         gnugrep
+        gnused
         gnutar
         gzip
         nodejs
@@ -119,6 +120,11 @@
         };
         EOF
           fi
+        done
+
+        find "$HOME/.local" "$HOME/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null | while read -r tui_js; do
+          sed -i 's/spawn(process\.execPath, \[entry,/spawn(process.execPath, ["--expose-internals", entry,/g' "$tui_js"
+          sed -i 's/spawn(process\.execPath, \[profileBin,/spawn(process.execPath, ["--expose-internals", profileBin,/g' "$tui_js"
         done
 
         dsh_bin="$HOME/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"

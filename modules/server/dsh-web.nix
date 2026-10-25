@@ -8,11 +8,71 @@ _: {
     cfg = config.services.dsh-web;
     dshBin = "/home/${cfg.user}/.local/bin/dsh";
     preStartScript = pkgs.writeShellScript "dsh-web-prestart" ''
-      export PATH="/home/${cfg.user}/.local/bin:${pkgs.nodejs}/bin:${pkgs.coreutils}/bin:$PATH"
+      export PATH="/home/${cfg.user}/.local/bin:/etc/profiles/per-user/${cfg.user}/bin:${pkgs.nodejs}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:${pkgs.gnused}/bin:$PATH"
       export NPM_CONFIG_PREFIX="/home/${cfg.user}/.local"
-      if [ ! -x "${dshBin}" ]; then
-        ${pkgs.nodejs}/bin/npm install -g @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
+
+      if command -v update-ai-tools >/dev/null 2>&1; then
+        update-ai-tools
+      elif [ ! -x "${dshBin}" ]; then
+        ${pkgs.nodejs}/bin/npm install -g --prefix "/home/${cfg.user}/.local" @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
       fi
+
+      find "/home/${cfg.user}/.local" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
+        if ! grep -q "expose-internals" "$target"; then
+          cat << 'EOF' > "$target"
+      "use strict";
+      var __importDefault = (this && this.__importDefault) || function (mod) {
+          return (mod && mod.__esModule) ? mod : { "default": mod };
+      };
+      Object.defineProperty(exports, "__esModule", { value: true });
+      exports.requireBuiltin = requireBuiltin;
+      exports.isAllowedInternalId = isAllowedInternalId;
+      exports.getBindingInfo = getBindingInfo;
+      const node_path_1 = __importDefault(require("node:path"));
+
+      let api = null;
+      function getApi() {
+          if (!api) {
+              const { createEntryApi } = require('node-addon-native-custom-loader');
+              api = createEntryApi(node_path_1.default.resolve(__dirname, '..'));
+          }
+          return api;
+      }
+
+      function requireBuiltin(moduleId) {
+          try {
+              return require(moduleId);
+          } catch {
+              return getApi().requireBuiltin(moduleId);
+          }
+      }
+      function isAllowedInternalId(moduleId) {
+          return typeof moduleId === 'string' && (moduleId.startsWith('internal/') || !moduleId.includes('/'));
+      }
+      function getBindingInfo() {
+          try {
+              return getApi().getBindingInfo();
+          } catch {
+              return { mode: 'napi', product: 'require-builtin', backend: 'expose-internals', abi: 'native' };
+          }
+      }
+      exports.default = {
+          requireBuiltin,
+          isAllowedInternalId,
+          getBindingInfo,
+      };
+      EOF
+        fi
+      done
+
+      dsh_target="/home/${cfg.user}/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
+      if [ -f "$dsh_target" ]; then
+        rm -f "${dshBin}"
+        printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+          "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_target" > "${dshBin}"
+        chmod +x "${dshBin}"
+      fi
+
       "${dshBin}" --version
     '';
   in {
@@ -66,10 +126,12 @@ _: {
 
         path = [
           "/home/${cfg.user}/.local/bin"
-          "/etc/profiles/per-user/${cfg.user}"
+          "/etc/profiles/per-user/${cfg.user}/bin"
           pkgs.nodejs
           pkgs.coreutils
           pkgs.bash
+          pkgs.findutils
+          pkgs.gnused
           pkgs.rtk
           pkgs.graphify
         ];
