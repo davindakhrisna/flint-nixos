@@ -24,6 +24,7 @@
         coreutils
         curl
         findutils
+        gawk
         gnugrep
         gnused
         gnutar
@@ -42,13 +43,12 @@
         flock -n 9 || exit 0
 
         # 1. Codex + seed MCP servers into writable ~/.codex/config.toml
-        curl -fsSL https://chatgpt.com/codex/install.sh |
-          CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh
-
-        mkdir -p "$HOME/.codex"
-        touch "$HOME/.codex/config.toml"
-        if ! grep -q "\[mcp_servers.codebase-memory\]" "$HOME/.codex/config.toml"; then
-          cat >> "$HOME/.codex/config.toml" << 'EOF'
+        if curl -fsSL https://chatgpt.com/codex/install.sh |
+            CODEX_NON_INTERACTIVE=1 CODEX_INSTALL_DIR="$HOME/.local/bin" sh; then
+          mkdir -p "$HOME/.codex"
+          touch "$HOME/.codex/config.toml"
+          if ! grep -q "\[mcp_servers.codebase-memory\]" "$HOME/.codex/config.toml"; then
+            cat >> "$HOME/.codex/config.toml" << 'EOF'
 
         [features]
         hooks = true
@@ -60,19 +60,25 @@
         command = "serena-mcp"
         startup_timeout_sec = 30
         EOF
+          fi
+        else
+          echo "Warning: Codex installation failed or was skipped" >&2
         fi
 
-        curl -fsSL https://antigravity.google/cli/install.sh |
-          bash -s -- --dir "$HOME/.local/bin"
-        if [[ -f "$HOME/.local/bin/agy" ]]; then
-          tmp_agy=$(mktemp "$HOME/.local/bin/agy.tmp.XXXXXX")
-          cp "$HOME/.local/bin/agy" "$tmp_agy"
-          patchelf --set-interpreter ${lib.escapeShellArg pkgs.stdenv.cc.bintools.dynamicLinker} "$tmp_agy"
-          chmod +x "$tmp_agy"
-          mv -f "$tmp_agy" "$HOME/.local/bin/agy"
+        # 2. Antigravity CLI
+        if curl -fsSL https://antigravity.google/cli/install.sh | bash -s -- --dir "$HOME/.local/bin"; then
+          if [[ -f "$HOME/.local/bin/agy" ]]; then
+            tmp_agy=$(mktemp "$HOME/.local/bin/agy.tmp.XXXXXX")
+            cp "$HOME/.local/bin/agy" "$tmp_agy"
+            patchelf --set-interpreter ${lib.escapeShellArg pkgs.stdenv.cc.bintools.dynamicLinker} "$tmp_agy"
+            chmod +x "$tmp_agy"
+            mv -f "$tmp_agy" "$HOME/.local/bin/agy"
+          fi
+        else
+          echo "Warning: Antigravity installation failed or was skipped" >&2
         fi
 
-        npm install -g --prefix "$HOME/.local" @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
+        npm install -g --prefix "$HOME/.local" --force @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
 
         find "$HOME/.local" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
           if ! grep -q "expose-internals" "$target"; then

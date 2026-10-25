@@ -12,9 +12,12 @@ _: {
       export NPM_CONFIG_PREFIX="/home/${cfg.user}/.local"
 
       if command -v update-ai-tools >/dev/null 2>&1; then
-        update-ai-tools
-      elif [ ! -x "${dshBin}" ]; then
-        ${pkgs.nodejs}/bin/npm install -g --prefix "/home/${cfg.user}/.local" @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
+        update-ai-tools || true
+      fi
+
+      dsh_target="/home/${cfg.user}/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
+      if [ ! -f "$dsh_target" ]; then
+        ${pkgs.nodejs}/bin/npm install -g --prefix "/home/${cfg.user}/.local" --force @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
       fi
 
       find "/home/${cfg.user}/.local" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
@@ -65,12 +68,27 @@ _: {
         fi
       done
 
+      find "/home/${cfg.user}/.local" "/home/${cfg.user}/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null | while read -r tui_js; do
+        ${pkgs.gnused}/bin/sed -i 's/spawn(process\.execPath, \[entry,/spawn(process.execPath, ["--expose-internals", entry,/g' "$tui_js"
+        ${pkgs.gnused}/bin/sed -i 's/spawn(process\.execPath, \[profileBin,/spawn(process.execPath, ["--expose-internals", profileBin,/g' "$tui_js"
+      done
+
       dsh_target="/home/${cfg.user}/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
       if [ -f "$dsh_target" ]; then
         rm -f "${dshBin}"
         printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
           "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_target" > "${dshBin}"
         chmod +x "${dshBin}"
+      fi
+
+      dsh_tui_target="/home/${cfg.user}/.local/lib/node_modules/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js"
+      if [ -f "$dsh_tui_target" ]; then
+        for cmd in dsh-tui dst; do
+          rm -f "/home/${cfg.user}/.local/bin/$cmd"
+          printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+            "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_tui_target" > "/home/${cfg.user}/.local/bin/$cmd"
+          chmod +x "/home/${cfg.user}/.local/bin/$cmd"
+        done
       fi
 
       "${dshBin}" --version
@@ -131,7 +149,9 @@ _: {
           pkgs.coreutils
           pkgs.bash
           pkgs.findutils
+          pkgs.gnugrep
           pkgs.gnused
+          pkgs.git
           pkgs.rtk
           pkgs.graphify
         ];
