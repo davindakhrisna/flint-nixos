@@ -9,14 +9,14 @@ Flint is my personal NixOS configuration. It manages everything from kernel para
 
 ## Stack
 
-| Layer | What's in it |
-|:------|:-------------|
-| **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers |
-| **Shell** | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide |
-| **Editor** | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP |
-| **Dev** | `light` / `medium` / `heavy` profiles, direnv + nix-direnv, `mkenv` project environments |
-| **System** | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS |
-| **Gaming** | Steam, Gamescope, MangoHud, GameMode |
+| Layer       | What's in it                                                                             |
+| :---------- | :--------------------------------------------------------------------------------------- |
+| **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers                 |
+| **Shell**   | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide                       |
+| **Editor**  | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP                         |
+| **Dev**     | `light` / `medium` / `heavy` profiles, direnv + nix-direnv, `mkenv` project environments |
+| **System**  | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS               |
+| **Gaming**  | Steam, Gamescope, MangoHud, GameMode                                                     |
 
 ---
 
@@ -38,11 +38,13 @@ heavy  → medium + Zed, DBGate, Godot, Blender, LibreSprite, and Winboat
 ## Quick Start
 
 **Rebuild:**
+
 ```bash
 nh os switch
 ```
 
 **Lint & format:**
+
 ```bash
 nix develop          # also activated automatically by direnv
 alejandra .          # format
@@ -51,6 +53,7 @@ statix check .       # anti-patterns
 ```
 
 **Pre-switch validation:**
+
 ```bash
 ./scripts/check.sh                # checks and dry-builds powerhouse + template
 ./scripts/check.sh powerhouse     # check and dry-build one host
@@ -61,6 +64,7 @@ The validation script also rejects untracked `.nix` files, because Git-backed
 flakes cannot see them even when they exist in the working tree.
 
 **Bootstrap a dev environment:**
+
 ```bash
 mkenv rust my-project
 cd my-project        # direnv activates automatically
@@ -91,14 +95,6 @@ cp /mnt/etc/nixos/hardware-configuration.nix hosts/my-machine/_hardware.nix
 Flint supports fully offline installation via Nix closure archives. Build on a connected machine, export to USB, import on target.
 
 See [docs/offline-installation.md](docs/offline-installation.md) for the full guide.
-
----
-
-## Docs
-
-- [Architecture & Module Structure](docs/architecture.md)
-- [Offline Installation Guide](docs/offline-installation.md)
-- [Maximal Coding Tools](docs/token-optimization.md)
 
 ---
 
