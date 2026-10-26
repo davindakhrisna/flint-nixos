@@ -12,6 +12,7 @@ _: {
         limine = {
           enable = true;
           efiSupport = true;
+          efiInstallAsRemovable = true;
           maxGenerations = 5;
           extraEntries = lib.optionalString config.var.dualBoot.enable ''
             /Windows

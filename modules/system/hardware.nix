@@ -146,6 +146,7 @@
             vpl-gpu-rt # oneVPL runtime for Intel QuickSync Video
           ];
         };
+        boot.kernelParams = ["i915.enable_psr=0"];
       })
       (lib.mkIf cfg.features.opentabletdriver {
         hardware.opentabletdriver = {
