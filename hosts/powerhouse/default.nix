@@ -8,6 +8,8 @@
     specialArgs = {inherit inputs self;};
     modules = [
       ./_hardware.nix
+      ./_disko.nix
+      inputs.disko.nixosModules.disko
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager = {

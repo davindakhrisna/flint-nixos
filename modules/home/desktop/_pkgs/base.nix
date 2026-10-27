@@ -17,10 +17,6 @@
   '';
 
   heliumExtensionSources = {
-    dhdgffkkebhmkfjojejmpbldmpobfkfo = {
-      name = "tampermonkey";
-      hash = "sha256-vK7AgsQ54RxN9oP0PQfprD1EOSUdcrkcW0Uvl32sFdU=";
-    };
     nngceckbapebfimnlniiiahkandclblb = {
       name = "bitwarden";
       version = "2026.9.2";
@@ -43,8 +39,6 @@
           nativeBuildInputs = [pkgs.unzip];
           installPhase = ''
             mkdir -p "$out"
-            # CRX3 prefixes a valid ZIP archive with its own header.  unzip
-            # extracts it correctly but returns 1 to report that prefix.
             unzip -q "$src" -d "$out" || test -f "$out/manifest.json"
           '';
         }
