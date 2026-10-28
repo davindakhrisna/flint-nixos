@@ -18,6 +18,8 @@
       name: builtins.readFile (rulesDir + "/${name}")
     ) (builtins.attrNames ruleFiles);
 
+    dshPkgs = pkgs.callPackage ../../system/packages/_dsh.nix {};
+
     updateAiTools = pkgs.writeShellApplication {
       name = "update-ai-tools";
       runtimeInputs = with pkgs; [
@@ -137,20 +139,14 @@
         dsh_bin="$HOME/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
         if [[ -f "$dsh_bin" ]]; then
           rm -f "$HOME/.local/bin/dsh"
-          # shellcheck disable=SC2016
-          printf '#!/usr/bin/env bash\nexport PATH="%s:%s:%s:$HOME/.local/bin:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
-            "${pkgs.nodejs}/bin" "${pkgs.pnpm}/bin" "${pkgs.git}/bin" "${pkgs.nodejs}/bin/node" "$dsh_bin" > "$HOME/.local/bin/dsh"
-          chmod +x "$HOME/.local/bin/dsh"
+          ln -sf "${dshPkgs.dsh}/bin/dsh" "$HOME/.local/bin/dsh"
         fi
 
         dsh_tui_bin="$HOME/.local/lib/node_modules/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js"
         if [[ -f "$dsh_tui_bin" ]]; then
           for cmd in dsh-tui dst; do
             rm -f "$HOME/.local/bin/$cmd"
-            # shellcheck disable=SC2016
-            printf '#!/usr/bin/env bash\nexport PATH="%s:%s:%s:$HOME/.local/bin:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
-              "${pkgs.nodejs}/bin" "${pkgs.pnpm}/bin" "${pkgs.git}/bin" "${pkgs.nodejs}/bin/node" "$dsh_tui_bin" > "$HOME/.local/bin/$cmd"
-            chmod +x "$HOME/.local/bin/$cmd"
+            ln -sf "${dshPkgs.dshTui}/bin/$cmd" "$HOME/.local/bin/$cmd"
           done
         fi
 
@@ -174,6 +170,9 @@
           updateAiTools
           pkgs.nodejs
           pkgs.pnpm
+          dshPkgs.dsh
+          dshPkgs.dshTui
+          dshPkgs.dst
         ];
 
         file = {
