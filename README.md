@@ -1,39 +1,38 @@
 # Flint
 
-Flint is a multi-host, dendritic NixOS configuration flake built with **flake-parts**, **import-tree**, and **Home Manager**. It manages everything from declarative kernel and disk layouts (Disko) to Hyprland desktop environments, developer toolchains, and a unified homelab server suite.
+A multi-host, dendritic NixOS configuration flake powered by **flake-parts**, **import-tree**, and **Home Manager**.
 
-> [!NOTE]
-> Flint uses dendritic auto-discovery via `import-tree`. Module files in `modules/` and `hosts/` are registered automatically—no manual import trees needed.
+Module files in `modules/` and `hosts/` are discovered automatically via `import-tree`.
 
 ---
 
 ## Hosts
 
-| Host | Description | Specs / Role |
+| Host | Role | Description |
 | :--- | :--- | :--- |
-| **`powerhouse`** | Main Desktop Workstation | Intel + NVIDIA, UWSM Hyprland, Dual-boot (Windows), Full Dev + AI + Extras |
-| **`homelab`** | Headless / Portable Server | AMD + Btrfs Disko, Tailscale Serve, Glance, NAS, Vaultwarden, Media & Sync |
-| **`noble`** | Secondary Machine | Intel Mobile |
-| **`template`** | Clean Slate Template | Starting scaffold for new host setups |
+| **`powerhouse`** | Workstation | Intel + NVIDIA, UWSM Hyprland, Dual-boot, Dev, Agents, Extras |
+| **`homelab`** | Server | AMD + Disko Btrfs, Tailscale Serve, Glance, NAS, Vaultwarden, Media |
+| **`noble`** | Laptop | Intel Mobile |
+| **`template`** | Scaffold | Minimal starting point for new machines |
 
 ---
 
-## Architecture & Layers
+## Structure
 
-| Layer | Location | Components |
+| Directory | Layer | Purpose |
 | :--- | :--- | :--- |
-| **System** | `modules/system/` | Base, Boot (Limine), Security, Audio (PipeWire), Containers (Docker, Waydroid), Virtualization (KVM/Libvirt), Hardware options |
-| **Desktop** | `modules/home/desktop/` | Hyprland (Lua modular config), UWSM, Waybar, Rofi, Dunst, Hypridle, Hyprlock, Awww wallpapers |
-| **Shell** | `modules/home/shell/` | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide, CLI tools |
-| **Productivity** | `modules/home/productivity/` | GUI programs (`programs.nix`), Coding (`coding.nix` + LazyVim), Agents (`agents.nix`), Dev Tools (`tools.nix`), Creative suite (`creative.nix`), and `mkenv` dev templates |
-| **Server** | `hosts/homelab/server/` | Centralized services (`services.nix`), Glance dashboard, Tailscale Serve, Vaultwarden, qBittorrent, Jackett, Audiobookshelf, Immich, CouchDB, Samba NAS |
-| **Extras** | `scripts/extra/` | Standalone modular helpers (`xinu.sh`, `stealth.sh`) toggled via `var.extra` |
+| `modules/system/` | System | Boot (Limine), audio, virtualization, docker, hardware |
+| `modules/home/desktop/` | Desktop | Hyprland (Lua config), UWSM, Waybar, Rofi, Dunst |
+| `modules/home/shell/` | Shell | Zsh, Starship, fzf, CLI tools |
+| `modules/home/productivity/` | User Apps | GUI programs, coding toolchains, LazyVim, AI agents, `mkenv` |
+| `hosts/homelab/server/` | Homelab | Glance, Tailscale Serve, Vaultwarden, qBittorrent, Immich, NAS |
+| `scripts/extra/` | Extras | Modular standalone tasks (`xinu`, `stealth`) toggled via options |
 
 ---
 
-## Feature Flags & Extras
+## Declarative Options
 
-Hosts configure capabilities declaratively under `var.features` and `var.extra`:
+Hosts configure capabilities in `hosts/<name>/default.nix`:
 
 ```nix
 var = {
@@ -52,64 +51,29 @@ var = {
     creative = true;
   };
   extra = {
-    xinu = true; # Provisions diskless QEMU/TFTP Xinu OS environment
-    stealth = true; # Builds & binds headless AI screenshot solver (SUPER+Z / X / C)
+    xinu = false;     # QEMU/TFTP Xinu OS lab environment
+    stealth = false;  # AI screen solver keybinds (SUPER+Z / X / C)
   };
 };
 ```
 
 ---
 
-## Installation (`install.sh`)
-
-<!-- TODO: install.sh automation implementation -->
-
----
-
-## Quick Start & Workflow
-
-### 1. Rebuild & Activate
+## Workflow
 
 ```bash
+# Rebuild and switch system
 nh os switch
+
+# Validate code, formatting, ShellCheck, and dry-build evaluations
+./scripts/check.sh [host]
+
+# Scaffold a project dev environment (via direnv + flakes)
+mkenv <template> <project-name>   # c, flutter, go, nix, py, rust, ts
 ```
 
-### 2. Validation & Quality Checks
+### Adding a Machine
 
-Run the pre-switch test suite to validate formatting, ShellCheck, Lua syntax, dead code, and dry-build evaluations:
-
-```bash
-# Validate and dry-build specific host
-./scripts/check.sh powerhouse
-./scripts/check.sh homelab
-
-# Or validate all hosts
-./scripts/check.sh
-```
-
-### 3. Development Environment Bootstrapping
-
-Project toolchains are scoped per-project using `mkenv` templates:
-
-```bash
-mkenv rust my-project
-cd my-project # direnv loads flake devShell automatically
-```
-
-Supported templates: `c`, `flutter`, `go`, `nix`, `py`, `rust`, `ts`.
-
----
-
-## Adding a New Host
-
-1. Copy the template:
-   ```bash
-   cp -r hosts/template hosts/my-machine
-   ```
-2. Configure `hosts/my-machine/default.nix` (hostname, username, disk config, features, and hardware).
-3. If using Disko, customize `_disko.nix` for your partition layout.
-4. Validate with `./scripts/check.sh my-machine` before deploying.
-
----
-
-<sub>NixOS · flake-parts · import-tree · home-manager · hyprland · disko</sub>
+1. `cp -r hosts/template hosts/<name>`
+2. Edit `hosts/<name>/default.nix` (and `_hardware.nix` / `_disko.nix` as needed).
+3. Validate: `./scripts/check.sh <name>`

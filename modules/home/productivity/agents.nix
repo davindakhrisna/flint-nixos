@@ -25,6 +25,7 @@
         curl
         findutils
         gawk
+        git
         gnugrep
         gnused
         gnutar
@@ -80,7 +81,7 @@
 
         npm install -g --prefix "$HOME/.local" --force @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
 
-        find "$HOME/.local" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
+        find "$HOME/.local" "$HOME/.dsh" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
           if ! grep -q "expose-internals" "$target"; then
             cat << 'EOF' > "$target"
         "use strict";
@@ -137,8 +138,8 @@
         if [[ -f "$dsh_bin" ]]; then
           rm -f "$HOME/.local/bin/dsh"
           # shellcheck disable=SC2016
-          printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
-            "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_bin" > "$HOME/.local/bin/dsh"
+          printf '#!/usr/bin/env bash\nexport PATH="%s:%s:%s:$HOME/.local/bin:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+            "${pkgs.nodejs}/bin" "${pkgs.pnpm}/bin" "${pkgs.git}/bin" "${pkgs.nodejs}/bin/node" "$dsh_bin" > "$HOME/.local/bin/dsh"
           chmod +x "$HOME/.local/bin/dsh"
         fi
 
@@ -147,18 +148,33 @@
           for cmd in dsh-tui dst; do
             rm -f "$HOME/.local/bin/$cmd"
             # shellcheck disable=SC2016
-            printf '#!/usr/bin/env bash\nexport PATH="%s:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
-              "${pkgs.nodejs}/bin" "${pkgs.nodejs}/bin/node" "$dsh_tui_bin" > "$HOME/.local/bin/$cmd"
+            printf '#!/usr/bin/env bash\nexport PATH="%s:%s:%s:$HOME/.local/bin:$PATH"\nexec "%s" --expose-internals "%s" "$@"\n' \
+              "${pkgs.nodejs}/bin" "${pkgs.pnpm}/bin" "${pkgs.git}/bin" "${pkgs.nodejs}/bin/node" "$dsh_tui_bin" > "$HOME/.local/bin/$cmd"
             chmod +x "$HOME/.local/bin/$cmd"
           done
+        fi
+
+        # Ensure dsh-tui profile is initialized declaratively on fresh installs
+        if [[ -x "$HOME/.local/bin/dsh" ]] && [[ ! -d "$HOME/.dsh/profiles/dsh-tui/node_modules/@deepseek-harness-tui/dsh-tui" ]]; then
+          "$HOME/.local/bin/dsh" plugin --profile dsh-tui add "@deepseek-harness-tui/dsh-tui" || true
         fi
       '';
     };
   in {
     config = lib.mkIf enabled {
       home = {
-        sessionPath = ["$HOME/.local/bin"];
-        packages = [updateAiTools];
+        sessionPath = [
+          "$HOME/.local/bin"
+          "$HOME/.local/share/pnpm"
+        ];
+        sessionVariables = {
+          PNPM_HOME = "$HOME/.local/share/pnpm";
+        };
+        packages = [
+          updateAiTools
+          pkgs.nodejs
+          pkgs.pnpm
+        ];
 
         file = {
           ".codex/AGENTS.md".text = combinedRules;
