@@ -18,47 +18,7 @@
     extraModulePackages = [];
   };
 
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-uuid/ef70c629-5baf-407d-929c-67335414bddb";
-      fsType = "btrfs";
-      options = ["subvol=@"];
-    };
-
-    "/nix" = {
-      device = "/dev/disk/by-uuid/ef70c629-5baf-407d-929c-67335414bddb";
-      fsType = "btrfs";
-      options = ["subvol=@nix"];
-    };
-
-    "/var/log" = {
-      device = "/dev/disk/by-uuid/ef70c629-5baf-407d-929c-67335414bddb";
-      fsType = "btrfs";
-      options = ["subvol=@log"];
-    };
-
-    "/persist" = {
-      device = "/dev/disk/by-uuid/ef70c629-5baf-407d-929c-67335414bddb";
-      fsType = "btrfs";
-      options = ["subvol=@persist"];
-    };
-
-    "/home" = {
-      device = "/dev/disk/by-uuid/ef70c629-5baf-407d-929c-67335414bddb";
-      fsType = "btrfs";
-      options = ["subvol=@home"];
-    };
-
-    "/boot" = {
-      device = "/dev/disk/by-uuid/8B45-8779";
-      fsType = "vfat";
-      options = ["fmask=0077" "dmask=0022"];
-    };
-  };
-
-  swapDevices = [
-    {device = "/dev/disk/by-uuid/c8f154e1-ccc1-40bc-8ec2-6e16d7c38875";}
-  ];
+  # Filesystem and swap configurations are managed by ./_disko.nix
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

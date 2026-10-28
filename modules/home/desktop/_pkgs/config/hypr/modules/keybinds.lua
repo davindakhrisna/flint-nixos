@@ -161,9 +161,12 @@ hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd(app .. "spotify"), { desc = "
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(app .. "vesktop"), { desc = "Vesktop" })
 
 -- =============================================================================
--- Custom Keybinds
+-- Extra Keybinds
 -- =============================================================================
 
--- Example keybind
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd(app .. "flint-stealth"), { desc = "Stealth" })
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(app .. "flint-stealth --clear"), { desc = "Clear Prints" })
+pcall(function()
+	local extra = loadfile(os.getenv("HOME") .. "/.config/hypr/modules/extra.lua")
+	if extra then
+		extra()
+	end
+end)

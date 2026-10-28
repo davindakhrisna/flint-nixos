@@ -8,4 +8,14 @@
       freecad
     ];
   };
+
+  flake.homeModules.programs = {pkgs, ...}: {
+    home.packages = with pkgs; [
+      obs-studio
+      obsidian
+      xournalpp
+      onlyoffice-desktopeditors
+      freecad
+    ];
+  };
 }

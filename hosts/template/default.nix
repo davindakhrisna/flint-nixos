@@ -90,6 +90,11 @@
             tools = true;
             creative = true;
           };
+
+          extra = {
+            xinu = false;
+            stealth = false;
+          };
         };
 
         # User Configuration (Home Manager level)

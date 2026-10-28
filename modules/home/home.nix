@@ -129,6 +129,24 @@
 
     xresources.path = "${config.xdg.configHome}/X11/Xresources";
 
+    home.activation.setupExtra = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      if [[ -z "''${DRY_RUN_CMD:-}" ]]; then
+        export PATH="/run/current-system/sw/bin:${lib.makeBinPath [pkgs.git pkgs.nix pkgs.bash pkgs.coreutils]}:$PATH:$HOME/.local/bin"
+        ${lib.optionalString (osConfig.var.extra.xinu or false) ''
+        if [[ -x "${flakePath}/scripts/extra/xinu.sh" ]]; then
+          echo "==> Running extra/xinu.sh..."
+          "${flakePath}/scripts/extra/xinu.sh" || true
+        fi
+      ''}
+        ${lib.optionalString (osConfig.var.extra.stealth or false) ''
+        if [[ -x "${flakePath}/scripts/extra/stealth.sh" ]]; then
+          echo "==> Running extra/stealth.sh..."
+          "${flakePath}/scripts/extra/stealth.sh" || true
+        fi
+      ''}
+      fi
+    '';
+
     programs.home-manager.enable = true;
   };
 }

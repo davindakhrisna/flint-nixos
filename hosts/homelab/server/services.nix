@@ -1,7 +1,13 @@
 _: {
   flake.nixosModules.services = _: {
     services = {
-      # PDF, Book, and more
+      # AI GUI
+      dsh-web = {
+        enable = true;
+        publicUrl = "https://homelab.auxois-searobin.ts.net:8449";
+      };
+
+      # Books, Podcasts, and Audiobooks
       audiobookshelf = {
         enable = true;
         host = "127.0.0.1";
@@ -35,6 +41,23 @@ _: {
           SIGNUPS_ALLOWED = false;
         };
       };
+
+      # Database & Sync (Obsidian)
+      couchdb.enable = true;
+
+      # Glance Dashboard
+      glance.enable = true;
+
+      # Torrents & Indexers
+      jackett.enable = true;
+      qbittorrent.enable = true;
+
+      # Shared Storage (NAS)
+      samba.enable = true;
+      samba-wsdd.enable = true;
+
+      # Remote Browser
+      browser.enable = true;
     };
   };
 }

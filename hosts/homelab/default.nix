@@ -10,6 +10,8 @@
     specialArgs = {inherit inputs self;};
     modules = [
       ./_hardware.nix
+      ./_disko.nix
+      inputs.disko.nixosModules.disko
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager = {
@@ -22,15 +24,7 @@
 
       # Services
       self.nixosModules.system
-      self.nixosModules.tailscale-server
-      self.nixosModules.nas
-      self.nixosModules.server-tmpfiles
-      self.nixosModules.services
-      self.nixosModules.dsh-web
-      self.nixosModules.couchdb
-      self.nixosModules.glance
-      self.nixosModules.torrents
-      self.nixosModules.browser
+      self.nixosModules.server
 
       ({
         pkgs,
@@ -41,11 +35,6 @@
 
         security.sudo.wheelNeedsPassword = false;
         networking.hostName = "homelab";
-
-        services.dsh-web = {
-          enable = true;
-          publicUrl = "https://homelab.auxois-searobin.ts.net:8449";
-        };
 
         time.timeZone = "Asia/Jakarta";
         i18n.defaultLocale = "en_US.UTF-8";
@@ -99,6 +88,11 @@
             agents = true;
             tools = true;
             creative = true;
+          };
+
+          extra = {
+            xinu = false;
+            stealth = false;
           };
         };
 

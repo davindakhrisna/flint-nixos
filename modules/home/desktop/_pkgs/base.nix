@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  osConfig ? {},
   ...
 }: let
   startHyprland = lib.hiPrio (pkgs.writeShellScriptBin "start-hyprland" ''
@@ -77,73 +78,76 @@
 in {
   imports = lib.optional (inputs ? helium) inputs.helium.homeModules.default;
 
-  home.packages = with pkgs; [
-    # Launchers & Secrets
-    rofi
-    rbw
-    rofi-rbw-wayland
-    wtype
-    pinentry-gnome3
-    lua
+  home.packages = with pkgs;
+    [
+      # Launchers & Secrets
+      rofi
+      rbw
+      rofi-rbw-wayland
+      wtype
+      pinentry-gnome3
+      lua
 
-    # File manager & network storage
-    kdePackages.dolphin
-    kdePackages.kio-extras
-    kdePackages.kio-fuse
-    kdePackages.kwallet
-    kdePackages.kwalletmanager
+      # File manager & network storage
+      kdePackages.dolphin
+      kdePackages.kio-extras
+      kdePackages.kio-fuse
+      kdePackages.kwallet
+      kdePackages.kwalletmanager
 
-    # Audio & Bluetooth
-    wiremix
-    bluetui
-    pamixer
-    gazelle-tui
+      # Audio & Bluetooth
+      wiremix
+      bluetui
+      pamixer
+      gazelle-tui
 
-    # Display & Monitor Management
-    hyprmon
-    wlr-randr
-    hyprsunset
-    socat
+      # Display & Monitor Management
+      hyprmon
+      wlr-randr
+      hyprsunset
+      socat
 
-    # Screenshots & Recording
-    grim
-    slurp
-    satty
-    swappy
-    wl-screenrec
-    hyprpicker
-    imagemagick
+      # Screenshots & Recording
+      grim
+      slurp
+      satty
+      swappy
+      wl-screenrec
+      hyprpicker
+      imagemagick
 
-    # System & Clipboard
-    cliphist
-    polkit_gnome
+      # System & Clipboard
+      cliphist
+      polkit_gnome
 
-    # Theme assets
-    bibata-cursors
-    papirus-icon-theme
-    adw-gtk3
-    gsettings-desktop-schemas
-    kitty
-    startHyprland
-    flintLaunch
-
-    (writeShellScriptBin "flint-stealth" ''
-      exec "$HOME/.local/bin/stealth" "$@"
-    '')
-
-    (writeShellScriptBin "flint-rofi-tools" ''
-      exec "$HOME/.config/hypr/scripts/rofi-tools.sh" "$@"
-    '')
-    (writeShellScriptBin "flint-wallpaper-picker" ''
-      exec "$HOME/.config/awww/wallpaper-picker.sh" "$@"
-    '')
-    (writeShellScriptBin "flint-powermenu" ''
-      exec "$HOME/.config/hypr/scripts/powermenu.sh" "$@"
-    '')
-    (writeShellScriptBin "flint-reload-desktop" ''
-      exec "$HOME/.config/hypr/scripts/reload-desktop.sh" "$@"
-    '')
-  ];
+      # Theme assets
+      bibata-cursors
+      papirus-icon-theme
+      adw-gtk3
+      gsettings-desktop-schemas
+      kitty
+      startHyprland
+      flintLaunch
+    ]
+    ++ lib.optionals (osConfig.var.extra.stealth or false) [
+      (writeShellScriptBin "flint-stealth" ''
+        exec "$HOME/.local/bin/stealth" "$@"
+      '')
+    ]
+    ++ [
+      (writeShellScriptBin "flint-rofi-tools" ''
+        exec "$HOME/.config/hypr/scripts/rofi-tools.sh" "$@"
+      '')
+      (writeShellScriptBin "flint-wallpaper-picker" ''
+        exec "$HOME/.config/awww/wallpaper-picker.sh" "$@"
+      '')
+      (writeShellScriptBin "flint-powermenu" ''
+        exec "$HOME/.config/hypr/scripts/powermenu.sh" "$@"
+      '')
+      (writeShellScriptBin "flint-reload-desktop" ''
+        exec "$HOME/.config/hypr/scripts/reload-desktop.sh" "$@"
+      '')
+    ];
 
   programs = {
     btop.enable = true;

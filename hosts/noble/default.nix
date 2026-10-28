@@ -112,6 +112,11 @@
             tools = true;
             creative = true;
           };
+
+          extra = {
+            xinu = false;
+            stealth = false;
+          };
         };
 
         home-manager.users.noble = {...}: {

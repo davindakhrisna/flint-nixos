@@ -1,101 +1,115 @@
-## What is this?
+# Flint
 
-Flint is my personal NixOS configuration. It manages everything from kernel parameters to Neovim keybindings in a single, reproducible flake. Drop a new host file in `hosts/`, set a few options, and `nh os switch` gives you the whole stack.
+Flint is a multi-host, dendritic NixOS configuration flake built with **flake-parts**, **import-tree**, and **Home Manager**. It manages everything from declarative kernel and disk layouts (Disko) to Hyprland desktop environments, developer toolchains, and a unified homelab server suite.
 
 > [!NOTE]
-> Built on [flake-parts](https://github.com/hercules-ci/flake-parts) + [import-tree](https://github.com/denful/import-tree). Modules are discovered automatically — no manual import lists.
+> Flint uses dendritic auto-discovery via `import-tree`. Module files in `modules/` and `hosts/` are registered automatically—no manual import trees needed.
 
 ---
 
-## Stack
+## Hosts
 
-| Layer       | What's in it                                                                             |
-| :---------- | :--------------------------------------------------------------------------------------- |
-| **Desktop** | Hyprland (Wayland), UWSM, Waybar, Rofi, Dunst, Hyprlock, Awww wallpapers                 |
-| **Shell**   | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide                       |
-| **Editor**  | LazyVim — TokyoNight / Gruvbox, Snacks.nvim, Flash, Trouble, LSP                         |
-| **Dev**     | `light` / `medium` / `heavy` profiles, direnv + nix-direnv, `mkenv` project environments |
-| **System**  | Declarative hardware (Intel/AMD × Nvidia/AMD), PipeWire, Docker, Quad9 DNS               |
-| **Gaming**  | Steam, Gamescope, MangoHud, GameMode                                                     |
+| Host | Description | Specs / Role |
+| :--- | :--- | :--- |
+| **`powerhouse`** | Main Desktop Workstation | Intel + NVIDIA, UWSM Hyprland, Dual-boot (Windows), Full Dev + AI + Extras |
+| **`homelab`** | Headless / Portable Server | AMD + Btrfs Disko, Tailscale Serve, Glance, NAS, Vaultwarden, Media & Sync |
+| **`noble`** | Secondary Machine | Intel Mobile |
+| **`template`** | Clean Slate Template | Starting scaffold for new host setups |
 
 ---
 
-## Development Profiles
+## Architecture & Layers
 
-Set `dev = "light"`, `dev = "medium"`, or `dev = "heavy"` per host. Each profile includes the lighter profiles.
+| Layer | Location | Components |
+| :--- | :--- | :--- |
+| **System** | `modules/system/` | Base, Boot (Limine), Security, Audio (PipeWire), Containers (Docker, Waydroid), Virtualization (KVM/Libvirt), Hardware options |
+| **Desktop** | `modules/home/desktop/` | Hyprland (Lua modular config), UWSM, Waybar, Rofi, Dunst, Hypridle, Hyprlock, Awww wallpapers |
+| **Shell** | `modules/home/shell/` | Zsh + Vi mode, Starship prompt, fzf, bat, eza, fd, ripgrep, zoxide, CLI tools |
+| **Productivity** | `modules/home/productivity/` | GUI programs (`programs.nix`), Coding (`coding.nix` + LazyVim), Agents (`agents.nix`), Dev Tools (`tools.nix`), Creative suite (`creative.nix`), and `mkenv` dev templates |
+| **Server** | `hosts/homelab/server/` | Centralized services (`services.nix`), Glance dashboard, Tailscale Serve, Vaultwarden, qBittorrent, Jackett, Audiobookshelf, Immich, CouchDB, Samba NAS |
+| **Extras** | `scripts/extra/` | Standalone modular helpers (`xinu.sh`, `stealth.sh`) toggled via `var.extra` |
 
+---
+
+## Feature Flags & Extras
+
+Hosts configure capabilities declaratively under `var.features` and `var.extra`:
+
+```nix
+var = {
+  cpu = "intel";
+  gpu = "nvidia";
+  features = {
+    desktop = true;
+    audio = true;
+    bluetooth = true;
+    tailscale = true;
+    docker = true;
+    libvirt = true;
+    coding = true;
+    agents = true;
+    tools = true;
+    creative = true;
+  };
+  extra = {
+    xinu = true; # Provisions diskless QEMU/TFTP Xinu OS environment
+    stealth = true; # Builds & binds headless AI screenshot solver (SUPER+Z / X / C)
+  };
+};
 ```
-light  → Git/GitHub CLI, direnv, LazyVim, mkenv, CLI/container tools, AI coding tools
-medium → light + RTK, Headroom, and Graphify
-heavy  → medium + Zed, DBGate, Godot, Blender, LibreSprite, and Winboat
-```
-
-> [!TIP]
-> Compilers, language runtimes, SDKs, and formatters are project-scoped. `mkenv` bootstraps a `flake.nix` + `.envrc` for C/C++, Go, TypeScript, Python, Rust, Flutter, or Nix. Run `mkenv ts`, for example, or use `mkenv` for a fuzzy picker.
 
 ---
 
-## Quick Start
+## Installation (`install.sh`)
 
-**Rebuild:**
+<!-- TODO: install.sh automation implementation -->
+
+---
+
+## Quick Start & Workflow
+
+### 1. Rebuild & Activate
 
 ```bash
 nh os switch
 ```
 
-**Lint & format:**
+### 2. Validation & Quality Checks
+
+Run the pre-switch test suite to validate formatting, ShellCheck, Lua syntax, dead code, and dry-build evaluations:
 
 ```bash
-nix develop          # also activated automatically by direnv
-alejandra .          # format
-deadnix .            # find dead code
-statix check .       # anti-patterns
+# Validate and dry-build specific host
+./scripts/check.sh powerhouse
+./scripts/check.sh homelab
+
+# Or validate all hosts
+./scripts/check.sh
 ```
 
-**Pre-switch validation:**
+### 3. Development Environment Bootstrapping
 
-```bash
-./scripts/check.sh                # checks and dry-builds powerhouse + template
-./scripts/check.sh powerhouse     # check and dry-build one host
-nh os switch                      # activate only after validation passes
-```
-
-The validation script also rejects untracked `.nix` files, because Git-backed
-flakes cannot see them even when they exist in the working tree.
-
-**Bootstrap a dev environment:**
+Project toolchains are scoped per-project using `mkenv` templates:
 
 ```bash
 mkenv rust my-project
-cd my-project        # direnv activates automatically
+cd my-project # direnv loads flake devShell automatically
 ```
+
+Supported templates: `c`, `flutter`, `go`, `nix`, `py`, `rust`, `ts`.
 
 ---
 
 ## Adding a New Host
 
-```bash
-cp -r hosts/template hosts/my-machine
-```
-
-Edit `hosts/my-machine/default.nix` — set hostname, timezone, user, hardware vars, and which modules to import. After mounting the target at `/mnt`, generate and copy its hardware configuration explicitly:
-
-```bash
-nixos-generate-config --root /mnt
-cp /mnt/etc/nixos/hardware-configuration.nix hosts/my-machine/_hardware.nix
-```
-
-> [!CAUTION]
-> Don't forget to update disk UUIDs in `_hardware.nix` — they're unique to each machine.
+1. Copy the template:
+   ```bash
+   cp -r hosts/template hosts/my-machine
+   ```
+2. Configure `hosts/my-machine/default.nix` (hostname, username, disk config, features, and hardware).
+3. If using Disko, customize `_disko.nix` for your partition layout.
+4. Validate with `./scripts/check.sh my-machine` before deploying.
 
 ---
 
-## Offline Install
-
-Flint supports fully offline installation via Nix closure archives. Build on a connected machine, export to USB, import on target.
-
-See [docs/offline-installation.md](docs/offline-installation.md) for the full guide.
-
----
-
-<sub>NixOS unstable · flake-parts · home-manager · lazyvim · hyprland</sub>
+<sub>NixOS · flake-parts · import-tree · home-manager · hyprland · disko</sub>

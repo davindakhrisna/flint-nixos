@@ -85,6 +85,11 @@
             tools = true;
             creative = true;
           };
+
+          extra = {
+            xinu = true;
+            stealth = true;
+          };
         };
 
         home-manager.users.kryisnn = {...}: {

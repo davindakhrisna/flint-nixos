@@ -4,6 +4,11 @@ _: {
     lib,
     ...
   }: {
+    options.extra = {
+      xinu = lib.mkEnableOption "Xinu virtualization environment";
+      stealth = lib.mkEnableOption "Stealth screenshot solver and Hyprland keybinds";
+    };
+
     options.var = {
       flakePath = lib.mkOption {
         type = lib.types.str;
@@ -39,6 +44,19 @@ _: {
         agents = lib.mkEnableOption "AI agent configurations";
         tools = lib.mkEnableOption "developer tools";
         creative = lib.mkEnableOption "creative software (Godot, Blender, LibreSprite)";
+      };
+
+      extra = {
+        xinu = lib.mkOption {
+          type = lib.types.bool;
+          default = config.extra.xinu;
+          description = "Xinu virtualization environment";
+        };
+        stealth = lib.mkOption {
+          type = lib.types.bool;
+          default = config.extra.stealth;
+          description = "Stealth screenshot solver and Hyprland keybinds";
+        };
       };
     };
 
