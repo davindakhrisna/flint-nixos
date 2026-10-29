@@ -54,7 +54,7 @@
           };
           dualBoot = {
             enable = true;
-            windowsEntry = "uuid(dc68ee6b-9b35-49c8-b40f-3995d7f44547):/EFI/Microsoft/Boot/bootmgfw.efi";
+            windowsEntry = "uuid(c2d18c1e-1fce-4a17-a96e-576793f7ae50):/EFI/Microsoft/Boot/bootmgfw.efi";
           };
           features = {
             # Desktop
