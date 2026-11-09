@@ -267,13 +267,15 @@ in {
     Unit = {
       Description = "KDE I/O daemon";
       PartOf = ["graphical-session.target"];
-      After = ["graphical-session-pre.target"];
+      After = ["graphical-session.target"];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
     };
     Install.WantedBy = ["graphical-session.target"];
     Service = {
       Type = "simple";
       ExecStart = "${pkgs.kdePackages.kio}/libexec/kf6/kiod6";
       Restart = "on-failure";
+      RestartSec = 1;
     };
   };
 }

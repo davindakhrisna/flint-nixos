@@ -89,18 +89,17 @@ _: {
             JACKETT_PORT = toString jackettPort;
             FLARESOLVERR_PORT = toString flaresolverrPort;
           };
-          after = ["docker-flaresolverr.service"];
-          wants = ["docker-flaresolverr.service"];
+          after = ["docker-flaresolverr.service" "sops-nix.service"];
+          wants = ["docker-flaresolverr.service" "sops-nix.service"];
           serviceConfig = {
-            ExecStartPre = ["+${prepareJackett}"];
-            ReadWritePaths = ["/var/lib/secrets"];
+            ExecStartPre = ["+${prepareJackett} ${config.sops.secrets.jackett_api_key.path}"];
           };
         };
 
         jackett-seed-indexers = {
           description = "Provision default Jackett providers";
           wantedBy = ["multi-user.target"];
-          after = ["jackett.service"];
+          after = ["jackett.service" "sops-nix.service"];
           requires = ["jackett.service"];
           path = with pkgs; [coreutils curl];
           environment.JACKETT_PORT = toString jackettPort;
@@ -109,13 +108,13 @@ _: {
             TimeoutStartSec = "210s";
             Restart = "on-failure";
             RestartSec = "30s";
-            ExecStart = seedJackettIndexers;
+            ExecStart = "${seedJackettIndexers} ${config.sops.secrets.jackett_api_key.path}";
           };
         };
 
         qbittorrent = {
-          after = ["jackett.service"];
-          wants = ["jackett.service"];
+          after = ["jackett.service" "sops-nix.service"];
+          wants = ["jackett.service" "sops-nix.service"];
           serviceConfig = {
             Restart = "on-success";
             RestartSec = "5s";
@@ -124,7 +123,7 @@ _: {
             ExecStartPre = [
               "${pkgs.coreutils}/bin/install -d -m 0755 /var/lib/qBittorrent/qBittorrent/data/nova3/engines"
               "${pkgs.coreutils}/bin/install -m 0444 ${searchPlugins}/nova3/engines/jackett.py /var/lib/qBittorrent/qBittorrent/data/nova3/engines/jackett.py"
-              "${pkgs.python3}/bin/python3 ${./config/torrent/apply-qbittorrent-credentials.py}"
+              "${pkgs.python3}/bin/python3 ${./config/torrent/apply-qbittorrent-credentials.py} ${config.sops.secrets.qbittorrent_webui.path}"
             ];
           };
         };
@@ -132,7 +131,7 @@ _: {
         qbittorrent-rss-feeds = {
           description = "Provision Jackett RSS feeds into qBittorrent";
           wantedBy = ["multi-user.target"];
-          after = ["qbittorrent.service" "jackett.service"];
+          after = ["qbittorrent.service" "jackett.service" "sops-nix.service"];
           requires = ["qbittorrent.service" "jackett.service"];
           path = with pkgs; [coreutils curl jq];
           environment = {
@@ -144,7 +143,7 @@ _: {
             TimeoutStartSec = "60s";
             Restart = "on-failure";
             RestartSec = "20s";
-            ExecStart = seedQbittorrentRss;
+            ExecStart = "${seedQbittorrentRss} ${config.sops.secrets.jackett_api_key.path}";
           };
         };
       };

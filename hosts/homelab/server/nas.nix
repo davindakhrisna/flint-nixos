@@ -2,6 +2,7 @@ _: {
   flake.nixosModules.nas = {
     config,
     lib,
+    pkgs,
     ...
   }: let
     directInterface = "enp1s0f0";
@@ -91,6 +92,26 @@ _: {
             userServices = true;
           };
         };
+      };
+
+      systemd.services.samba-provision-users = {
+        description = "Provision Samba user credentials from SOPS";
+        after = ["sops-nix.service" "samba-smbd.service"];
+        wants = ["sops-nix.service"];
+        wantedBy = ["multi-user.target"];
+        path = [pkgs.samba pkgs.coreutils];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          Restart = "on-failure";
+          RestartSec = "5s";
+        };
+        script = ''
+          if [ -s "${config.sops.secrets.user_password.path}" ]; then
+            pass=$(<"${config.sops.secrets.user_password.path}")
+            printf '%s\n%s\n' "$pass" "$pass" | smbpasswd -s -a kryisnn
+          fi
+        '';
       };
 
       networking.firewall.interfaces.${directInterface} = {

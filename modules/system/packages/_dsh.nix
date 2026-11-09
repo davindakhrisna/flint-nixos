@@ -3,7 +3,7 @@
 
   # Patch node-addon-require-builtin for NixOS internals compatibility
   patchRequireBuiltin = ''
-    find "$HOME/.local" "$HOME/.dsh" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
+    while read -r target; do
       if ! grep -q "expose-internals" "$target" 2>/dev/null; then
         cat << 'EOF' > "$target"
     "use strict";
@@ -45,15 +45,15 @@
     };
     EOF
       fi
-    done
+    done < <(find "$HOME/.local/lib" "$HOME/.dsh" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null || true)
   '';
 
   # Patch dsh-tui launcher to forward --expose-internals
   patchTui = ''
-    find "$HOME/.local" "$HOME/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null | while read -r tui_js; do
+    while read -r tui_js; do
       ${pkgs.gnused}/bin/sed -i 's/spawn(process\.execPath, \[entry,/spawn(process.execPath, ["--expose-internals", entry,/g' "$tui_js"
       ${pkgs.gnused}/bin/sed -i 's/spawn(process\.execPath, \[profileBin,/spawn(process.execPath, ["--expose-internals", profileBin,/g' "$tui_js"
-    done
+    done < <(find "$HOME/.local/lib" "$HOME/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null || true)
   '';
 
   dsh = pkgs.writeShellScriptBin "dsh" ''

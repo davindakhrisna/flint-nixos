@@ -10,6 +10,7 @@
       glance
       torrents
       browser
+      homelab-secrets
     ];
   };
 }

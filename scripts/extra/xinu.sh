@@ -15,11 +15,17 @@ cd "$target_dir"
 
 nix-shell -I nixpkgs=flake:nixpkgs --run '
 set -euo pipefail
-make -C xinu-vbox/compile
+if [[ ! -f xinu-vbox/tftpboot/xinu.boot ]]; then
+	make -C xinu-vbox/compile
+fi
 install -d -m 755 /var/tmp/xinu-tftp
 install -m 644 xinu-vbox/tftpboot/xinu.boot /var/tmp/xinu-tftp/xinu.boot
-virsh -c qemu:///system net-define xinu_net.xml || true
-virsh -c qemu:///system define backend.xml || true
-virsh -c qemu:///system net-autostart xinu_net --disable || true
-virsh -c qemu:///system autostart backend --disable || true
+if ! virsh -c qemu:///system net-info xinu_net >/dev/null 2>&1; then
+	virsh -c qemu:///system net-define xinu_net.xml || true
+fi
+if ! virsh -c qemu:///system dominfo backend >/dev/null 2>&1; then
+	virsh -c qemu:///system define backend.xml || true
+fi
+virsh -c qemu:///system net-autostart xinu_net --disable >/dev/null 2>&1 || true
+virsh -c qemu:///system autostart backend --disable >/dev/null 2>&1 || true
 '

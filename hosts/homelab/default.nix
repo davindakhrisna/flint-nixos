@@ -10,8 +10,8 @@
     specialArgs = {inherit inputs self;};
     modules = [
       ./_hardware.nix
-      # ./_disko.nix
-      # inputs.disko.nixosModules.disko
+      ./_disko.nix
+      inputs.disko.nixosModules.disko
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager = {
@@ -29,6 +29,7 @@
       ({
         pkgs,
         lib,
+        config,
         ...
       }: {
         boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_18;
@@ -43,6 +44,7 @@
           isNormalUser = true;
           uid = 1001;
           shell = pkgs.zsh;
+          hashedPasswordFile = config.sops.secrets.user_password_hash.path;
           extraGroups = [
             "seat"
             "wheel"

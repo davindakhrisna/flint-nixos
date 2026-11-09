@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-api_key=$(</var/lib/secrets/jackett-api-key)
+api_key_file="${1:-/var/lib/secrets/jackett-api-key}"
+test -s "$api_key_file" || {
+	echo "Jackett API key file is missing or empty" >&2
+	exit 1
+}
+api_key=$(<"$api_key_file")
 jackett="http://127.0.0.1:${JACKETT_PORT}"
 
 for attempt in {1..180}; do
-  if curl --connect-timeout 2 --max-time 5 -fsS "$jackett/api/v2.0/server/config?apikey=$api_key" >/dev/null 2>&1; then
-    break
-  fi
-  if [ "$attempt" -eq 180 ]; then
-    echo "Jackett did not become ready in time" >&2
-    exit 1
-  fi
-  sleep 1
+	if curl --connect-timeout 2 --max-time 5 -fsS "$jackett/api/v2.0/server/config?apikey=$api_key" >/dev/null 2>&1; then
+		break
+	fi
+	if [ "$attempt" -eq 180 ]; then
+		echo "Jackett did not become ready in time" >&2
+		exit 1
+	fi
+	sleep 1
 done
 
 for indexer in 1337x thepiratebay yts eztv limetorrents torrentgalaxy nyaasi badass-torrents solidtorrents glodls; do
-  echo "Configuring Jackett indexer: $indexer"
-  curl --connect-timeout 2 --max-time 10 -fsS -X POST \
-    "$jackett/api/v2.0/indexers/$indexer/config?apikey=$api_key" \
-    -H "Content-Type: application/json" -d '{}' >/dev/null ||
-    echo "Jackett could not configure $indexer" >&2
+	echo "Configuring Jackett indexer: $indexer"
+	curl --connect-timeout 2 --max-time 10 -fsS -X POST \
+		"$jackett/api/v2.0/indexers/$indexer/config?apikey=$api_key" \
+		-H "Content-Type: application/json" -d '{}' >/dev/null ||
+		echo "Jackett could not configure $indexer" >&2
 done

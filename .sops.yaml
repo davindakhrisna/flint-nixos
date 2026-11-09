@@ -1,0 +1,11 @@
+keys:
+  - &admin_kryisnn age1klfgmvp4h93e7xvmnh4uhttqxm9n04s35dvdju9qysn4vukgev9qfzf5lp
+  - &admin_age age1zfdkzk0gxdjhwptdr4f3a7j5j5ryq4za8el3xadph6d0gr8d9qwsyqn9w8
+  - &host_homelab age10yvt9uwpcf29grtu0whsuu6vc4d2r538j6g9rmcznaml3wy7dsjq82xp4e
+creation_rules:
+  - path_regex: hosts/homelab/.*secrets.*\.ya?ml$
+    key_groups:
+      - age:
+          - *admin_kryisnn
+          - *admin_age
+          - *host_homelab

@@ -5,7 +5,7 @@ _: {
     config,
     ...
   }: let
-    adminPasswordFile = "/var/lib/secrets/obsidian-sync-admin-password";
+    adminPasswordFile = config.sops.secrets.couchdb_password.path;
     adminUser = "admin";
     syncUser = "kryisnn";
     prepare = pkgs.writeShellScript "prepare-couchdb" (builtins.readFile ./config/couchdb/prepare-couchdb.sh);
@@ -49,6 +49,8 @@ _: {
 
       systemd.services = {
         couchdb = {
+          after = ["sops-nix.service"];
+          wants = ["sops-nix.service"];
           path = [pkgs.coreutils pkgs.gnused];
           unitConfig.ConditionFileNotEmpty = adminPasswordFile;
           serviceConfig = {

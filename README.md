@@ -12,7 +12,7 @@ Module files in `modules/` and `hosts/` are discovered automatically via `import
 | :--- | :--- | :--- |
 | **`powerhouse`** | Workstation | Intel + NVIDIA, UWSM Hyprland, Dual-boot, Dev, Agents, Extras |
 | **`homelab`** | Server | AMD + Disko Btrfs, Tailscale Serve, Glance, NAS, Vaultwarden, Media |
-| **`noble`** | Laptop | Intel Mobile |
+| **`portable`** | Laptop | AMD Mobile, Desktop, Dev, Work Laptop |
 | **`template`** | Scaffold | Minimal starting point for new machines |
 
 ---

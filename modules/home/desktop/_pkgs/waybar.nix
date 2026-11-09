@@ -40,7 +40,8 @@ in {
       Description = "Waybar status bar";
       Documentation = ["https://github.com/Alexays/Waybar/wiki"];
       PartOf = ["graphical-session.target"];
-      After = ["graphical-session-pre.target"];
+      After = ["graphical-session.target"];
+      ConditionEnvironment = "WAYLAND_DISPLAY";
     };
     Service = {
       ExecStart = "${pkgs.waybar}/bin/waybar";

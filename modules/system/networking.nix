@@ -36,6 +36,7 @@ _: {
           FallbackDNS = "2620:fe::fe#dns.quad9.net 2620:fe::9#dns.quad9.net";
           DNSOverTLS = true;
           DNSSEC = true;
+          MulticastDNS = false;
         };
       };
     };

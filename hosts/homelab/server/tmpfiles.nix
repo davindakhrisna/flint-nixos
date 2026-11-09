@@ -1,5 +1,5 @@
 _: {
-  flake.nixosModules.server-tmpfiles = _: {
+  flake.nixosModules.server-tmpfiles = {config, ...}: {
     systemd = {
       tmpfiles.rules = [
         # NAS
@@ -15,13 +15,6 @@ _: {
         # Glance and Tailscale service URLs
         "d /run/homelab 0755 root root - -"
         "f /run/homelab/glance.env 0644 root root - HOMELAB_HOST=homelab.auxois-searobin.ts.net"
-
-        # Service secrets
-        "d /var/lib/secrets 0711 root root - -"
-        "f /var/lib/secrets/vaultwarden.env 0600 root root - -"
-        "f /var/lib/secrets/obsidian-sync-admin-password 0640 root couchdb - -"
-        "f /var/lib/secrets/jackett-api-key 0640 root jackett - -"
-        "f /var/lib/secrets/qbittorrent-webui 0640 qbittorrent nas - -"
       ];
 
       services = {
@@ -37,7 +30,7 @@ _: {
         };
         vaultwarden.serviceConfig.EnvironmentFile = [
           "-/run/homelab/vaultwarden.env"
-          "-/var/lib/secrets/vaultwarden.env"
+          config.sops.secrets.vaultwarden_env.path
         ];
       };
     };

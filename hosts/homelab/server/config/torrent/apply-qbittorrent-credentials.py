@@ -1,8 +1,16 @@
 from pathlib import Path
 import sys
 
-credentials_file = Path(sys.argv[1]) if len(sys.argv) == 3 else Path("/var/lib/secrets/qbittorrent-webui")
-config_file = Path(sys.argv[2]) if len(sys.argv) == 3 else Path("/var/lib/qBittorrent/qBittorrent/config/qBittorrent.conf")
+credentials_file = (
+    Path(sys.argv[1])
+    if len(sys.argv) >= 2
+    else Path("/var/lib/secrets/qbittorrent-webui")
+)
+config_file = (
+    Path(sys.argv[2])
+    if len(sys.argv) >= 3
+    else Path("/var/lib/qBittorrent/qBittorrent/config/qBittorrent.conf")
+)
 if not credentials_file.is_file() or not config_file.is_file():
     raise SystemExit(0)
 
@@ -30,7 +38,9 @@ for line in lines:
         if in_preferences:
             if output and not output[-1].endswith("\n"):
                 output[-1] += "\n"
-            output.extend(f"{key}={value}\n" for key, value in updates.items() if key not in seen)
+            output.extend(
+                f"{key}={value}\n" for key, value in updates.items() if key not in seen
+            )
         in_preferences = line.strip() == "[Preferences]"
         found_preferences |= in_preferences
         seen.clear()
@@ -49,6 +59,8 @@ if not found_preferences:
 if in_preferences or not found_preferences:
     if output and not output[-1].endswith("\n"):
         output[-1] += "\n"
-    output.extend(f"{key}={value}\n" for key, value in updates.items() if key not in seen)
+    output.extend(
+        f"{key}={value}\n" for key, value in updates.items() if key not in seen
+    )
 
 config_file.write_text("".join(output))

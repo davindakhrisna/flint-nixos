@@ -2,26 +2,25 @@
 set -euo pipefail
 umask 077
 
-api_key_file=/var/lib/secrets/jackett-api-key
+api_key_file="${1:-/var/lib/secrets/jackett-api-key}"
 config_file=/var/lib/jackett/.config/Jackett/ServerConfig.json
 mkdir -p /var/lib/jackett/.config/Jackett/Indexers
 
-if [ ! -s "$api_key_file" ]; then
-  od -An -tx1 -N16 /dev/urandom | tr -d ' \n' > "$api_key_file"
+if [ -s "$api_key_file" ]; then
+	api_key=$(<"$api_key_file")
+else
+	api_key=$(od -An -tx1 -N16 /dev/urandom | tr -d ' \n')
 fi
-chmod 0640 "$api_key_file"
-chown root:jackett "$api_key_file"
-api_key=$(<"$api_key_file")
 
 if [ -s "$config_file" ]; then
-  cat "$config_file"
+	cat "$config_file"
 else
-  printf '{}\n'
+	printf '{}\n'
 fi | jq \
-  --arg api_key "$api_key" \
-  --arg flaresolverr_url "http://127.0.0.1:${FLARESOLVERR_PORT}" \
-  --argjson jackett_port "$JACKETT_PORT" \
-  '.APIKey = $api_key
+	--arg api_key "$api_key" \
+	--arg flaresolverr_url "http://127.0.0.1:${FLARESOLVERR_PORT}" \
+	--argjson jackett_port "$JACKETT_PORT" \
+	'.APIKey = $api_key
    | .Port = $jackett_port
    | .LocalBindAddress = "127.0.0.1"
    | .AllowExternal = false
@@ -32,7 +31,7 @@ fi | jq \
    | .CacheMaxResultsPerIndexer = 1000
    | .FlareSolverrUrl = $flaresolverr_url
    | .FlareSolverrMaxTimeout = 55000' \
-  > "$config_file.new"
+	>"$config_file.new"
 
 chmod 0600 "$config_file.new"
 chown jackett:jackett "$config_file.new"

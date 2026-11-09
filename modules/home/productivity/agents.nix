@@ -83,7 +83,7 @@
 
         npm install -g --prefix "$HOME/.local" --force @deepseek-ai/dsh @deepseek-harness-tui/dsh-tui
 
-        find "$HOME/.local" "$HOME/.dsh" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null | while read -r target; do
+        while read -r target; do
           if ! grep -q "expose-internals" "$target"; then
             cat << 'EOF' > "$target"
         "use strict";
@@ -129,12 +129,12 @@
         };
         EOF
           fi
-        done
+        done < <(find "$HOME/.local/lib" "$HOME/.dsh" -path "*/node-addon-require-builtin/lib/index.js" 2>/dev/null || true)
 
-        find "$HOME/.local" "$HOME/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null | while read -r tui_js; do
+        while read -r tui_js; do
           sed -i 's/spawn(process\.execPath, \[entry,/spawn(process.execPath, ["--expose-internals", entry,/g' "$tui_js"
           sed -i 's/spawn(process\.execPath, \[profileBin,/spawn(process.execPath, ["--expose-internals", profileBin,/g' "$tui_js"
-        done
+        done < <(find "$HOME/.local/lib" "$HOME/.dsh" -path "*/@deepseek-harness-tui/dsh-tui/bin/dsh-tui.js" 2>/dev/null || true)
 
         dsh_bin="$HOME/.local/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
         if [[ -f "$dsh_bin" ]]; then
@@ -200,8 +200,9 @@
         };
 
         activation.updateAiTools = lib.hm.dag.entryAfter ["reloadSystemd"] ''
-          [[ -n "''${DRY_RUN_CMD:-}" ]] ||
+          if [[ -z "''${DRY_RUN_CMD:-}" ]] && [[ -n "''${XDG_RUNTIME_DIR:-}" ]] && [[ -S "''${XDG_RUNTIME_DIR}/bus" ]]; then
             ${pkgs.systemd}/bin/systemctl --user start --no-block update-ai-tools.service || true
+          fi
         '';
       };
 
