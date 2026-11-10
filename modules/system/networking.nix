@@ -16,6 +16,13 @@ _: {
       };
     };
     systemd.services.NetworkManager-wait-online.enable = false;
+    systemd.services.wpa_supplicant = {
+      wantedBy = lib.mkForce [];
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = "1s";
+      };
+    };
 
     services = {
       tailscale.enable = config.var.features.tailscale;

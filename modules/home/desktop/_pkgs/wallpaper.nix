@@ -33,9 +33,12 @@
     awww-restore = {
       Unit = {
         Description = "Restore the selected wallpaper";
-        After = ["awww.service"];
-        Requires = ["awww.service"];
         PartOf = ["graphical-session.target"];
+        After = [
+          "graphical-session.target"
+          "awww.service"
+        ];
+        Requires = ["awww.service"];
       };
       Service = {
         Type = "oneshot";

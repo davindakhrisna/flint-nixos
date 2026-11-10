@@ -13,7 +13,13 @@ fi
 
 cd "$target_dir"
 
-nix-shell -I nixpkgs=flake:nixpkgs --run '
+if [[ -f /var/tmp/xinu-tftp/xinu.boot ]] && [[ -f "$target_dir/xinu-vbox/tftpboot/xinu.boot" ]]; then
+	if virsh -c qemu:///system net-info xinu_net >/dev/null 2>&1 && virsh -c qemu:///system dominfo backend >/dev/null 2>&1; then
+		exit 0
+	fi
+fi
+
+nix-shell --run '
 set -euo pipefail
 if [[ ! -f xinu-vbox/tftpboot/xinu.boot ]]; then
 	make -C xinu-vbox/compile

@@ -6,6 +6,10 @@
   }: {
     services.power-profiles-daemon.enable = true;
 
+    systemd.sleep.settings.Sleep = {
+      HibernateDelaySec = "45min";
+    };
+
     programs = {
       nh = {
         enable = true;

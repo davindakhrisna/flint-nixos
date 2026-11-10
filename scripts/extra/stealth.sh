@@ -14,6 +14,10 @@ fi
 
 cd "$target_dir"
 
+if [[ -x "$bin_dir/stealth" ]] && [[ -f "$target_dir/.env" ]]; then
+	exit 0
+fi
+
 nix develop --command cargo build --release
 install -m 755 target/release/stealth "$bin_dir/stealth"
 
