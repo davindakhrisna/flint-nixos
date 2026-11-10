@@ -114,8 +114,8 @@
 
           services.hypridle.enable = lib.mkForce false;
           xdg.configFile."hypr/modules/lid.lua".text = ''
-            hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms off"), { locked = true })
-            hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprctl dispatch dpms on"), { locked = true })
+            hl.bind("switch:on:Lid Switch", hl.dsp.dpms({ action = "off" }), { locked = true })
+            hl.bind("switch:off:Lid Switch", hl.dsp.dpms({ action = "on" }), { locked = true })
           '';
         };
 
