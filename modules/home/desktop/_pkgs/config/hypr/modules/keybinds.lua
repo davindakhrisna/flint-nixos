@@ -151,6 +151,67 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(scriptsDir .. "/focusmode.sh"
 -- Power Menu
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(scriptsDir .. "/powermenu.sh"), { desc = "Power Menu" })
 
+-- Keyboard Mouse Mode (Continuous Cursor Control)
+local function move_cursor(dx, dy)
+	return function()
+		local pos = hl.get_cursor_pos()
+		if pos then
+			hl.dispatch(hl.dsp.cursor.move({ x = math.floor(pos.x + dx), y = math.floor(pos.y + dy) }))
+		end
+	end
+end
+
+hl.bind(mainMod .. " + M", hl.dsp.submap("cursor"), { desc = "Cursor Mode (Continuous)" })
+
+hl.define_submap("cursor", function()
+	-- Continuous Movement: normal speed (20px)
+	hl.bind("h", move_cursor(-20, 0), { repeating = true })
+	hl.bind("j", move_cursor(0, 20), { repeating = true })
+	hl.bind("k", move_cursor(0, -20), { repeating = true })
+	hl.bind("l", move_cursor(20, 0), { repeating = true })
+	hl.bind("left", move_cursor(-20, 0), { repeating = true })
+	hl.bind("down", move_cursor(0, 20), { repeating = true })
+	hl.bind("up", move_cursor(0, -20), { repeating = true })
+	hl.bind("right", move_cursor(20, 0), { repeating = true })
+
+	-- Fast Movement: Shift modifier (60px)
+	hl.bind("SHIFT + H", move_cursor(-60, 0), { repeating = true })
+	hl.bind("SHIFT + J", move_cursor(0, 60), { repeating = true })
+	hl.bind("SHIFT + K", move_cursor(0, -60), { repeating = true })
+	hl.bind("SHIFT + L", move_cursor(60, 0), { repeating = true })
+	hl.bind("SHIFT + left", move_cursor(-60, 0), { repeating = true })
+	hl.bind("SHIFT + down", move_cursor(0, 60), { repeating = true })
+	hl.bind("SHIFT + up", move_cursor(0, -60), { repeating = true })
+	hl.bind("SHIFT + right", move_cursor(60, 0), { repeating = true })
+
+	-- Fine / Slow Movement: Alt modifier (4px)
+	hl.bind("ALT + H", move_cursor(-4, 0), { repeating = true })
+	hl.bind("ALT + J", move_cursor(0, 4), { repeating = true })
+	hl.bind("ALT + K", move_cursor(0, -4), { repeating = true })
+	hl.bind("ALT + L", move_cursor(4, 0), { repeating = true })
+
+	-- Mouse clicks (wlrctl)
+	hl.bind("space", hl.dsp.exec_cmd("wlrctl pointer click left"))
+	hl.bind("m", hl.dsp.exec_cmd("wlrctl pointer click left"))
+	hl.bind("RETURN", hl.dsp.exec_cmd("wlrctl pointer click left"))
+	hl.bind("period", hl.dsp.exec_cmd("wlrctl pointer click right"))
+	hl.bind("comma", hl.dsp.exec_cmd("wlrctl pointer click middle"))
+
+	-- Oneshot click & exit
+	hl.bind("n", function()
+		hl.dispatch(hl.dsp.exec_cmd("wlrctl pointer click left"))
+		hl.dispatch(hl.dsp.submap("reset"))
+	end)
+
+	-- Mouse scroll (wlrctl)
+	hl.bind("e", hl.dsp.exec_cmd("wlrctl pointer scroll 25 0"), { repeating = true })
+	hl.bind("r", hl.dsp.exec_cmd("wlrctl pointer scroll -25 0"), { repeating = true })
+
+	-- Exit cursor mode
+	hl.bind("escape", hl.dsp.submap("reset"))
+	hl.bind(mainMod .. " + M", hl.dsp.submap("reset"))
+end)
+
 -- =============================================================================
 -- Apps
 -- =============================================================================

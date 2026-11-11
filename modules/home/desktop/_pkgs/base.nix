@@ -119,6 +119,7 @@ in {
       # System & Clipboard
       cliphist
       polkit_gnome
+      wlrctl
 
       # Theme assets
       bibata-cursors
