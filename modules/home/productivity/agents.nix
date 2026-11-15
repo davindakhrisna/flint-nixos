@@ -150,9 +150,18 @@
           done
         fi
 
-        # Ensure dsh-tui profile is initialized declaratively on fresh installs
-        if [[ -x "$HOME/.local/bin/dsh" ]] && [[ ! -d "$HOME/.dsh/profiles/dsh-tui/node_modules/@deepseek-harness-tui/dsh-tui" ]]; then
-          "$HOME/.local/bin/dsh" plugin --profile dsh-tui add "@deepseek-harness-tui/dsh-tui" || true
+        # Keep dsh-tui profile in sync with the global launcher version
+        tui_pkg="$HOME/.local/lib/node_modules/@deepseek-harness-tui/dsh-tui/package.json"
+        profile_pkg="$HOME/.dsh/profiles/dsh-tui/node_modules/@deepseek-harness-tui/dsh-tui/package.json"
+        if [[ -x "$HOME/.local/bin/dsh" ]] && [[ -f "$tui_pkg" ]]; then
+          tui_version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")).version)' "$tui_pkg")
+          profile_version=""
+          if [[ -f "$profile_pkg" ]]; then
+            profile_version=$(node -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")).version)' "$profile_pkg")
+          fi
+          if [[ "$profile_version" != "$tui_version" ]]; then
+            "$HOME/.local/bin/dsh" plugin --profile dsh-tui add "@deepseek-harness-tui/dsh-tui@$tui_version" || true
+          fi
         fi
       '';
     };

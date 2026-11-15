@@ -90,8 +90,19 @@
     ${patchRequireBuiltin}
     ${patchTui}
 
-    if [ -f "$dsh_target" ] && [ ! -d "$HOME/.dsh/profiles/dsh-tui/node_modules/@deepseek-harness-tui/dsh-tui" ]; then
-      "${nodejs}/bin/node" --expose-internals "$dsh_target" plugin --profile dsh-tui add "@deepseek-harness-tui/dsh-tui" || true
+    tui_pkg="$HOME/.local/lib/node_modules/@deepseek-harness-tui/dsh-tui/package.json"
+    profile_pkg="$HOME/.dsh/profiles/dsh-tui/node_modules/@deepseek-harness-tui/dsh-tui/package.json"
+    if [ -f "$dsh_target" ] && [ -f "$tui_pkg" ]; then
+      tui_version=$("${nodejs}/bin/node" -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")).version)' "$tui_pkg")
+      profile_version=""
+      if [ -f "$profile_pkg" ]; then
+        profile_version=$("${nodejs}/bin/node" -e 'console.log(JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")).version)' "$profile_pkg")
+      fi
+      if [ "$profile_version" != "$tui_version" ]; then
+        "${nodejs}/bin/node" --expose-internals "$dsh_target" plugin --profile dsh-tui add "@deepseek-harness-tui/dsh-tui@$tui_version" || true
+        ${patchRequireBuiltin}
+        ${patchTui}
+      fi
     fi
 
     exec "${nodejs}/bin/node" --expose-internals "$dsh_tui_target" "$@"
