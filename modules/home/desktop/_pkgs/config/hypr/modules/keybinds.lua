@@ -148,6 +148,9 @@ hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd(scriptsDir .. "/gamemode.sh")
 -- Focus Mode Toggle
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd(scriptsDir .. "/focusmode.sh"), { desc = "Focus Mode Toggle" })
 
+-- Wi-Fi Toggle
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(scriptsDir .. "/wifi-toggle.sh"), { desc = "Wi-Fi Toggle" })
+
 -- Power Menu
 hl.bind(mainMod .. " + ESCAPE", hl.dsp.exec_cmd(scriptsDir .. "/powermenu.sh"), { desc = "Power Menu" })
 
